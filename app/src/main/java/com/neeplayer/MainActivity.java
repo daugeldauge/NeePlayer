@@ -22,8 +22,8 @@ import java.util.ArrayList;
 
 public class MainActivity extends Activity implements MediaPlayerControl {
 
-    private ArrayList<Song> songList;
-    private ListView songView;
+    private ArrayList<Artist> artistList;
+    private ListView artistView;
 
     private MusicService musicService;
     private Intent playIntent;
@@ -40,7 +40,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
         public void onServiceConnected(ComponentName name, IBinder service) {
             MusicService.MusicBinder binder = (MusicService.MusicBinder) service;
             musicService = binder.getService();
-            musicService.setList(songList);
+//            musicService.setList(songList);
             musicBound = true;
         }
 
@@ -50,28 +50,28 @@ public class MainActivity extends Activity implements MediaPlayerControl {
         }
     };
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (playIntent == null) {
-            playIntent = new Intent(this, MusicService.class);
-            bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
-            startService(playIntent);
-        }
-    }
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        if (playIntent == null) {
+//            playIntent = new Intent(this, MusicService.class);
+//            bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
+//            startService(playIntent);
+//        }
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        songView = (ListView) findViewById(R.id.song_list);
-        songList = new ArrayList<Song>();
+        artistView = (ListView) findViewById(R.id.artist_list);
+        artistList = new ArrayList<Artist>();
 
-        getSongList();
+        getArtistList();
 
-        SongAdapter songAdapter = new SongAdapter(this, songList);
-        songView.setAdapter(songAdapter);
+        ArtistAdapter artistAdapter = new ArtistAdapter(this, artistList);
+        artistView.setAdapter(artistAdapter);
 
         setController();
     }
@@ -113,24 +113,27 @@ public class MainActivity extends Activity implements MediaPlayerControl {
         return super.onOptionsItemSelected(item);
     }
 
-    public void getSongList() {
+    public void getArtistList() {
         ContentResolver resolver = getContentResolver();
-        Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        Uri uri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
+
+        //TODO: Add projection
         Cursor cursor = resolver.query(uri, null, null, null, null);
 
         if (cursor != null && cursor.moveToFirst()) {
-            int titleColumn = cursor.getColumnIndexOrThrow("title");
-            int artistColumn = cursor.getColumnIndexOrThrow("artist");
-            int idColumn = cursor.getColumnIndexOrThrow("_id");
+            String idColumnName = MediaStore.Audio.Artists._ID;
+            String nameColumnName = MediaStore.Audio.Artists.ARTIST;
+
+            int nameColumn = cursor.getColumnIndexOrThrow(nameColumnName);
+            int idColumn = cursor.getColumnIndexOrThrow(idColumnName);
 
             do {
-                Song song = new Song(
+                Artist artist = new Artist(
                         cursor.getLong(idColumn),
-                        cursor.getString(titleColumn),
-                        cursor.getString(artistColumn)
+                        cursor.getString(nameColumn)
                 );
 
-                songList.add(song);
+                artistList.add(artist);
             } while(cursor.moveToNext());
 
             cursor.close();
@@ -150,8 +153,8 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 
     @Override
     protected void onDestroy() {
-        stopService(playIntent);
-        musicService = null;
+//        stopService(playIntent);
+//        musicService = null;
         super.onDestroy();
     }
 
@@ -170,7 +173,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
         });
 
         controller.setMediaPlayer(this);
-        controller.setAnchorView(findViewById(R.id.song_list));
+        controller.setAnchorView(findViewById(R.id.artist_list));
         controller.setEnabled(true);
     }
 

@@ -10,19 +10,19 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class SongAdapter extends BaseAdapter{
+public class ArtistAdapter extends BaseAdapter{
 
-    private ArrayList<Song> songs;
+    private ArrayList<Artist> artists;
     private LayoutInflater songInf;
 
-    public SongAdapter(Context context, ArrayList<Song> theSongs) {
-        songs = theSongs;
+    public ArtistAdapter(Context context, ArrayList<Artist> artists) {
+        this.artists = artists;
         songInf= LayoutInflater.from(context);
     }
 
     @Override
     public int getCount() {
-        return songs.size();
+        return artists.size();
     }
 
     @Override
@@ -37,18 +37,16 @@ public class SongAdapter extends BaseAdapter{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        LinearLayout songLayout = (LinearLayout) songInf.inflate(R.layout.song, parent, false);
+        LinearLayout artistLayout = (LinearLayout) songInf.inflate(R.layout.artist, parent, false);
 
-        TextView titleView = (TextView) songLayout.findViewById(R.id.song_title);
-        TextView artistView = (TextView) songLayout.findViewById(R.id.song_artist);
+        TextView nameView = (TextView) artistLayout.findViewById(R.id.artist_name);
 
-        Song currSong = songs.get(position);
+        Artist currSong = artists.get(position);
 
-        titleView.setText(currSong.getTitle());
-        artistView.setText(currSong.getArtist());
+        nameView.setText(currSong.getName());
 
-        songLayout.setTag(position);
+        artistLayout.setTag(position);
 
-        return songLayout;
+        return artistLayout;
     }
 }

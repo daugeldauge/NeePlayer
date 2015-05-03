@@ -1,6 +1,12 @@
 package com.neeplayer;
 
-import java.util.ArrayList;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
+import java.util.Scanner;
 
 public class Artist {
 
@@ -8,6 +14,7 @@ public class Artist {
     private String name;
     private int numberOfSongs;
     private int numberOfAlbums;
+    private String imageURL;
 
     public Artist(Long id, String name, int numberOfSongs, int numberOfAlbums) {
         this.id = id;
@@ -31,5 +38,14 @@ public class Artist {
     public Long getId() {
         return id;
     }
+
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
+    }
+
 
 }

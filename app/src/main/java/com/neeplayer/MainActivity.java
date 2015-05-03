@@ -3,11 +3,12 @@ package com.neeplayer;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.MediaStore;
@@ -17,7 +18,14 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.MediaController.MediaPlayerControl;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 
 public class MainActivity extends Activity implements MediaPlayerControl {
@@ -30,6 +38,8 @@ public class MainActivity extends Activity implements MediaPlayerControl {
     private Boolean musicBound = false;
 
     private MusicController controller;
+
+    SharedPreferences artistImages;
 
     private Boolean paused = false;
     private Boolean playbackPaused = false;
@@ -67,6 +77,8 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 
         artistView = (ListView) findViewById(R.id.artist_list);
         artistList = new ArrayList<Artist>();
+
+        artistImages = getSharedPreferences("ArtistImages", 0);
 
         getArtistList();
 
@@ -144,12 +156,64 @@ public class MainActivity extends Activity implements MediaPlayerControl {
                         cursor.getInt(numberOfAlbumsColumn)
                 );
 
+                String image = artistImages.getString(artist.getName(), null);
+                if (image != null) {
+                    artist.setImageURL(image);
+                } else {
+                    new RetrieveArtistImageUrl().execute(artist);
+                }
+
                 artistList.add(artist);
             } while(cursor.moveToNext());
 
             cursor.close();
         }
 
+    }
+
+    class RetrieveArtistImageUrl extends AsyncTask<Artist, Void, Void> {
+        @Override
+        protected Void doInBackground(Artist... params) {
+            String apiKey = "76b52a83c8c82ae436524353bcea2da0";
+            Artist artist = (Artist) params[0];
+
+            try {
+                URL url = new URI(
+                        "http",
+                        "ws.audioscrobbler.com",
+                        "/2.0",
+                        String.format("method=artist.getinfo&artist=%s&api_key=%s&format=json", artist.getName(), apiKey),
+                        null
+                ).toURL();
+
+                InputStream response = url.openConnection().getInputStream();
+                String responseString = new Scanner(response).useDelimiter("\\A").next();
+
+                JSONObject json = new JSONObject(responseString);
+                JSONObject artistInfo = json.getJSONObject("artist");
+                JSONArray images = artistInfo.getJSONArray("image");
+
+                for (int i = 0; i < images.length(); ++i) {
+                    JSONObject image = images.getJSONObject(i);
+                    String size = image.getString("size");
+                    if (size.equals("extralarge")) {
+                        String imageURL = image.getString("#text");
+                        artist.setImageURL(imageURL);
+
+                        SharedPreferences.Editor editor = artistImages.edit();
+                        editor.putString(artist.getName(), imageURL);
+                        editor.commit();
+
+                        return null;
+                    }
+                }
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 
     public void songPicked(View view) {

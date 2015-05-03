@@ -40,10 +40,12 @@ public class ArtistAdapter extends BaseAdapter{
         LinearLayout artistLayout = (LinearLayout) songInf.inflate(R.layout.artist, parent, false);
 
         TextView nameView = (TextView) artistLayout.findViewById(R.id.artist_name);
+        TextView descriptionView = (TextView) artistLayout.findViewById(R.id.artist_description);
 
-        Artist currSong = artists.get(position);
+        Artist artist = artists.get(position);
 
-        nameView.setText(currSong.getName());
+        nameView.setText(artist.getName());
+        descriptionView.setText(String.format("%d albums, %d songs", artist.getNumberOfAlbums(), artist.getNumberOfSongs()));
 
         artistLayout.setTag(position);
 

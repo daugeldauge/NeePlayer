@@ -117,20 +117,31 @@ public class MainActivity extends Activity implements MediaPlayerControl {
         ContentResolver resolver = getContentResolver();
         Uri uri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
 
-        //TODO: Add projection
-        Cursor cursor = resolver.query(uri, null, null, null, null);
+        String idColumnName = MediaStore.Audio.Artists._ID;
+        String nameColumnName = MediaStore.Audio.Artists.ARTIST;
+        String numberOfSongsColumnName = MediaStore.Audio.Artists.NUMBER_OF_TRACKS;
+        String numberOfAlbumsColumnName = MediaStore.Audio.Artists.NUMBER_OF_ALBUMS;
+
+        Cursor cursor = resolver.query(
+                uri,
+                new String[]{idColumnName, nameColumnName, numberOfSongsColumnName, numberOfAlbumsColumnName},
+                null,
+                null,
+                null);
 
         if (cursor != null && cursor.moveToFirst()) {
-            String idColumnName = MediaStore.Audio.Artists._ID;
-            String nameColumnName = MediaStore.Audio.Artists.ARTIST;
 
             int nameColumn = cursor.getColumnIndexOrThrow(nameColumnName);
             int idColumn = cursor.getColumnIndexOrThrow(idColumnName);
+            int numberOfSongsColumn = cursor.getColumnIndexOrThrow(numberOfSongsColumnName);
+            int numberOfAlbumsColumn = cursor.getColumnIndexOrThrow(numberOfAlbumsColumnName);
 
             do {
                 Artist artist = new Artist(
                         cursor.getLong(idColumn),
-                        cursor.getString(nameColumn)
+                        cursor.getString(nameColumn),
+                        cursor.getInt(numberOfSongsColumn),
+                        cursor.getInt(numberOfAlbumsColumn)
                 );
 
                 artistList.add(artist);

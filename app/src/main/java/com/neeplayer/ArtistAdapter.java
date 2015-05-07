@@ -31,7 +31,7 @@ public class ArtistAdapter extends BaseAdapter{
 
     public ArtistAdapter(Context context, ArrayList<Artist> artists) {
         this.artists = artists;
-        songInf= LayoutInflater.from(context);
+        songInf = LayoutInflater.from(context);
 
         DisplayImageOptions options = new DisplayImageOptions.Builder()
                 .cacheInMemory(true)

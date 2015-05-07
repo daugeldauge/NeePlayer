@@ -5,13 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="100dp"
     android:padding="5dp"
-    android:background="@color/background">
+    android:background="@color/background"
+    android:onClick="startArtistActivity">
 
     <ImageView
         android:background="@color/image_alt"
         android:layout_width="90dp"
         android:layout_height="90dp"
-        android:scaleType="centerCrop"
+        android:scaleType="center"
         android:id="@+id/artist_image" />
 
     <LinearLayout

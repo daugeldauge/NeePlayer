@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.MediaController.MediaPlayerControl;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -336,5 +337,12 @@ public class MainActivity extends Activity implements MediaPlayerControl {
     @Override
     public int getAudioSessionId() {
         return 0;
+    }
+
+    public void startArtistActivity(View view) {
+        Intent intent = new Intent(this, ArtistActivity.class);
+        TextView artistName = (TextView) findViewById(R.id.artist_name);
+        intent.putExtra("ARTIST_NAME", artistName.getText());
+        startActivity(intent);
     }
 }

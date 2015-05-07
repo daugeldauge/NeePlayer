@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
@@ -31,7 +32,18 @@ public class ArtistAdapter extends BaseAdapter{
     public ArtistAdapter(Context context, ArrayList<Artist> artists) {
         this.artists = artists;
         songInf= LayoutInflater.from(context);
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).build();
+
+        DisplayImageOptions options = new DisplayImageOptions.Builder()
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .build();
+
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
+                .memoryCacheSize(20 * 1024 * 1024)
+                .diskCacheSize(50 * 1024 * 1024)
+                .defaultDisplayImageOptions(options)
+                .build();
+
         imageLoader = ImageLoader.getInstance();
         imageLoader.init(config);
     }

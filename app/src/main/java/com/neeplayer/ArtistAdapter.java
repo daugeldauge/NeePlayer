@@ -51,24 +51,36 @@ public class ArtistAdapter extends BaseAdapter{
         return 0;
     }
 
+    static class ViewHolder {
+        TextView nameView;
+        TextView descriptionView;
+        ImageView imageView;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        LinearLayout artistLayout = (LinearLayout) songInf.inflate(R.layout.artist, parent, false);
+        ViewHolder holder;
+        if (convertView == null) {
+            convertView = songInf.inflate(R.layout.artist, parent, false);
+            holder = new ViewHolder();
 
-        TextView nameView = (TextView) artistLayout.findViewById(R.id.artist_name);
-        TextView descriptionView = (TextView) artistLayout.findViewById(R.id.artist_description);
-        ImageView imageView = (ImageView) artistLayout.findViewById(R.id.artist_image);
+            holder.nameView = (TextView) convertView.findViewById(R.id.artist_name);
+            holder.descriptionView = (TextView) convertView.findViewById(R.id.artist_description);
+            holder.imageView = (ImageView) convertView.findViewById(R.id.artist_image);
+
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
 
         Artist artist = artists.get(position);
 
-        nameView.setText(artist.getName());
-        descriptionView.setText(String.format("%d albums, %d songs", artist.getNumberOfAlbums(), artist.getNumberOfSongs()));
+        holder.nameView.setText(artist.getName());
+        holder.descriptionView.setText(String.format("%d albums, %d songs", artist.getNumberOfAlbums(), artist.getNumberOfSongs()));
 
-        imageLoader.displayImage(artist.getImageURL(), imageView);
+        imageLoader.displayImage(artist.getImageURL(), holder.imageView);
 
-        artistLayout.setTag(position);
-
-        return artistLayout;
+        return convertView;
     }
 
 }

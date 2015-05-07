@@ -15,6 +15,7 @@ import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.MediaController.MediaPlayerControl;
 import android.widget.TextView;
@@ -85,6 +86,16 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 
         ArtistAdapter artistAdapter = new ArtistAdapter(this, artistList);
         artistView.setAdapter(artistAdapter);
+        artistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(MainActivity.this, ArtistActivity.class);
+
+                Artist artist = (Artist) parent.getItemAtPosition(position);
+                intent.putExtra("ARTIST_NAME", artist.getName());
+                startActivity(intent);
+            }
+        });
 
         setController();
     }
@@ -339,10 +350,4 @@ public class MainActivity extends Activity implements MediaPlayerControl {
         return 0;
     }
 
-    public void startArtistActivity(View view) {
-        Intent intent = new Intent(this, ArtistActivity.class);
-        TextView artistName = (TextView) findViewById(R.id.artist_name);
-        intent.putExtra("ARTIST_NAME", artistName.getText());
-        startActivity(intent);
-    }
 }

@@ -55,7 +55,7 @@ public class ArtistAdapter extends BaseAdapter{
 
     @Override
     public Object getItem(int position) {
-        return null;
+        return artists.get(position);
     }
 
     @Override

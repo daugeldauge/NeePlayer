@@ -93,6 +93,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 
                 Artist artist = (Artist) parent.getItemAtPosition(position);
                 intent.putExtra("ARTIST_NAME", artist.getName());
+                intent.putExtra("ARTIST_ID", artist.getId());
                 startActivity(intent);
             }
         });

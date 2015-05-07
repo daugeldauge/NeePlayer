@@ -1,23 +1,87 @@
 package com.neeplayer;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.net.Uri;
+import android.widget.ListView;
+
+import java.util.ArrayList;
 
 
 public class ArtistActivity extends Activity {
 
     String artistName;
+    Long artistId;
+    ArrayList<Album> albumList;
+    private ListView albumView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_artist);
 
-        artistName  = getIntent().getStringExtra("ARTIST_NAME");
+        Intent intent = getIntent();
+        artistName  = intent.getStringExtra("ARTIST_NAME");
+        artistId = intent.getLongExtra("ARTIST_ID", 0);
+
         setTitle(artistName);
+
+        albumView = (ListView) findViewById(R.id.album_list);
+        albumList = new ArrayList<Album>();
+
+        getAlbumList();
+
+        AlbumAdapter albumAdapter = new AlbumAdapter(this, albumList);
+        albumView.setAdapter(albumAdapter);
+
+    }
+
+    private void getAlbumList() {
+        Uri uri = MediaStore.Audio.Artists.Albums.getContentUri("external", artistId);
+
+        ContentResolver resolver = getContentResolver();
+
+        String idColumnName = MediaStore.Audio.Albums._ID;
+        String titleColumnName = MediaStore.Audio.Artists.Albums.ALBUM;
+        String artColumnName = MediaStore.Audio.Artists.Albums.ALBUM_ART;
+        String yearColumnName = MediaStore.Audio.Artists.Albums.FIRST_YEAR;
+
+        Cursor cursor = resolver.query(
+                uri,
+                new String[]{idColumnName, titleColumnName, artColumnName, yearColumnName},
+                null,
+                null,
+                null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+
+            int idColumn = cursor.getColumnIndexOrThrow(idColumnName);
+            int titleColumn = cursor.getColumnIndexOrThrow(titleColumnName);
+            int artColumn = cursor.getColumnIndexOrThrow(artColumnName);
+            int yearColumn = cursor.getColumnIndexOrThrow(yearColumnName);
+
+            do {
+                Album album = new Album(
+                        cursor.getLong(idColumn),
+                        cursor.getString(titleColumn),
+                        cursor.getInt(yearColumn),
+                        cursor.getString(artColumn),
+                        null
+                );
+
+                albumList.add(album);
+            } while(cursor.moveToNext());
+
+            cursor.close();
+        }
+
+
     }
 
 

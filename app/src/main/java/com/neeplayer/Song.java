@@ -1,6 +1,8 @@
 package com.neeplayer;
 
-public class Song {
+import java.io.Serializable;
+
+public class Song implements Serializable {
 
     private Long id;
     private String title;

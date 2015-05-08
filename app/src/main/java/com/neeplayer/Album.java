@@ -1,8 +1,9 @@
 package com.neeplayer;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Album {
+public class Album implements Serializable {
 
     private final Long id;
     private final String title;

@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.view.View;
 import android.widget.ListView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 
@@ -153,6 +154,7 @@ public class ArtistActivity extends Activity {
         Intent intent = new Intent(this, NowPlayingActivity.class);
         intent.putExtra("ALBUM_POSITION",(int) view.getTag(R.id.ALBUM_POSITION));
         intent.putExtra("SONG_POSITION", (int) view.getTag(R.id.SONG_POSITION));
+        intent.putExtra("ALBUM_LIST", albumList);
         startActivity(intent);
     }
 }

@@ -51,6 +51,7 @@ public class NowPlayingActivity extends Activity {
         super.onNewIntent(intent);
         int albumPosition = intent.getIntExtra("ALBUM_POSITION", 0);
         int songPosition = intent.getIntExtra("SONG_POSITION", 0);
+        albumList = (ArrayList<Album>) intent.getSerializableExtra("ALBUM_LIST");
         TextView view = (TextView)findViewById(R.id.intent_params);
         view.setText(String.format("%d %d", albumPosition, songPosition));
     }

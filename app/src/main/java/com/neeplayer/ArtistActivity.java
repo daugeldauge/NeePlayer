@@ -1,14 +1,19 @@
 package com.neeplayer;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.net.Uri;
+import android.view.View;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -74,7 +79,7 @@ public class ArtistActivity extends Activity {
                         cursor.getString(titleColumn),
                         cursor.getInt(yearColumn),
                         cursor.getString(artColumn),
-                        getSongList(id)
+                        getAlbumSongs(id)
                 );
 
                 albumList.add(album);
@@ -86,7 +91,7 @@ public class ArtistActivity extends Activity {
 
     }
 
-    private ArrayList<Song> getSongList(Long albumId) {
+    private ArrayList<Song> getAlbumSongs(Long albumId) {
         ContentResolver resolver = getContentResolver();
         ArrayList<Song> list = new ArrayList<Song>();
 
@@ -120,7 +125,6 @@ public class ArtistActivity extends Activity {
         return list;
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -141,5 +145,41 @@ public class ArtistActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private MusicService musicService;
+    private Intent playIntent;
+
+    private Boolean musicBound = false;
+
+    private ServiceConnection musicConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            MusicService.MusicBinder binder = (MusicService.MusicBinder) service;
+            musicService = binder.getService();
+            musicService.setList(albumList);
+            musicBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            musicBound = false;
+        }
+    };
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (playIntent == null) {
+            playIntent = new Intent(this, MusicService.class);
+            bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
+            startService(playIntent);
+        }
+    }
+
+
+    public void songPicked(View view) {
+        musicService.setPosition((int) view.getTag(R.id.ALBUM_POSITION), (int) view.getTag(R.id.SONG_POSITION));
+        musicService.playSong();
     }
 }

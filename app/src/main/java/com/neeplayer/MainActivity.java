@@ -18,7 +18,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.MediaController.MediaPlayerControl;
-import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -30,47 +29,12 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 
-public class MainActivity extends Activity implements MediaPlayerControl {
+public class MainActivity extends Activity {
 
     private ArrayList<Artist> artistList;
     private ListView artistView;
 
-    private MusicService musicService;
-    private Intent playIntent;
-    private Boolean musicBound = false;
-
-    private MusicController controller;
-
     SharedPreferences artistImages;
-
-    private Boolean paused = false;
-    private Boolean playbackPaused = false;
-
-
-    private ServiceConnection musicConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            MusicService.MusicBinder binder = (MusicService.MusicBinder) service;
-            musicService = binder.getService();
-//            musicService.setList(songList);
-            musicBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            musicBound = false;
-        }
-    };
-
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        if (playIntent == null) {
-//            playIntent = new Intent(this, MusicService.class);
-//            bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
-//            startService(playIntent);
-//        }
-//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,22 +62,6 @@ public class MainActivity extends Activity implements MediaPlayerControl {
             }
         });
 
-        setController();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (paused) {
-            setController();
-            paused = false;
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        controller.hide();
-        super.onStop();
     }
 
     @Override
@@ -229,126 +177,11 @@ public class MainActivity extends Activity implements MediaPlayerControl {
         }
     }
 
-    public void songPicked(View view) {
-        musicService.setSongPosition(Integer.parseInt(view.getTag().toString()));
-        musicService.playSong();
-        if (playbackPaused) {
-            setController();
-            playbackPaused = false;
-        }
-        controller.show(0);
-    }
-
     @Override
     protected void onDestroy() {
 //        stopService(playIntent);
 //        musicService = null;
         super.onDestroy();
-    }
-
-    private void setController() {
-        controller = new MusicController(this);
-        controller.setPrevNextListeners(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                playNext();
-            }
-        }, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                playPrevious();
-            }
-        });
-
-        controller.setMediaPlayer(this);
-        controller.setAnchorView(findViewById(R.id.artist_list));
-        controller.setEnabled(true);
-    }
-
-    private void playNext() {
-        musicService.playNext();
-        if (playbackPaused) {
-            setController();
-            playbackPaused = false;
-        }
-        controller.show(0);
-    }
-
-    private void playPrevious() {
-        musicService.playPrevious();
-        if (playbackPaused) {
-            setController();
-            playbackPaused = false;
-        }
-        controller.show(0);
-    }
-
-    @Override
-    public void start() {
-        musicService.start();
-    }
-
-    @Override
-    public void pause() {
-        playbackPaused = true;
-        musicService.pausePlayer();
-    }
-
-    @Override
-    public int getDuration() {
-        if (musicService != null && musicBound && musicService.isPLaying()) {
-            return musicService.getDuration();
-        } else {
-            return 0;
-        }
-    }
-
-    @Override
-    public int getCurrentPosition() {
-        if (musicService != null && musicBound && musicService.isPLaying()) {
-            return musicService.getSongPosition();
-        } else {
-            return 0;
-        }
-    }
-
-    @Override
-    public void seekTo(int pos) {
-        musicService.seekTo(pos);
-    }
-
-    @Override
-    public boolean isPlaying() {
-        if (musicService != null && musicBound) {
-            return musicService.isPLaying();
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public int getBufferPercentage() {
-        return 0;
-    }
-
-    @Override
-    public boolean canPause() {
-        return true;
-    }
-
-    @Override
-    public boolean canSeekBackward() {
-        return true;
-    }
-
-    @Override
-    public boolean canSeekForward() {
-        return true;
-    }
-
-    @Override
-    public int getAudioSessionId() {
-        return 0;
     }
 
 }

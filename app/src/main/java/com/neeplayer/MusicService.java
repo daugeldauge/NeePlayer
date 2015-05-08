@@ -20,8 +20,9 @@ import java.util.ArrayList;
 public class MusicService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener {
 
     private MediaPlayer player;
-    private ArrayList<Song> songs;
+    private ArrayList<Album> albums;
     private int songPosition;
+    private int albumPosition;
     private String songTitle;
     private static final int NOTIFY_ID = 1;
 
@@ -41,17 +42,18 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         player.setOnErrorListener(this);
     }
 
-    public void setList(ArrayList<Song> songs) {
-        this.songs = songs;
+    public void setList(ArrayList<Album> albums) {
+        this.albums = albums;
     }
 
-    public void setSongPosition(int songPosition) {
+    public void setPosition(int albumPosition, int songPosition) {
         this.songPosition = songPosition;
+        this.albumPosition = albumPosition;
     }
 
     public void playSong() {
         player.reset();
-        Song song = songs.get(songPosition);
+        Song song = albums.get(albumPosition).getSongs().get(songPosition);
         Long id = song.getId();
 
         songTitle = String.format("%s – %s", "", song.getTitle());
@@ -156,15 +158,23 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public void playPrevious() {
         --songPosition;
         if (songPosition < 0) {
-            songPosition = songs.size() - 1;
+            --albumPosition;
+            if (albumPosition < 0) {
+                albumPosition = albums.size() - 1;
+            }
+            songPosition = albums.get(albumPosition).getSongs().size() - 1;
         }
         playSong();
     }
 
     public void playNext() {
         ++songPosition;
-        if (songPosition >= songs.size()) {
+        if (songPosition >= albums.get(albumPosition).getSongs().size()) {
             songPosition = 0;
+            ++albumPosition;
+            if (albumPosition >= albums.size()) {
+                albumPosition = 0;
+            }
         }
         playSong();
     }

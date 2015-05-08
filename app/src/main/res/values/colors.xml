@@ -2,8 +2,8 @@
 <resources>
     <color name="primary">#009688</color>
     <color name="primary_dark">#00796b</color>
-    <color name="background">#ffffff</color>
-    <color name="image_alt">#80cbc4</color>
+    <color name="background">#fafafa</color>
+    <color name="image_alt">#e0e0e0</color>
     <color name="black87">#212121</color>
     <color name="black54">#757575</color>
 </resources>

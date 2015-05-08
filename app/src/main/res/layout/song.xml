@@ -3,7 +3,10 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:padding="15dp">
+    android:padding="15dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:onClick="songPicked">
 
 
     <TextView

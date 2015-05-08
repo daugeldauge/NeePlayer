@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -74,7 +73,9 @@ public class AlbumAdapter extends BaseAdapter {
         holder.art.setImageBitmap(BitmapFactory.decodeFile(album.getArt()));
 
         holder.songs.removeAllViews();
-        for (Song song : album.getSongs()) {
+        for (int i = 0; i < album.getSongs().size(); ++i) {
+            Song song = album.getSongs().get(i);
+
             LinearLayout songView = (LinearLayout)inflater.inflate(R.layout.song, holder.songs, false);
 
             TextView track =    (TextView) songView.findViewById(R.id.song_track);
@@ -88,6 +89,9 @@ public class AlbumAdapter extends BaseAdapter {
             Long min = TimeUnit.MILLISECONDS.toMinutes(ms);
             Long sec = TimeUnit.MILLISECONDS.toSeconds(ms) - TimeUnit.MINUTES.toSeconds(min);
             duration.setText(String.format("%d:%d", min, sec));
+
+            songView.setTag(R.id.ALBUM_POSITION, position);
+            songView.setTag(R.id.SONG_POSITION, i);
 
             holder.songs.addView(songView);
         }

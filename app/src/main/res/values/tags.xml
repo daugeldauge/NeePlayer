@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="ALBUM_POSITION" type="id"/>
+    <item name="SONG_POSITION" type="id"/>
+</resources>

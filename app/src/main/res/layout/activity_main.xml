@@ -9,6 +9,8 @@
     <ListView
         android:id="@+id/artist_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:choiceMode="singleChoice"
+        android:drawSelectorOnTop="true"/>
 
 </LinearLayout>

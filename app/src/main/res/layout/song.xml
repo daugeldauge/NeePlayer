@@ -2,8 +2,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
-    android:padding="15dp"
+    android:layout_height="50dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
+    android:paddingLeft="25dp"
+    android:paddingRight="25dp"
     android:clickable="true"
     android:focusable="true"
     android:onClick="songPicked">

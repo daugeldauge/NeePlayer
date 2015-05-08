@@ -100,7 +100,12 @@ public class AlbumAdapter extends BaseAdapter {
             TextView title =    (TextView) songView.findViewById(R.id.song_title);
             TextView duration = (TextView) songView.findViewById(R.id.song_duration);
 
-            track.setText(Integer.toString(song.getTrack()));
+            int songTrack = song.getTrack();
+            if (songTrack >= 1000) {
+                songTrack = songTrack % 1000;
+            }
+
+            track.setText(Integer.toString(songTrack));
             title.setText(song.getTitle());
 
             long ms = song.getDuration();

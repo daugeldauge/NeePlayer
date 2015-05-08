@@ -20,12 +20,14 @@ import java.util.ArrayList;
 public class MusicService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener {
 
     private MediaPlayer player;
+
     private ArrayList<Album> albums;
+
+    private String artistName;
     private int songPosition;
     private int albumPosition;
     private String songTitle;
     private static final int NOTIFY_ID = 1;
-
     public void onCreate() {
         super.onCreate();
         songPosition = 0;
@@ -46,6 +48,10 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         this.albums = albums;
     }
 
+    public void setArtistName(String artistName) {
+        this.artistName = artistName;
+    }
+
     public void setPosition(int albumPosition, int songPosition) {
         this.songPosition = songPosition;
         this.albumPosition = albumPosition;
@@ -56,7 +62,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         Song song = albums.get(albumPosition).getSongs().get(songPosition);
         Long id = song.getId();
 
-        songTitle = String.format("%s – %s", "", song.getTitle());
+        songTitle = song.getTitle();
 
         Uri trackUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
 
@@ -111,7 +117,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public void onPrepared(MediaPlayer mp) {
         mp.start();
 
-        Intent notIntent = new Intent(this, MainActivity.class);
+        Intent notIntent = new Intent(this, ArtistActivity.class);
         notIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -121,8 +127,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
                 .setSmallIcon(R.drawable.play)
                 .setTicker(songTitle)
                 .setOngoing(true)
-                .setContentTitle("PLaying")
-                .setContentText(songTitle);
+                .setContentTitle(songTitle)
+                .setContentText(artistName);
 
         Notification not = builder.build();
 

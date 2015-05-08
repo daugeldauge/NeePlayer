@@ -158,6 +158,7 @@ public class ArtistActivity extends Activity {
             MusicService.MusicBinder binder = (MusicService.MusicBinder) service;
             musicService = binder.getService();
             musicService.setList(albumList);
+            musicService.setArtistName(artistName);
             musicBound = true;
         }
 

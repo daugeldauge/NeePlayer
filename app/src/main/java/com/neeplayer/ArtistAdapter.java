@@ -1,27 +1,18 @@
 package com.neeplayer;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class ArtistAdapter extends BaseAdapter{
 
@@ -32,6 +23,7 @@ public class ArtistAdapter extends BaseAdapter{
     public ArtistAdapter(Context context, ArrayList<Artist> artists) {
         this.artists = artists;
         songInf = LayoutInflater.from(context);
+
 
         DisplayImageOptions options = new DisplayImageOptions.Builder()
                 .cacheInMemory(true)

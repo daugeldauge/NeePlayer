@@ -10,16 +10,33 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 public class AlbumAdapter extends BaseAdapter {
     private ArrayList<Album> albums;
     private LayoutInflater inflater;
+    private ImageLoader imageLoader;
 
     public AlbumAdapter(Context context, ArrayList<Album> albums) {
         this.albums = albums;
         inflater = LayoutInflater.from(context);
+
+        DisplayImageOptions options = new DisplayImageOptions.Builder()
+                .cacheInMemory(true)
+                .build();
+
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
+                .memoryCacheSize(20 * 1024 * 1024)
+                .defaultDisplayImageOptions(options)
+                .build();
+
+        imageLoader = ImageLoader.getInstance();
+        imageLoader.init(config);
     }
 
     @Override
@@ -70,7 +87,7 @@ public class AlbumAdapter extends BaseAdapter {
         holder.year.setText(Integer.toString(album.getYear()));
         holder.info.setText("11 songs, 56 min");
 
-        holder.art.setImageBitmap(BitmapFactory.decodeFile(album.getArt()));
+        imageLoader.displayImage("file://" + album.getArt(), holder.art);
 
         holder.songs.removeAllViews();
         for (int i = 0; i < album.getSongs().size(); ++i) {

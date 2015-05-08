@@ -107,7 +107,7 @@ public class AlbumAdapter extends BaseAdapter {
             albumDuration += ms;
             long min = TimeUnit.MILLISECONDS.toMinutes(ms);
             long sec = TimeUnit.MILLISECONDS.toSeconds(ms) - TimeUnit.MINUTES.toSeconds(min);
-            duration.setText(String.format("%d:%d", min, sec));
+            duration.setText(String.format("%d:%02d", min, sec));
 
             songView.setTag(R.id.ALBUM_POSITION, position);
             songView.setTag(R.id.SONG_POSITION, i);

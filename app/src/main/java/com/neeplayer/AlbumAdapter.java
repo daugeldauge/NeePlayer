@@ -85,10 +85,11 @@ public class AlbumAdapter extends BaseAdapter {
 
         holder.title.setText(album.getTitle());
         holder.year.setText(Integer.toString(album.getYear()));
-        holder.info.setText("11 songs, 56 min");
+
 
         imageLoader.displayImage("file://" + album.getArt(), holder.art);
 
+        long albumDuration = 0;
         holder.songs.removeAllViews();
         for (int i = 0; i < album.getSongs().size(); ++i) {
             Song song = album.getSongs().get(i);
@@ -102,9 +103,10 @@ public class AlbumAdapter extends BaseAdapter {
             track.setText(Integer.toString(song.getTrack()));
             title.setText(song.getTitle());
 
-            Long ms = song.getDuration();
-            Long min = TimeUnit.MILLISECONDS.toMinutes(ms);
-            Long sec = TimeUnit.MILLISECONDS.toSeconds(ms) - TimeUnit.MINUTES.toSeconds(min);
+            long ms = song.getDuration();
+            albumDuration += ms;
+            long min = TimeUnit.MILLISECONDS.toMinutes(ms);
+            long sec = TimeUnit.MILLISECONDS.toSeconds(ms) - TimeUnit.MINUTES.toSeconds(min);
             duration.setText(String.format("%d:%d", min, sec));
 
             songView.setTag(R.id.ALBUM_POSITION, position);
@@ -112,6 +114,11 @@ public class AlbumAdapter extends BaseAdapter {
 
             holder.songs.addView(songView);
         }
+
+        holder.info.setText(String.format(
+                "%d songs, %d min",
+                album.getSongs().size(),
+                TimeUnit.MILLISECONDS.toMinutes(albumDuration)));
 
         return convertView;
     }

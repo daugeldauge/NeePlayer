@@ -18,6 +18,9 @@ public class NowPlayingActivity extends Activity {
     ArrayList<Album> albumList;
     String artistName;
 
+    int albumPosition;
+    int songPosition;
+
     private MusicService musicService;
     private Intent playIntent;
 
@@ -28,8 +31,11 @@ public class NowPlayingActivity extends Activity {
         public void onServiceConnected(ComponentName name, IBinder service) {
             MusicService.MusicBinder binder = (MusicService.MusicBinder) service;
             musicService = binder.getService();
+
             musicService.setList(albumList);
-            musicService.setArtistName(artistName);
+            musicService.setPosition(albumPosition, songPosition);
+            musicService.playSong();
+
             musicBound = true;
         }
 
@@ -43,29 +49,37 @@ public class NowPlayingActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_now_playing);
+
         onNewIntent(getIntent());
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        int albumPosition = intent.getIntExtra("ALBUM_POSITION", 0);
-        int songPosition = intent.getIntExtra("SONG_POSITION", 0);
+
+        albumPosition = intent.getIntExtra("ALBUM_POSITION", 0);
+        songPosition = intent.getIntExtra("SONG_POSITION", 0);
         albumList = (ArrayList<Album>) intent.getSerializableExtra("ALBUM_LIST");
+
+        if (playIntent != null) {
+            unbindService(musicConnection);
+            stopService(playIntent);
+        }
+
+        playIntent = new Intent(this, MusicService.class);
+        bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
+        startService(playIntent);
+
         TextView view = (TextView)findViewById(R.id.intent_params);
         view.setText(String.format("%d %d", albumPosition, songPosition));
     }
 
-    //    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        if (playIntent == null) {
-//            playIntent = new Intent(this, MusicService.class);
-//            bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
-//            startService(playIntent);
-//        }
-//    }
-
+    @Override
+    protected void onDestroy() {
+        unbindService(musicConnection);
+        stopService(playIntent);
+        super.onDestroy();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -54,7 +54,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         Song song = songs.get(songPosition);
         Long id = song.getId();
 
-        songTitle = String.format("%s – %s", song.getArtist(), song.getTitle());
+        songTitle = String.format("%s – %s", "", song.getTitle());
 
         Uri trackUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
 

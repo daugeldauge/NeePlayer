@@ -57,7 +57,7 @@ public class ArtistActivity extends Activity {
                 new String[]{idColumnName, titleColumnName, artColumnName, yearColumnName},
                 null,
                 null,
-                null);
+                yearColumnName);
 
         if (cursor != null && cursor.moveToFirst()) {
 
@@ -67,12 +67,14 @@ public class ArtistActivity extends Activity {
             int yearColumn = cursor.getColumnIndexOrThrow(yearColumnName);
 
             do {
+                Long id = cursor.getLong(idColumn);
+
                 Album album = new Album(
-                        cursor.getLong(idColumn),
+                        id,
                         cursor.getString(titleColumn),
                         cursor.getInt(yearColumn),
                         cursor.getString(artColumn),
-                        null
+                        getSongList(id)
                 );
 
                 albumList.add(album);
@@ -82,6 +84,40 @@ public class ArtistActivity extends Activity {
         }
 
 
+    }
+
+    private ArrayList<Song> getSongList(Long albumId) {
+        ContentResolver resolver = getContentResolver();
+        ArrayList<Song> list = new ArrayList<Song>();
+
+        String idColumnName = MediaStore.Audio.Media._ID;
+        String titleColumnName = MediaStore.Audio.Media.TITLE;
+        String durationColumnName = MediaStore.Audio.Media.DURATION;
+        String trackColumnName = MediaStore.Audio.Media.TRACK;
+
+        Cursor cursor = resolver.query(
+                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                new String[] { idColumnName, titleColumnName, durationColumnName, trackColumnName },
+                MediaStore.Audio.Media.ALBUM_ID + "=?",
+                new String[] { albumId.toString() },
+                MediaStore.Audio.Media.TRACK);
+
+
+        if (cursor != null && cursor.moveToFirst()) {
+
+            do {
+                list.add(new Song(
+                        cursor.getLong(0),
+                        cursor.getString(1),
+                        cursor.getLong(2),
+                        cursor.getInt(3)
+                ));
+            } while(cursor.moveToNext());
+
+            cursor.close();
+        }
+
+        return list;
     }
 
 

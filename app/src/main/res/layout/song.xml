@@ -1,20 +1,37 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:onClick="songPicked">
+    android:layout_height="60dp"
+    android:padding="15dp">
+
+
+    <TextView
+        android:id="@+id/song_track"
+        android:textSize="14sp"
+        android:textColor="@color/black54"
+        android:layout_width="30dp"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical|left"
+        android:text="3"/>
+
 
     <TextView
         android:id="@+id/song_title"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:textSize="16sp"
+        android:textColor="@color/black87"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical|left"
+        android:text="Everlasting Love"/>
+
     <TextView
-        android:id="@+id/song_artist"
-        android:textSize="18sp"
+        android:id="@+id/song_duration"
+        android:textSize="14sp"
+        android:textColor="@color/black54"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent"
+        android:gravity="center_vertical|right"
+        android:text="3:22"/>
 
 </LinearLayout>

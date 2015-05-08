@@ -7,17 +7,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class AlbumAdapter extends BaseAdapter {
     private ArrayList<Album> albums;
-    private LayoutInflater albumInf;
+    private LayoutInflater inflater;
 
     public AlbumAdapter(Context context, ArrayList<Album> albums) {
         this.albums = albums;
-        albumInf = LayoutInflater.from(context);
+        inflater = LayoutInflater.from(context);
     }
 
     @Override
@@ -40,6 +43,7 @@ public class AlbumAdapter extends BaseAdapter {
         TextView year;
         TextView info;
         ImageView art;
+        LinearLayout songs;
     }
 
     @Override
@@ -47,13 +51,14 @@ public class AlbumAdapter extends BaseAdapter {
         ViewHolder holder;
 
         if (convertView == null) {
-            convertView = albumInf.inflate(R.layout.album, parent, false);
+            convertView = inflater.inflate(R.layout.album, parent, false);
             holder = new ViewHolder();
 
             holder.title = (TextView) convertView.findViewById(R.id.album_title);
             holder.year  = (TextView) convertView.findViewById(R.id.album_year);
             holder.info  = (TextView) convertView.findViewById(R.id.album_info);
             holder.art  = (ImageView) convertView.findViewById(R.id.album_art);
+            holder.songs = (LinearLayout) convertView.findViewById(R.id.song_list);
 
             convertView.setTag(holder);
         } else {
@@ -67,6 +72,25 @@ public class AlbumAdapter extends BaseAdapter {
         holder.info.setText("11 songs, 56 min");
 
         holder.art.setImageBitmap(BitmapFactory.decodeFile(album.getArt()));
+
+        holder.songs.removeAllViews();
+        for (Song song : album.getSongs()) {
+            LinearLayout songView = (LinearLayout)inflater.inflate(R.layout.song, holder.songs, false);
+
+            TextView track =    (TextView) songView.findViewById(R.id.song_track);
+            TextView title =    (TextView) songView.findViewById(R.id.song_title);
+            TextView duration = (TextView) songView.findViewById(R.id.song_duration);
+
+            track.setText(Integer.toString(song.getTrack()));
+            title.setText(song.getTitle());
+
+            Long ms = song.getDuration();
+            Long min = TimeUnit.MILLISECONDS.toMinutes(ms);
+            Long sec = TimeUnit.MILLISECONDS.toSeconds(ms) - TimeUnit.MINUTES.toSeconds(min);
+            duration.setText(String.format("%d:%d", min, sec));
+
+            holder.songs.addView(songView);
+        }
 
         return convertView;
     }

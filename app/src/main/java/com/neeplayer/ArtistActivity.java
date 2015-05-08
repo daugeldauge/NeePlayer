@@ -147,40 +147,12 @@ public class ArtistActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    private MusicService musicService;
-    private Intent playIntent;
-
-    private Boolean musicBound = false;
-
-    private ServiceConnection musicConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            MusicService.MusicBinder binder = (MusicService.MusicBinder) service;
-            musicService = binder.getService();
-            musicService.setList(albumList);
-            musicService.setArtistName(artistName);
-            musicBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            musicBound = false;
-        }
-    };
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (playIntent == null) {
-            playIntent = new Intent(this, MusicService.class);
-            bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
-            startService(playIntent);
-        }
-    }
 
 
     public void songPicked(View view) {
-        musicService.setPosition((int) view.getTag(R.id.ALBUM_POSITION), (int) view.getTag(R.id.SONG_POSITION));
-        musicService.playSong();
+        Intent intent = new Intent(this, NowPlayingActivity.class);
+        intent.putExtra("ALBUM_POSITION",(int) view.getTag(R.id.ALBUM_POSITION));
+        intent.putExtra("SONG_POSITION", (int) view.getTag(R.id.SONG_POSITION));
+        startActivity(intent);
     }
 }

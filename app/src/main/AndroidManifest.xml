@@ -32,6 +32,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="MainActivity" />
         </activity>
+        <activity
+            android:name=".NowPlayingActivity"
+            android:label="@string/title_activity_now_playing"
+            android:launchMode="singleInstance">
+        </activity>
     </application>
 
 </manifest>

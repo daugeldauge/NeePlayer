@@ -26,17 +26,7 @@ public class AlbumAdapter extends BaseAdapter {
         this.albums = albums;
         inflater = LayoutInflater.from(context);
 
-        DisplayImageOptions options = new DisplayImageOptions.Builder()
-                .cacheInMemory(true)
-                .build();
-
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
-                .memoryCacheSize(20 * 1024 * 1024)
-                .defaultDisplayImageOptions(options)
-                .build();
-
         imageLoader = ImageLoader.getInstance();
-        imageLoader.init(config);
     }
 
     @Override

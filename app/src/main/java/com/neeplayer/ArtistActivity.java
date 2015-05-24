@@ -155,6 +155,7 @@ public class ArtistActivity extends Activity {
         intent.putExtra("ALBUM_POSITION",(int) view.getTag(R.id.ALBUM_POSITION));
         intent.putExtra("SONG_POSITION", (int) view.getTag(R.id.SONG_POSITION));
         intent.putExtra("ALBUM_LIST", albumList);
+        intent.putExtra("ARTIST_NAME", artistName);
         startActivity(intent);
     }
 }

@@ -9,12 +9,18 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.TextView;
+
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.util.ArrayList;
 
 
-public class NowPlayingActivity extends Activity {
+public class NowPlayingActivity extends Activity implements MediaController.MediaPlayerControl {
     ArrayList<Album> albumList;
     String artistName;
 
@@ -24,7 +30,11 @@ public class NowPlayingActivity extends Activity {
     private MusicService musicService;
     private Intent playIntent;
 
+    private MusicController controller;
+
     private Boolean musicBound = false;
+
+    private ImageLoader imageLoader;
 
     private ServiceConnection musicConnection = new ServiceConnection() {
         @Override
@@ -50,6 +60,8 @@ public class NowPlayingActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_now_playing);
 
+        imageLoader = ImageLoader.getInstance();
+
         onNewIntent(getIntent());
     }
 
@@ -60,6 +72,7 @@ public class NowPlayingActivity extends Activity {
         albumPosition = intent.getIntExtra("ALBUM_POSITION", 0);
         songPosition = intent.getIntExtra("SONG_POSITION", 0);
         albumList = (ArrayList<Album>) intent.getSerializableExtra("ALBUM_LIST");
+        artistName = intent.getStringExtra("ARTIST_NAME");
 
         if (playIntent != null) {
             unbindService(musicConnection);
@@ -70,8 +83,19 @@ public class NowPlayingActivity extends Activity {
         bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
         startService(playIntent);
 
-        TextView view = (TextView)findViewById(R.id.intent_params);
-        view.setText(String.format("%d %d", albumPosition, songPosition));
+        Album album = albumList.get(albumPosition);
+        Song song = album.getSongs().get(songPosition);
+
+        TextView songTitleView = (TextView)findViewById(R.id.np_song_title);
+        songTitleView.setText(song.getTitle());
+
+        TextView albumArtistView = (TextView)findViewById(R.id.np_artist_and_album);
+        albumArtistView.setText(String.format("%s — %s", artistName, album.getTitle()));
+
+        ImageView artView = (ImageView)findViewById(R.id.np_album_art);
+        imageLoader.displayImage("file://" + album.getArt(), artView);
+
+        setController();
     }
 
     @Override
@@ -103,8 +127,92 @@ public class NowPlayingActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void setController() {
+        controller = new MusicController(this);
+        controller.setMediaPlayer(this);
+        controller.setAnchorView(findViewById(R.id.np_layout));
+        controller.setEnabled(true);
+    }
+
+    private void playNext() {
+        musicService.playNext();
+        controller.show(0);
+    }
+
+    private void playPrevious() {
+        musicService.playPrevious();
+        controller.show(0);
+    }
+
     @Override
     public void onBackPressed() {
         moveTaskToBack(true);
+    }
+
+    @Override
+    public void start() {
+        musicService.start();
+    }
+
+    @Override
+    public void pause() {
+        musicService.pausePlayer();
+    }
+
+    @Override
+    public int getDuration() {
+        if (musicService != null && musicBound && musicService.isPlaying()) {
+            return musicService.getDuration();
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
+    public int getCurrentPosition() {
+        if (musicService != null && musicBound && musicService.isPlaying()) {
+            return musicService.getSongPosition();
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
+    public void seekTo(int pos) {
+        musicService.seekTo(pos);
+    }
+
+    @Override
+    public boolean isPlaying() {
+        if (musicService != null && musicBound) {
+            return musicService.isPlaying();
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int getBufferPercentage() {
+        return 0;
+    }
+
+    @Override
+    public boolean canPause() {
+        return true;
+    }
+
+    @Override
+    public boolean canSeekBackward() {
+        return true;
+    }
+
+    @Override
+    public boolean canSeekForward() {
+        return true;
+    }
+
+    @Override
+    public int getAudioSessionId() {
+        return 0;
     }
 }

@@ -145,7 +145,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         return player.getDuration();
     }
 
-    public Boolean isPLaying() {
+    public Boolean isPlaying() {
         return player.isPlaying();
     }
 

@@ -52,19 +52,19 @@
                 android:layout_height="wrap_content"
                 style="?android:attr/borderlessButtonStyle"
                 android:src="@drawable/ic_fast_rewind_black_48dp"
-                android:id="@+id/fast_rewind"/>
+                android:onClick="onFastRewindPressed"/>
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="?android:attr/borderlessButtonStyle"
                 android:src="@drawable/ic_pause_black_48dp"
-                android:id="@+id/play_pause"/>
+                android:onClick="onPLayPausePressed"/>
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="?android:attr/borderlessButtonStyle"
                 android:src="@drawable/ic_fast_forward_black_48dp"
-                android:id="@+id/fast_forward"/>
+                android:onClick="onFastForwardPressed"/>
 
         </LinearLayout>
 

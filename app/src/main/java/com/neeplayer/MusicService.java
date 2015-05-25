@@ -12,6 +12,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.provider.MediaStore;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -116,6 +117,11 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     @Override
     public void onPrepared(MediaPlayer mp) {
         mp.start();
+
+        Intent intent = new Intent("UPDATE_CURRENT_SONG");
+        intent.putExtra("SONG_POSITION", songPosition);
+        intent.putExtra("ALBUM_POSITION", albumPosition);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 
         Intent notIntent = new Intent(this, ArtistActivity.class);
         notIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

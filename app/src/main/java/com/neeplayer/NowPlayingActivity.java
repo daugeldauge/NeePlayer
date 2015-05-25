@@ -1,14 +1,18 @@
 package com.neeplayer;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.TextView;
@@ -31,6 +35,7 @@ public class NowPlayingActivity extends Activity {
     private Intent playIntent;
 
     private Boolean musicBound = false;
+    private Boolean paused = false;
 
     private ImageLoader imageLoader;
 
@@ -60,6 +65,10 @@ public class NowPlayingActivity extends Activity {
 
         imageLoader = ImageLoader.getInstance();
 
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("UPDATE_CURRENT_SONG");
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
+
         onNewIntent(getIntent());
     }
 
@@ -81,6 +90,21 @@ public class NowPlayingActivity extends Activity {
         bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
         startService(playIntent);
 
+        updateScreen();
+    }
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals("UPDATE_CURRENT_SONG")) {
+                albumPosition = intent.getIntExtra("ALBUM_POSITION", 0);
+                songPosition = intent.getIntExtra("SONG_POSITION", 0);
+            }
+            updateScreen();
+        }
+    };
+
+    private void updateScreen() {
         Album album = albumList.get(albumPosition);
         Song song = album.getSongs().get(songPosition);
 
@@ -92,7 +116,6 @@ public class NowPlayingActivity extends Activity {
 
         ImageView artView = (ImageView)findViewById(R.id.np_album_art);
         imageLoader.displayImage("file://" + album.getArt(), artView);
-
     }
 
     @Override
@@ -127,6 +150,18 @@ public class NowPlayingActivity extends Activity {
     @Override
     public void onBackPressed() {
         moveTaskToBack(true);
+    }
+
+    public void onFastRewindPressed(View view) {
+        musicService.playPrevious();
+    }
+
+    public void onFastForwardPressed(View view) {
+        musicService.playNext();
+    }
+
+    public void onPLayPausePressed(View view) {
+
     }
 
 }

@@ -14,14 +14,60 @@
         android:adjustViewBounds="true"
         android:id="@+id/np_album_art"/>
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/np_song_title"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/np_artist_and_album"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:textSize="24sp"
+            android:gravity="center"
+            android:textColor="@color/black87"
+            android:text="The Weather Report Suite"
+            android:id="@+id/np_song_title"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:textColor="@color/black54"
+            android:text="Jack White – Lazaretto quento cuda key glk dfkj ojfsd dsh sdlflsdfk lkdsflk "
+            android:id="@+id/np_artist_and_album"/>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/borderlessButtonStyle"
+                android:src="@drawable/ic_fast_rewind_black_48dp"
+                android:id="@+id/fast_rewind"/>
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/borderlessButtonStyle"
+                android:src="@drawable/ic_pause_black_48dp"
+                android:id="@+id/play_pause"/>
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/borderlessButtonStyle"
+                android:src="@drawable/ic_fast_forward_black_48dp"
+                android:id="@+id/fast_forward"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </LinearLayout>

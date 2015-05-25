@@ -20,7 +20,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import java.util.ArrayList;
 
 
-public class NowPlayingActivity extends Activity implements MediaController.MediaPlayerControl {
+public class NowPlayingActivity extends Activity {
     ArrayList<Album> albumList;
     String artistName;
 
@@ -29,8 +29,6 @@ public class NowPlayingActivity extends Activity implements MediaController.Medi
 
     private MusicService musicService;
     private Intent playIntent;
-
-    private MusicController controller;
 
     private Boolean musicBound = false;
 
@@ -95,7 +93,6 @@ public class NowPlayingActivity extends Activity implements MediaController.Medi
         ImageView artView = (ImageView)findViewById(R.id.np_album_art);
         imageLoader.displayImage("file://" + album.getArt(), artView);
 
-        setController();
     }
 
     @Override
@@ -127,92 +124,9 @@ public class NowPlayingActivity extends Activity implements MediaController.Medi
         return super.onOptionsItemSelected(item);
     }
 
-    private void setController() {
-        controller = new MusicController(this);
-        controller.setMediaPlayer(this);
-        controller.setAnchorView(findViewById(R.id.np_layout));
-        controller.setEnabled(true);
-    }
-
-    private void playNext() {
-        musicService.playNext();
-        controller.show(0);
-    }
-
-    private void playPrevious() {
-        musicService.playPrevious();
-        controller.show(0);
-    }
-
     @Override
     public void onBackPressed() {
         moveTaskToBack(true);
     }
 
-    @Override
-    public void start() {
-        musicService.start();
-    }
-
-    @Override
-    public void pause() {
-        musicService.pausePlayer();
-    }
-
-    @Override
-    public int getDuration() {
-        if (musicService != null && musicBound && musicService.isPlaying()) {
-            return musicService.getDuration();
-        } else {
-            return 0;
-        }
-    }
-
-    @Override
-    public int getCurrentPosition() {
-        if (musicService != null && musicBound && musicService.isPlaying()) {
-            return musicService.getSongPosition();
-        } else {
-            return 0;
-        }
-    }
-
-    @Override
-    public void seekTo(int pos) {
-        musicService.seekTo(pos);
-    }
-
-    @Override
-    public boolean isPlaying() {
-        if (musicService != null && musicBound) {
-            return musicService.isPlaying();
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public int getBufferPercentage() {
-        return 0;
-    }
-
-    @Override
-    public boolean canPause() {
-        return true;
-    }
-
-    @Override
-    public boolean canSeekBackward() {
-        return true;
-    }
-
-    @Override
-    public boolean canSeekForward() {
-        return true;
-    }
-
-    @Override
-    public int getAudioSessionId() {
-        return 0;
-    }
 }

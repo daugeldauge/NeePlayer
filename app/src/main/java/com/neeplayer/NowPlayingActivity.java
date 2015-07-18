@@ -13,6 +13,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.TextView;
@@ -35,7 +36,7 @@ public class NowPlayingActivity extends Activity {
     private Intent playIntent;
 
     private Boolean musicBound = false;
-    private Boolean paused = false;
+    private Boolean paused;
 
     private ImageLoader imageLoader;
 
@@ -49,6 +50,7 @@ public class NowPlayingActivity extends Activity {
             musicService.setPosition(albumPosition, songPosition);
             musicService.playSong();
 
+            paused = false;
             musicBound = true;
         }
 
@@ -80,6 +82,7 @@ public class NowPlayingActivity extends Activity {
         songPosition = intent.getIntExtra("SONG_POSITION", 0);
         albumList = (ArrayList<Album>) intent.getSerializableExtra("ALBUM_LIST");
         artistName = intent.getStringExtra("ARTIST_NAME");
+
 
         if (playIntent != null) {
             unbindService(musicConnection);
@@ -160,8 +163,23 @@ public class NowPlayingActivity extends Activity {
         musicService.playNext();
     }
 
-    public void onPLayPausePressed(View view) {
+    public void onPlayPausePressed(View view) {
+        if (musicBound) {
+            ImageButton button = (ImageButton) findViewById(R.id.np_play_pause);
+            int drawableId;
 
+            if (paused) {
+                musicService.start();
+                drawableId = R.drawable.ic_pause_black_48dp;
+            } else {
+                musicService.pausePlayer();
+                drawableId = R.drawable.ic_play_arrow_black_48dp;
+            }
+
+            button.setImageDrawable(getResources().getDrawable(drawableId));
+
+            paused = !paused;
+        }
     }
 
 }

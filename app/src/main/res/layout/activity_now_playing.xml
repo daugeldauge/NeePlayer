@@ -58,7 +58,8 @@
                 android:layout_height="wrap_content"
                 style="?android:attr/borderlessButtonStyle"
                 android:src="@drawable/ic_pause_black_48dp"
-                android:onClick="onPLayPausePressed"/>
+                android:id="@+id/np_play_pause"
+                android:onClick="onPlayPausePressed"/>
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

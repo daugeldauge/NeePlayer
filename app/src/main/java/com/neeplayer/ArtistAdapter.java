@@ -31,7 +31,7 @@ public class ArtistAdapter extends BaseAdapter{
                 .build();
 
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
-                .memoryCacheSize(20 * 1024 * 1024)
+                .memoryCacheSize(100 * 1024 * 1024)
                 .diskCacheSize(50 * 1024 * 1024)
                 .defaultDisplayImageOptions(options)
                 .build();

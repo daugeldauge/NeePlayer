@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -134,7 +135,7 @@ public class MainActivity extends Activity {
 
     class RetrieveArtistImageUrl extends AsyncTask<Artist, Void, Void> {
         @Override
-        protected Void doInBackground(Artist... params) {
+        protected Void doInBackground(@NonNull Artist... params) {
             String apiKey = "76b52a83c8c82ae436524353bcea2da0";
             Artist artist = (Artist) params[0];
 
@@ -177,11 +178,5 @@ public class MainActivity extends Activity {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-//        stopService(playIntent);
-//        musicService = null;
-        super.onDestroy();
-    }
 
 }

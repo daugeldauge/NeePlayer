@@ -9,18 +9,16 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.MediaController;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.util.ArrayList;
 
@@ -39,6 +37,8 @@ public class NowPlayingActivity extends Activity {
     private Boolean paused;
 
     private ImageLoader imageLoader;
+
+    public static NowPlayingActivity instance;
 
     private ServiceConnection musicConnection = new ServiceConnection() {
         @Override
@@ -63,6 +63,7 @@ public class NowPlayingActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        instance = this;
         setContentView(R.layout.activity_now_playing);
 
         imageLoader = ImageLoader.getInstance();
@@ -98,7 +99,7 @@ public class NowPlayingActivity extends Activity {
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(@NonNull Context context, @NonNull Intent intent) {
             if (intent.getAction().equals("UPDATE_CURRENT_SONG")) {
                 albumPosition = intent.getIntExtra("ALBUM_POSITION", 0);
                 songPosition = intent.getIntExtra("SONG_POSITION", 0);

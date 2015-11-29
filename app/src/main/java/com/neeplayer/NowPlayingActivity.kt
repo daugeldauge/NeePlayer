@@ -63,7 +63,7 @@ class NowPlayingActivity : Activity() {
             musicService?.playPrevious()
         }
 
-        np_fast_rewind.onClick {
+        np_fast_forward.onClick {
             musicService?.playNext()
         }
 
@@ -141,11 +141,5 @@ class NowPlayingActivity : Activity() {
         moveTaskToBack(true)
     }
 
-    fun onPlayPausePressed(view: View) {
-        if (musicBound) {
-
-
-        }
-    }
 
 }

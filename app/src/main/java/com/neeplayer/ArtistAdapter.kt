@@ -7,37 +7,16 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import com.bumptech.glide.Glide
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions
-import com.nostra13.universalimageloader.core.ImageLoader
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 
 import kotlinx.android.synthetic.artist.view.*;
 
 
-class ArtistAdapter(context: Context, private val artists: List<Artist>) : BaseAdapter() {
-    private val songInf: LayoutInflater
-    private val imageLoader: ImageLoader
+class ArtistAdapter(private val context: Context, private val artists: List<Artist>) : BaseAdapter() {
+    private val songInf: LayoutInflater = LayoutInflater.from(context)
 
-    init {
-        songInf = LayoutInflater.from(context)
-
-        val options = DisplayImageOptions.Builder()
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .build()
-
-        val config = ImageLoaderConfiguration.Builder(context)
-                .memoryCacheSize(100 * 1024 * 1024)
-                .diskCacheSize(50 * 1024 * 1024)
-                .defaultDisplayImageOptions(options)
-                .build()
-
-        imageLoader = ImageLoader.getInstance()
-        imageLoader.init(config)
-    }
-
-    override fun getCount(): Int = artists.size()
+    override fun getCount(): Int = artists.size
 
     override fun getItem(position: Int): Any = artists.get(position)
 
@@ -62,7 +41,7 @@ class ArtistAdapter(context: Context, private val artists: List<Artist>) : BaseA
         holder.nameView.text = artist.name
         holder.descriptionView.text = "%d albums, %d songs".format(artist.numberOfAlbums, artist.numberOfSongs)
 
-        imageLoader.displayImage(artist.imageURL, holder.imageView)
+        Glide.with(context).load(artist.imageURL).into(holder.imageView)
 
         return view
     }

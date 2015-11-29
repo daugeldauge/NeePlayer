@@ -11,6 +11,7 @@ import android.provider.MediaStore.Audio.Media
 import android.view.View
 import kotlinx.android.synthetic.activity_artist.album_list
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.toast
 import java.io.Serializable
 import java.util.ArrayList
 

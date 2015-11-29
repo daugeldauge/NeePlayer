@@ -12,11 +12,12 @@ import android.os.IBinder
 import android.support.v4.content.LocalBroadcastManager
 import android.view.View
 
-import com.nostra13.universalimageloader.core.ImageLoader
+import com.bumptech.glide.Glide
 
 import java.util.ArrayList
 
 import kotlinx.android.synthetic.activity_now_playing.*
+import org.jetbrains.anko.onClick
 
 class NowPlayingActivity : Activity() {
     private var albumList: ArrayList<Album>? = null
@@ -30,8 +31,6 @@ class NowPlayingActivity : Activity() {
 
     private var musicBound: Boolean = false
     private var paused: Boolean = false
-
-    private var imageLoader: ImageLoader = ImageLoader.getInstance()
 
     private val musicConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
@@ -59,6 +58,32 @@ class NowPlayingActivity : Activity() {
         val filter = IntentFilter()
         filter.addAction("UPDATE_CURRENT_SONG")
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter)
+
+        np_fast_rewind.onClick {
+            musicService?.playPrevious()
+        }
+
+        np_fast_rewind.onClick {
+            musicService?.playNext()
+        }
+
+        np_play_pause.onClick {
+            if (musicBound) {
+
+                val drawableId = if (paused) {
+                    musicService?.start()
+                    R.drawable.ic_pause_black_48dp
+                } else {
+                    musicService?.pausePlayer()
+                    R.drawable.ic_play_arrow_black_48dp
+                }
+
+                np_play_pause.setImageDrawable(getDrawable(drawableId))
+
+                paused = !paused
+            }
+        }
+
 
         onNewIntent(intent)
     }
@@ -103,7 +128,7 @@ class NowPlayingActivity : Activity() {
         np_song_title.text = song.title
         np_artist_and_album.text = "$artistName — ${album.title}"
 
-        imageLoader.displayImage("file://" + album.art, np_album_art)
+        Glide.with(this).load("file://" + album.art).into(np_album_art)
     }
 
     override fun onDestroy() {
@@ -116,28 +141,10 @@ class NowPlayingActivity : Activity() {
         moveTaskToBack(true)
     }
 
-    fun onFastRewindPressed(view: View) {
-        musicService?.playPrevious()
-    }
-
-    fun onFastForwardPressed(view: View) {
-        musicService?.playNext()
-    }
-
     fun onPlayPausePressed(view: View) {
         if (musicBound) {
 
-            val drawableId = if (paused) {
-                musicService?.start()
-                R.drawable.ic_pause_black_48dp
-            } else {
-                musicService?.pausePlayer()
-                R.drawable.ic_play_arrow_black_48dp
-            }
 
-            np_play_pause.setImageDrawable(resources.getDrawable(drawableId))
-
-            paused = !paused
         }
     }
 

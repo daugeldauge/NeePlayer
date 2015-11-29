@@ -27,7 +27,7 @@
             android:textSize="24sp"
             android:gravity="center"
             android:textColor="@color/black87"
-            android:text="The Weather Report Suite"
+            tools:text="The Weather Report Suite"
             android:id="@+id/np_song_title"/>
 
         <TextView
@@ -38,7 +38,7 @@
             android:textSize="20sp"
             android:gravity="center"
             android:textColor="@color/black54"
-            android:text="Jack White – Lazaretto quento cuda key glk dfkj ojfsd dsh sdlflsdfk lkdsflk "
+            tools:text="Jack White – Lazaretto quento cuda key glk dfkj ojfsd dsh sdlflsdfk lkdsflk "
             android:id="@+id/np_artist_and_album"/>
 
         <LinearLayout
@@ -48,24 +48,23 @@
             android:gravity="center">
 
             <ImageButton
+                android:id="@+id/np_fast_rewind"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="?android:attr/borderlessButtonStyle"
-                android:src="@drawable/ic_fast_rewind_black_48dp"
-                android:onClick="onFastRewindPressed"/>
+                android:src="@drawable/ic_fast_rewind_black_48dp"/>
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="?android:attr/borderlessButtonStyle"
                 android:src="@drawable/ic_pause_black_48dp"
-                android:id="@+id/np_play_pause"
-                android:onClick="onPlayPausePressed"/>
+                android:id="@+id/np_play_pause"/>
             <ImageButton
+                android:id="@+id/np_fast_forward"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="?android:attr/borderlessButtonStyle"
-                android:src="@drawable/ic_fast_forward_black_48dp"
-                android:onClick="onFastForwardPressed"/>
+                android:src="@drawable/ic_fast_forward_black_48dp"/>
 
         </LinearLayout>
 

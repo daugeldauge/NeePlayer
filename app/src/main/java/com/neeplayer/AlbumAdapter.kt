@@ -8,24 +8,19 @@ import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.bumptech.glide.Glide
 
-import com.nostra13.universalimageloader.core.ImageLoader
 
 import java.util.concurrent.TimeUnit
 
 import kotlinx.android.synthetic.album.view.*;
 
 
-class AlbumAdapter(context: Context, private val albums: List<Album>) : BaseAdapter() {
-    private val inflater: LayoutInflater
-    private val imageLoader: ImageLoader
+class AlbumAdapter(private val context: Context, private val albums: List<Album>) : BaseAdapter() {
+    private val inflater = LayoutInflater.from(context)
 
-    init {
-        inflater = LayoutInflater.from(context)
-        imageLoader = ImageLoader.getInstance()
-    }
 
-    override fun getCount(): Int = albums.size()
+    override fun getCount(): Int = albums.size
 
     override fun getItem(position: Int): Any? = null
 
@@ -54,7 +49,7 @@ class AlbumAdapter(context: Context, private val albums: List<Album>) : BaseAdap
         holder.title.text = album.title
         holder.year.text = album.year.toString()
 
-        imageLoader.displayImage("file://" + album.art, holder.art)
+        Glide.with(context).load("file://" + album.art).into(holder.art)
 
         var albumDuration: Long = 0
         holder.songs.removeAllViews()
@@ -83,7 +78,7 @@ class AlbumAdapter(context: Context, private val albums: List<Album>) : BaseAdap
             holder.songs.addView(songView)
         }
 
-        holder.info.text = "%d songs, %d min".format(album.songs.size(), TimeUnit.MILLISECONDS.toMinutes(albumDuration))
+        holder.info.text = "%d songs, %d min".format(album.songs.size, TimeUnit.MILLISECONDS.toMinutes(albumDuration))
 
         return view
     }

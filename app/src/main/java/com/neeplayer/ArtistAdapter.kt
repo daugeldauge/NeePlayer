@@ -41,7 +41,7 @@ class ArtistAdapter(private val context: Context, private val artists: List<Arti
         holder.nameView.text = artist.name
         holder.descriptionView.text = "%d albums, %d songs".format(artist.numberOfAlbums, artist.numberOfSongs)
 
-        Glide.with(context).load(artist.imageURL).into(holder.imageView)
+        Glide.with(context).load(artist.imageURL).dontAnimate().into(holder.imageView)
 
         return view
     }

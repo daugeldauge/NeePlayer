@@ -38,7 +38,11 @@
         <activity
             android:name=".NowPlayingActivity"
             android:label="@string/title_activity_now_playing"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:parentActivityName=".ArtistActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ArtistActivity" />>
         </activity>
     </application>
 

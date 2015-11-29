@@ -130,17 +130,13 @@ class NowPlayingActivity : Activity() {
         np_song_title.text = song.title
         np_artist_and_album.text = "$artistName — ${album.title}"
 
-        Glide.with(this).load("file://" + album.art).into(np_album_art)
+        Glide.with(this).load("file://" + album.art).dontAnimate().into(np_album_art)
     }
 
     override fun onDestroy() {
         unbindService(musicConnection)
-        stopService(playIntent)
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
         super.onDestroy()
-    }
-
-    override fun onBackPressed() {
-        moveTaskToBack(true)
     }
 
 

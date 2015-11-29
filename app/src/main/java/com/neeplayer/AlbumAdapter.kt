@@ -49,7 +49,7 @@ class AlbumAdapter(private val context: Context, private val albums: List<Album>
         holder.title.text = album.title
         holder.year.text = album.year.toString()
 
-        Glide.with(context).load("file://" + album.art).into(holder.art)
+        Glide.with(context).load("file://" + album.art).dontAnimate().into(holder.art)
 
         var albumDuration: Long = 0
         holder.songs.removeAllViews()

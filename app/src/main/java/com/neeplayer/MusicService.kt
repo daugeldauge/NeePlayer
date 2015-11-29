@@ -86,8 +86,6 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     }
 
     override fun onUnbind(intent: Intent): Boolean {
-        player.stop()
-        player.release()
         return false
     }
 
@@ -104,6 +102,8 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     }
 
     override fun onDestroy() {
+        player.stop()
+        player.release()
         stopForeground(true)
     }
 
@@ -115,22 +115,21 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         intent.putExtra("ALBUM_POSITION", albumPosition)
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
 
-        val notIntent = Intent(this, ArtistActivity::class.java)
-        notIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        val pendingIntent = PendingIntent.getActivity(this, 0, notIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val notificationIntent = Intent(this, ArtistActivity::class.java)
+        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val builder = Notification.Builder(this)
-
-        builder.setContentIntent(pendingIntent)
+        val notification = Notification.Builder(this)
+                .setContentIntent(pendingIntent)
                 .setSmallIcon(R.drawable.play)
                 .setTicker(songTitle)
                 .setOngoing(true)
                 .setContentTitle(songTitle)
                 .setContentText(artistName)
+                .build()
 
-        val not = builder.build()
 
-        startForeground(NOTIFY_ID, not)
+        startForeground(NOTIFY_ID, notification)
 
 
     }

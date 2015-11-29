@@ -10,7 +10,6 @@ import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
 import android.support.v4.content.LocalBroadcastManager
-import android.view.View
 
 import com.bumptech.glide.Glide
 
@@ -35,11 +34,14 @@ class NowPlayingActivity : Activity() {
     private val musicConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
             val binder = service as MusicService.MusicBinder
-            musicService = binder.service
+            val musicService = binder.service
 
-            musicService?.setList(albumList)
-            musicService?.setPosition(albumPosition, songPosition)
-            musicService?.playSong()
+            musicService.setList(albumList)
+            musicService.setArtistName(artistName)
+            musicService.setPosition(albumPosition, songPosition)
+            musicService.playSong()
+
+            this@NowPlayingActivity.musicService = musicService
 
             paused = false
             musicBound = true

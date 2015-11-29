@@ -45,7 +45,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         this.albums = albums
     }
 
-    fun setArtistName(artistName: String) {
+    fun setArtistName(artistName: String?) {
         this.artistName = artistName
     }
 

@@ -32,14 +32,12 @@ class MainActivity : Activity(), AnkoLogger {
 
         val artistAdapter = ArtistAdapter(this, getArtistList())
         artist_list.adapter = artistAdapter
-        artist_list.onItemClickListener = object : AdapterView.OnItemClickListener {
-            override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val artist = parent.getItemAtPosition(position) as Artist
-                startActivity<ArtistActivity>(
-                        "ARTIST_NAME" to artist.name,
-                        "ARTIST_ID"   to artist.id
-                )
-            }
+        artist_list.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
+            val artist = parent.getItemAtPosition(position) as Artist
+            startActivity<ArtistActivity>(
+                    "ARTIST_NAME" to artist.name,
+                    "ARTIST_ID"   to artist.id
+            )
         }
 
     }

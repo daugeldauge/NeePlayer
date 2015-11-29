@@ -23,7 +23,8 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".MusicService" />
+        <service
+            android:name=".MusicService" />
 
         <activity
             android:name=".ArtistActivity"
@@ -37,8 +38,7 @@
         <activity
             android:name=".NowPlayingActivity"
             android:label="@string/title_activity_now_playing"
-            android:screenOrientation="portrait"
-            android:launchMode="singleInstance">
+            android:screenOrientation="portrait">
         </activity>
     </application>
 

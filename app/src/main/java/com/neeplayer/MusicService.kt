@@ -25,6 +25,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     private var songPosition: Int = 0
     private var albumPosition: Int = 0
     private var songTitle: String? = null
+
     override fun onCreate() {
         super.onCreate()
         songPosition = 0
@@ -134,6 +135,11 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
 
     }
 
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        stopSelf()
+        super.onTaskRemoved(rootIntent)
+    }
+
     fun getSongPosition(): Int {
         return player.currentPosition
     }
@@ -163,9 +169,9 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         if (songPosition < 0) {
             --albumPosition
             if (albumPosition < 0) {
-                albumPosition = albums.size() - 1
+                albumPosition = albums.size - 1
             }
-            songPosition = albums.get(albumPosition).songs.size() - 1
+            songPosition = albums.get(albumPosition).songs.size - 1
         }
         playSong()
     }
@@ -174,10 +180,10 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         val albums = this.albums ?: return
 
         ++songPosition
-        if (songPosition >= albums.get(albumPosition).songs.size()) {
+        if (songPosition >= albums.get(albumPosition).songs.size) {
             songPosition = 0
             ++albumPosition
-            if (albumPosition >= albums.size()) {
+            if (albumPosition >= albums.size) {
                 albumPosition = 0
             }
         }

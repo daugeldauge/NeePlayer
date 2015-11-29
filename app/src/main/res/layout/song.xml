@@ -1,5 +1,5 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="50dp"
@@ -19,7 +19,7 @@
         android:layout_width="30dp"
         android:layout_height="match_parent"
         android:gravity="center_vertical|left"
-        android:text="3"/>
+        tools:text="3"/>
 
 
     <TextView
@@ -29,7 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="center_vertical|left"
-        android:text="Everlasting Love"/>
+        tools:text="Everlasting Love"/>
 
     <TextView
         android:id="@+id/song_duration"
@@ -38,6 +38,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_vertical|right"
-        android:text="3:22"/>
+        tools:text="3:22"/>
 
 </LinearLayout>

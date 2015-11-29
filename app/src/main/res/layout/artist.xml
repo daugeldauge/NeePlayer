@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="100dp"
@@ -29,7 +29,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="bottom"
-            android:text="The Doors"
+            tools:text="The Doors"
             android:id="@+id/artist_name"/>
 
 
@@ -39,7 +39,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:textSize="14sp"
-            android:text="10 albums, 122 songs"
+            tools:text="10 albums, 122 songs"
             android:id="@+id/artist_description"/>
 
     </LinearLayout>

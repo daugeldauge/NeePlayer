@@ -95,11 +95,7 @@ class NowPlayingActivity : Activity() {
     }
 
     private fun updateScreen() {
-        val albumList = this.albumList
-
-        if (albumList == null) {
-            return
-        }
+        val albumList = this.albumList ?: return
 
         val album = albumList[albumPosition]
         val song = album.songs[songPosition]

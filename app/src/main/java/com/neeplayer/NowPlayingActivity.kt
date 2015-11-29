@@ -19,6 +19,10 @@ import kotlinx.android.synthetic.activity_now_playing.*
 import org.jetbrains.anko.onClick
 
 class NowPlayingActivity : Activity() {
+    companion object{
+        val UPDATE_CURRENT_SONG = "UPDATE_CURRENT_SONG"
+    }
+
     private var albumList: ArrayList<Album>? = null
     private var artistName: String? = null
 
@@ -58,7 +62,7 @@ class NowPlayingActivity : Activity() {
 
 
         val filter = IntentFilter()
-        filter.addAction("UPDATE_CURRENT_SONG")
+        filter.addAction(UPDATE_CURRENT_SONG)
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter)
 
         np_fast_rewind.onClick {
@@ -113,7 +117,7 @@ class NowPlayingActivity : Activity() {
 
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (intent.action == "UPDATE_CURRENT_SONG") {
+            if (intent.action == UPDATE_CURRENT_SONG) {
                 albumPosition = intent.getIntExtra("ALBUM_POSITION", 0)
                 songPosition = intent.getIntExtra("SONG_POSITION", 0)
             }

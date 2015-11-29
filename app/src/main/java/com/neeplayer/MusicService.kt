@@ -110,7 +110,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     override fun onPrepared(mp: MediaPlayer) {
         mp.start()
 
-        val intent = Intent("UPDATE_CURRENT_SONG")
+        val intent = Intent(NowPlayingActivity.UPDATE_CURRENT_SONG)
         intent.putExtra("SONG_POSITION", songPosition)
         intent.putExtra("ALBUM_POSITION", albumPosition)
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)

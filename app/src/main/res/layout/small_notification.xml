@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="64dp"
+    >
+
+    <ImageView
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:scaleType="centerCrop"
+        android:id="@+id/notification_album_art"
+        />
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:padding="8dp"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_toLeftOf="@+id/notification_controls"
+            >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/notification_song_title"
+                android:maxLines="1"
+                android:ellipsize="end"
+                style="@android:style/TextAppearance.Material.Notification.Title"
+                tools:text="Cemetery Gates (And other cool stuff)"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/notification_artist"
+                android:maxLines="1"
+                android:ellipsize="end"
+                style="@android:style/TextAppearance.Material.Notification"
+                tools:text="The Smiths"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@id/notification_controls"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_alignParentRight="true"
+            >
+
+            <ImageButton
+                style="@style/NotificationButton"
+                android:src="@drawable/ic_fast_rewind_black_24dp"
+                android:id="@+id/notification_fast_rewind_button"
+                />
+
+
+            <ImageButton
+                style="@style/NotificationButton"
+                android:src="@drawable/ic_pause_black_24dp"
+                android:id="@+id/notification_play_pause_button"
+                />
+
+
+            <ImageButton
+                style="@style/NotificationButton"
+                android:src="@drawable/ic_fast_forward_black_24dp"
+                android:id="@+id/notification_fast_forward_button"
+                />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>

@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.provider.BaseColumns
 import android.provider.MediaStore
 import android.provider.MediaStore.Audio.ArtistColumns
-import android.view.View
 import android.widget.AdapterView
 import kotlinx.android.synthetic.activity_main.artist_list
 import org.jetbrains.anko.AnkoLogger

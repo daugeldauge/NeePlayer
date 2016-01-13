@@ -55,7 +55,6 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
             PLAY_PREVIOUS_ACTION -> playPrevious()
             PLAY_OR_PAUSE_ACTION -> playOrPause()
             PLAY_NEXT_ACTION -> playNext()
-            else -> toast("Unknown intent")
         }
         return super.onStartCommand(intent, flags, startId)
     }
@@ -157,9 +156,11 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         fillNotificationContent(smallContent);
 
         val notification = Notification.Builder(this)
+                .setPriority(Notification.PRIORITY_MAX)
+                .setCategory(Notification.CATEGORY_STATUS)
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
                 .setTicker(nowPlaying?.title)
-                .setSmallIcon(R.drawable.play)
+                .setSmallIcon(R.drawable.ic_play_arrow_white)
                 .setContent(smallContent)
                 .build()
 

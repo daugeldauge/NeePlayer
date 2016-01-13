@@ -5,6 +5,7 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="64dp"
+    tools:background="#eee"
     >
 
     <ImageView
@@ -12,6 +13,7 @@
         android:layout_height="64dp"
         android:scaleType="centerCrop"
         android:id="@+id/notification_album_art"
+        android:background="@color/image_alt"
         />
 
     <RelativeLayout
@@ -25,6 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/notification_controls"
             >
 
@@ -55,26 +58,27 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:gravity="center_vertical"
+            android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
             >
 
             <ImageButton
-                style="@style/NotificationButton"
-                android:src="@drawable/ic_fast_rewind_black_24dp"
+                style="@style/NotificationButton.Small"
+                android:src="@drawable/ic_fast_rewind_black_medium"
                 android:id="@+id/notification_fast_rewind_button"
                 />
 
 
             <ImageButton
-                style="@style/NotificationButton"
-                android:src="@drawable/ic_pause_black_24dp"
+                style="@style/NotificationButton.Small"
+                android:src="@drawable/ic_pause_black_medium"
                 android:id="@+id/notification_play_pause_button"
                 />
 
 
             <ImageButton
-                style="@style/NotificationButton"
-                android:src="@drawable/ic_fast_forward_black_24dp"
+                style="@style/NotificationButton.Small"
+                android:src="@drawable/ic_fast_forward_black_medium"
                 android:id="@+id/notification_fast_forward_button"
                 />
 

@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:layout_width="match_parent"
@@ -13,31 +13,27 @@
 
 
     <TextView
+        style="@style/Text.Regular"
         android:id="@+id/song_track"
-        android:textSize="14sp"
-        android:textColor="@color/black54"
         android:layout_width="30dp"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical|left"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true"
         tools:text="3"/>
 
-
     <TextView
+        style="@style/Text.Title"
         android:id="@+id/song_title"
-        android:textSize="16sp"
-        android:textColor="@color/black87"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical|left"
-        tools:text="Everlasting Love"/>
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@id/song_track"
+        android:layout_toStartOf="@+id/song_duration"
+        tools:text="Everlasting Love and the end of somet"/>
 
     <TextView
+        style="@style/Text.Regular"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:paddingStart="4dp"
         android:id="@+id/song_duration"
-        android:textSize="14sp"
-        android:textColor="@color/black54"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical|right"
         tools:text="3:22"/>
 
-</LinearLayout>
+</RelativeLayout>

@@ -18,29 +18,21 @@
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left|center_vertical"
         android:padding="10dp">
 
         <TextView
-            android:textColor="@color/black87"
-            android:textSize="16sp"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="bottom"
+            style="@style/Text.Title"
             tools:text="The Doors"
-            android:id="@+id/artist_name"/>
+            android:id="@+id/artist_name" />
 
 
         <TextView
-            android:textColor="@color/black54"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:textSize="14sp"
+            style="@style/Text.Regular"
             tools:text="10 albums, 122 songs"
-            android:id="@+id/artist_description"/>
+            android:id="@+id/artist_description" />
 
     </LinearLayout>
 

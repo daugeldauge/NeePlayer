@@ -55,7 +55,7 @@ class AlbumAdapter(private val context: Context, private val albums: List<Album>
         holder.songs.removeAllViews()
 
         album.songs.forEachIndexed { i, song ->
-            val songView = inflater.inflate(R.layout.song, holder.songs, false) as LinearLayout
+            val songView = inflater.inflate(R.layout.song, holder.songs, false) as ViewGroup
 
             val track = songView.findViewById(R.id.song_track) as TextView
             val title = songView.findViewById(R.id.song_title) as TextView

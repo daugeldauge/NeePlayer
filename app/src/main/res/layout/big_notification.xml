@@ -4,15 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="96dp"
+    android:layout_height="128dp"
+    tools:layout_width="350dp"
+    tools:background="#eee"
     >
 
     <ImageView
-        android:layout_width="96dp"
-        android:layout_height="96dp"
+        android:layout_width="128dp"
+        android:layout_height="128dp"
         android:scaleType="centerCrop"
         android:id="@+id/notification_album_art"
-        tools:src="#ccc"
+        android:background="@color/image_alt"
         />
 
     <RelativeLayout
@@ -25,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_margin="8dp"
+            android:layout_margin="16dp"
             >
 
             <TextView
@@ -59,29 +61,23 @@
             >
 
             <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_fast_rewind_black_24dp"
+                style="@style/NotificationButton.Big"
+                android:src="@drawable/ic_fast_rewind_black_medium"
                 android:id="@+id/notification_fast_rewind_button"
-                style="?android:attr/borderlessButtonStyle"
                 />
 
 
             <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_pause_black_24dp"
+                style="@style/NotificationButton.Big"
+                android:src="@drawable/ic_pause_black_medium"
                 android:id="@+id/notification_play_pause_button"
-                style="?android:attr/borderlessButtonStyle"
                 />
 
 
             <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_fast_forward_black_24dp"
+                style="@style/NotificationButton.Big"
+                android:src="@drawable/ic_fast_forward_black_medium"
                 android:id="@+id/notification_fast_forward_button"
-                style="?android:attr/borderlessButtonStyle"
                 />
 
         </LinearLayout>

@@ -12,7 +12,9 @@
         android:layout_height="wrap_content"
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
-        android:id="@+id/np_album_art"/>
+        android:id="@+id/np_album_art"
+        tools:src="@color/image_alt"
+        tools:layout_height="360dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,26 +22,28 @@
         android:orientation="vertical"
         android:gravity="center">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:textSize="24sp"
-            android:gravity="center"
-            android:textColor="@color/black87"
-            tools:text="The Weather Report Suite"
-            android:id="@+id/np_song_title"/>
+            android:orientation="vertical"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:gravity="center">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:textSize="20sp"
-            android:gravity="center"
-            android:textColor="@color/black54"
-            tools:text="Jack White – Lazaretto quento cuda key glk dfkj ojfsd dsh sdlflsdfk lkdsflk "
-            android:id="@+id/np_artist_and_album"/>
+            <TextView
+                style="@style/Text.Title"
+                android:textSize="24sp"
+                android:gravity="center"
+                tools:text="The Weather Report Suit"
+                android:id="@+id/np_song_title" />
+
+            <TextView
+                style="@style/Text.Regular"
+                android:textSize="20sp"
+                android:gravity="center"
+                tools:text="Jack White – Lazaretto"
+                android:id="@+id/np_artist_and_album" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="fill_parent"

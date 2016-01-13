@@ -28,27 +28,19 @@
             android:padding="10dp">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/Text.Title"
+                android:maxLines="2"
                 android:id="@+id/album_title"
-                android:textSize="16sp"
-                android:textColor="@color/black87"
                 tools:text="Desire"/>
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/Text.Regular"
                 android:id="@+id/album_info"
-                android:textSize="14sp"
-                android:textColor="@color/black54"
                 tools:text="12 songs, 57 min"/>
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/Text.Regular"
                 android:id="@+id/album_year"
-                android:textSize="14sp"
-                android:textColor="@color/black54"
                 tools:text="1975"/>
 
         </LinearLayout>

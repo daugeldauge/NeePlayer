@@ -8,7 +8,7 @@ import android.provider.MediaStore.Audio.AlbumColumns
 import android.provider.MediaStore.Audio.Artists
 import android.provider.MediaStore.Audio.AudioColumns
 import android.provider.MediaStore.Audio.Media
-import android.view.View
+import android.support.v7.widget.LinearLayoutManager
 import kotlinx.android.synthetic.activity_artist.album_list
 import org.jetbrains.anko.startActivity
 import java.io.Serializable
@@ -30,7 +30,18 @@ class ArtistActivity : Activity() {
 
         albumList = getAlbumList(artistId)
 
-        album_list.adapter = AlbumAdapter(this, albumList as List<Album>)
+        val adapter = AlbumSongAdapter(this, albumList as List<Album>)
+        adapter.onSongClickListener = { index ->
+            startActivity<NowPlayingActivity>(
+                    "ALBUM_POSITION" to index.albumIndex,
+                    "SONG_POSITION" to index.songIndex!!,
+                    "ALBUM_LIST" to albumList as Serializable,
+                    "ARTIST_NAME" to artistName as String
+            )
+        }
+
+        album_list.adapter = adapter
+        album_list.layoutManager = LinearLayoutManager(this)
     }
 
     private fun getAlbumList(artistId: Long): List<Album>  {
@@ -89,15 +100,5 @@ class ArtistActivity : Activity() {
         }
 
         return list
-    }
-
-
-    fun songPicked(view: View) {
-        startActivity<NowPlayingActivity>(
-                "ALBUM_POSITION" to view.getTag(R.id.ALBUM_POSITION) as Int,
-                "SONG_POSITION" to view.getTag(R.id.SONG_POSITION) as Int,
-                "ALBUM_LIST" to albumList as Serializable,
-                "ARTIST_NAME" to artistName as String
-        )
     }
 }

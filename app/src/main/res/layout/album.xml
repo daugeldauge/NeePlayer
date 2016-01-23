@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="album"
+            type="com.neeplayer.Album"/>
+    </data>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,6 +24,7 @@
             android:layout_height="100dp"
             android:background="@color/image_alt"
             android:scaleType="centerCrop"
+            app:imagePath="@{album.art}"
             android:id="@+id/album_art"/>
 
         <LinearLayout
@@ -31,26 +37,23 @@
                 style="@style/Text.Title"
                 android:maxLines="2"
                 android:id="@+id/album_title"
+                android:text="@{album.title}"
                 tools:text="Desire"/>
 
             <TextView
                 style="@style/Text.Regular"
                 android:id="@+id/album_info"
+                android:text="@{album.info}"
                 tools:text="12 songs, 57 min"/>
 
             <TextView
                 style="@style/Text.Regular"
                 android:id="@+id/album_year"
+                android:text="@{album.year > 0 ? album.year.toString() : ``}"
                 tools:text="1975"/>
 
         </LinearLayout>
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:id="@+id/song_list"/>
-
-</LinearLayout>
+</layout>

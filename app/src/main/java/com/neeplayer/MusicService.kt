@@ -15,10 +15,7 @@ import android.os.PowerManager
 import android.provider.MediaStore
 import android.support.annotation.IdRes
 import android.support.v4.content.LocalBroadcastManager
-import android.util.Log
-import android.widget.ImageView
 import android.widget.RemoteViews
-import com.bumptech.glide.Glide
 import org.jetbrains.anko.toast
 
 class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener {
@@ -36,10 +33,9 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     private var songPosition: Int = 0
     private var albumPosition: Int = 0
     private var nowPlaying: Song? = null
-
+    private var paused = true
 
     private var albumArt: Bitmap? = null
-
     private var notificationContent: RemoteViews? = null
 
     private val musicBind = MusicBinder()
@@ -52,19 +48,21 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when(intent?.action) {
-            PLAY_PREVIOUS_ACTION -> playPrevious()
+            PLAY_PREVIOUS_ACTION -> choosePrevious()
             PLAY_OR_PAUSE_ACTION -> playOrPause()
-            PLAY_NEXT_ACTION -> playNext()
+            PLAY_NEXT_ACTION -> chooseNext()
         }
         return super.onStartCommand(intent, flags, startId)
     }
 
     private fun playOrPause() {
-        if (player.isPlaying) {
-            pausePlayer()
+        this.paused = !this.paused
+        if (paused) {
+            player.pause()
         } else {
-            start()
+            player.start()
         }
+        update()
     }
 
     fun initMediaPLayer() {
@@ -90,6 +88,11 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     }
 
     fun playSong() {
+        paused = false
+        chooseSong()
+    }
+
+    fun chooseSong() {
         player.reset()
         val albums = this.albums ?: return
 
@@ -125,7 +128,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     override fun onCompletion(mp: MediaPlayer) {
         if (player.currentPosition > 0) {
             mp.reset()
-            playNext()
+            chooseNext()
         }
     }
 
@@ -141,11 +144,17 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     }
 
     override fun onPrepared(mp: MediaPlayer) {
-        mp.start()
+        if (!paused) {
+            player.start()
+        }
+        update()
+    }
 
-        val intent = Intent(NowPlayingActivity.UPDATE_CURRENT_SONG)
+    private fun update() {
+        val intent = Intent(NowPlayingActivity.UPDATE_NOW_PLAYING)
         intent.putExtra("SONG_POSITION", songPosition)
         intent.putExtra("ALBUM_POSITION", albumPosition)
+        intent.putExtra("PAUSED", paused)
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
 
 
@@ -174,6 +183,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         content.setImageViewBitmap(R.id.notification_album_art, albumArt);
         content.setTextViewText(R.id.notification_song_title, nowPlaying?.title)
         content.setTextViewText(R.id.notification_artist, artistName)
+        content.setImageViewResource(R.id.notification_play_pause_button, if (paused) R.drawable.ic_play_arrow_black_medium else R.drawable.ic_pause_black_medium)
 
         setupPendingIntent(content, R.id.notification_fast_rewind_button, PLAY_PREVIOUS_ACTION)
         setupPendingIntent(content, R.id.notification_play_pause_button, PLAY_OR_PAUSE_ACTION)
@@ -201,19 +211,24 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     val isPlaying: Boolean?
         get() = player.isPlaying
 
-    fun pausePlayer() {
-        player.pause()
-    }
 
     fun seekTo(position: Int) {
         player.seekTo(position)
     }
 
-    fun start() {
+    fun play() {
+        paused = false
         player.start()
+        update()
     }
 
-    fun playPrevious() {
+    fun pause() {
+        paused = true
+        player.pause()
+        update()
+    }
+
+    fun choosePrevious(paused: Boolean? = null) {
         val albums = this.albums ?: return
 
         --songPosition
@@ -224,10 +239,14 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
             }
             songPosition = albums.get(albumPosition).songs.size - 1
         }
-        playSong()
+
+        if (paused != null) {
+            this.paused = paused
+        }
+        chooseSong()
     }
 
-    fun playNext() {
+    fun chooseNext(paused: Boolean? = null) {
         val albums = this.albums ?: return
 
         ++songPosition
@@ -238,6 +257,9 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
                 albumPosition = 0
             }
         }
-        playSong()
+        if (paused != null) {
+            this.paused = paused
+        }
+        chooseSong()
     }
 }

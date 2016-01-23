@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.os.IBinder
 import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
+import android.view.View
 
 import com.bumptech.glide.Glide
 import com.neeplayer.databinding.ActivityNowPlayingBinding
@@ -24,11 +25,11 @@ import kotlin.properties.Delegates
 
 class NowPlayingActivity : Activity() {
     companion object{
-        val UPDATE_CURRENT_SONG = "UPDATE_CURRENT_SONG"
+        val UPDATE_NOW_PLAYING = "UPDATE_NOW_PLAYING"
     }
 
     class ViewModel(val albumList: ArrayList<Album>, val artistName: String,
-            var albumPosition: Int , var songPosition: Int, var paused: Boolean = true) : BaseObservable() {
+            var albumPosition: Int , var songPosition: Int, var paused: Boolean = false) : BaseObservable() {
 
         val album: Album
             get() = albumList[albumPosition]
@@ -74,31 +75,8 @@ class NowPlayingActivity : Activity() {
         binding = DataBindingUtil.setContentView<ActivityNowPlayingBinding>(this, R.layout.activity_now_playing)
 
         val filter = IntentFilter()
-        filter.addAction(UPDATE_CURRENT_SONG)
+        filter.addAction(UPDATE_NOW_PLAYING)
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter)
-
-        np_fast_rewind.onClick {
-            musicService?.playPrevious()
-        }
-
-        np_fast_forward.onClick {
-            musicService?.playNext()
-        }
-
-        np_play_pause.onClick {
-            val model = model
-            if (musicBound && model != null) {
-
-                if (model.paused) {
-                    musicService?.start()
-                } else {
-                    musicService?.pausePlayer()
-                }
-
-                model.paused = !model.paused
-                model.notifyChange()
-            }
-        }
 
         onNewIntent(intent)
     }
@@ -106,14 +84,6 @@ class NowPlayingActivity : Activity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
 
-        model = ViewModel(
-            albumPosition = intent.getIntExtra("ALBUM_POSITION", 0),
-            songPosition = intent.getIntExtra("SONG_POSITION", 0),
-            albumList = intent.getSerializableExtra("ALBUM_LIST") as ArrayList<Album>,
-            artistName = intent.getStringExtra("ARTIST_NAME")
-        )
-
-        binding?.model = model
 
         if (playIntent != null) {
             unbindService(musicConnection)
@@ -123,13 +93,51 @@ class NowPlayingActivity : Activity() {
         playIntent = Intent(this, MusicService::class.java)
         bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE)
         startService(playIntent)
+
+        val binding = binding ?: return
+
+        val model = ViewModel(
+                albumPosition = intent.getIntExtra("ALBUM_POSITION", 0),
+                songPosition = intent.getIntExtra("SONG_POSITION", 0),
+                albumList = intent.getSerializableExtra("ALBUM_LIST") as ArrayList<Album>,
+                artistName = intent.getStringExtra("ARTIST_NAME")
+        )
+
+        binding.model = model
+        this.model = model
+
+        binding.npFastRewind.onClick {
+            musicService?.choosePrevious(model.paused)
+        }
+
+        binding.npFastForward.onClick {
+            musicService?.chooseNext(model.paused)
+        }
+
+        binding.npPlayPause.onClick {
+            val model = model
+            if (musicBound && model != null) {
+
+                if (model.paused) {
+                    musicService?.play()
+                } else {
+                    musicService?.pause()
+                }
+
+                model.paused = !model.paused
+                model.notifyChange()
+            }
+        }
+
+
     }
 
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (intent.action == UPDATE_CURRENT_SONG) {
+            if (intent.action == UPDATE_NOW_PLAYING) {
                 model?.albumPosition = intent.getIntExtra("ALBUM_POSITION", 0)
                 model?.songPosition = intent.getIntExtra("SONG_POSITION", 0)
+                model?.paused = intent.getBooleanExtra("PAUSED", false)
                 model?.notifyChange()
             }
         }

@@ -9,9 +9,6 @@ import android.provider.MediaStore.Audio.Artists
 import android.provider.MediaStore.Audio.AudioColumns
 import android.provider.MediaStore.Audio.Media
 import android.support.v7.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
-import com.bumptech.glide.GlideBuilder
-import com.bumptech.glide.load.engine.cache.LruResourceCache
 import kotlinx.android.synthetic.activity_artist.album_list
 import org.jetbrains.anko.startActivity
 import java.io.Serializable

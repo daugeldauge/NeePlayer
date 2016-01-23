@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.provider.BaseColumns
 import android.provider.MediaStore
 import android.provider.MediaStore.Audio.ArtistColumns
+import android.support.v7.widget.LinearLayoutManager
 import android.widget.AdapterView
 import kotlinx.android.synthetic.activity_main.artist_list
 import org.jetbrains.anko.AnkoLogger
@@ -29,15 +30,13 @@ class MainActivity : Activity(), AnkoLogger {
 
         artistImages = getSharedPreferences("ArtistImages", 0)
 
-        val artistAdapter = ArtistAdapter(this, getArtistList())
-        artist_list.adapter = artistAdapter
-        artist_list.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
-            val artist = parent.getItemAtPosition(position) as Artist
+        artist_list.adapter = ArtistAdapter(this, getArtistList()) {
             startActivity<ArtistActivity>(
-                    "ARTIST_NAME" to artist.name,
-                    "ARTIST_ID"   to artist.id
+                    "ARTIST_NAME" to it.name,
+                    "ARTIST_ID"   to it.id
             )
         }
+        artist_list.layoutManager = LinearLayoutManager(this)
 
     }
 

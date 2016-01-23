@@ -1,6 +1,8 @@
 package com.neeplayer
 
 import android.content.Context
+import android.databinding.DataBindingUtil
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,42 +10,29 @@ import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.neeplayer.databinding.ArtistBinding
 
 
 import kotlinx.android.synthetic.artist.view.*;
+import org.jetbrains.anko.onClick
 
 
-class ArtistAdapter(private val context: Context, private val artists: List<Artist>) : BaseAdapter() {
-    private val songInf: LayoutInflater = LayoutInflater.from(context)
+class ArtistAdapter(private val context: Context, private val artists: List<Artist>, private val onClickListener: (Artist) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    override fun getCount(): Int = artists.size
+    override fun getItemCount(): Int = artists.size
 
-    override fun getItem(position: Int): Any = artists.get(position)
+    class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
+        val binding = DataBindingUtil.bind<ArtistBinding>(view)
+    }
 
-    override fun getItemId(position: Int): Long = 0
+    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder?  {
+        return ViewHolder(ArtistBinding.inflate(LayoutInflater.from(context), parent, false).root)
+    }
 
-    internal data class ViewHolder(
-        var nameView: TextView,
-        var descriptionView: TextView,
-        var imageView: ImageView
-    )
-
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val view = convertView ?: let {
-            val view = songInf.inflate(R.layout.artist, parent, false)
-            view.tag = ViewHolder(view.artist_name, view.artist_description, view.artist_image)
-            view
-        }
-
-        val holder = view.tag as ViewHolder
-        val artist = artists[position]
-
-        holder.nameView.text = artist.name
-        holder.descriptionView.text = "%d albums, %d songs".format(artist.numberOfAlbums, artist.numberOfSongs)
-
-        Glide.with(context).load(artist.imageURL).dontAnimate().into(holder.imageView)
-
-        return view
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
+        val binding = (holder as ViewHolder).binding
+        binding.artist = artists[position]
+        binding.root.onClick { onClickListener(artists[position]) }
     }
 
 }

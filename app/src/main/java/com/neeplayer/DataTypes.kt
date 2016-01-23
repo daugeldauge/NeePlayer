@@ -3,7 +3,10 @@ package com.neeplayer
 import java.io.Serializable
 import java.util.concurrent.TimeUnit
 
-data class Artist(val id: Long, val name: String, val numberOfSongs: Int, val numberOfAlbums: Int, var imageURL: String? = null)
+data class Artist(val id: Long, val name: String, val numberOfSongs: Int, val numberOfAlbums: Int, var imageURL: String? = null) {
+    val description: String
+    get() = "%d albums, %d songs".format(numberOfAlbums, numberOfSongs)
+}
 
 data class Album(val id: Long, val title: String?, val year: Int?, val art: String?, val songs: List<Song>) : Serializable {
     val info: String

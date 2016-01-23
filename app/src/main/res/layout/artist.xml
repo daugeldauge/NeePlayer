@@ -1,39 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="horizontal"
-    android:layout_width="match_parent"
-    android:layout_height="100dp"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
-    android:paddingBottom="5dp"
-    android:paddingTop="5dp">
-
-    <ImageView
-        android:background="@color/image_alt"
-        android:layout_width="90dp"
-        android:layout_height="90dp"
-        android:scaleType="centerCrop"
-        android:id="@+id/artist_image" />
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="artist"
+            type="com.neeplayer.Artist"/>
+    </data>
 
     <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="left|center_vertical"
-        android:padding="10dp">
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?android:attr/selectableItemBackground">
 
-        <TextView
-            style="@style/Text.Title"
-            tools:text="The Doors"
-            android:id="@+id/artist_name" />
+        <ImageView
+            android:background="@color/image_alt"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:scaleType="centerCrop"
+            app:imageURL="@{artist.imageURL}"
+            android:id="@+id/artist_image" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center_vertical"
+            android:padding="10dp">
+
+            <TextView
+                style="@style/Text.Title"
+                android:text="@{artist.name}"
+                tools:text="The Doors"
+                android:id="@+id/artist_name" />
 
 
-        <TextView
-            style="@style/Text.Regular"
-            tools:text="10 albums, 122 songs"
-            android:id="@+id/artist_description" />
+            <TextView
+                style="@style/Text.Regular"
+                android:text="@{artist.description}"
+                tools:text="10 albums, 122 songs"
+                android:id="@+id/artist_description" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
-</LinearLayout>
+</layout>

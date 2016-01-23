@@ -1,77 +1,93 @@
-<LinearLayout
+<layout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:id="@+id/np_layout"
-    tools:context="com.neeplayer.NowPlayingActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scaleType="fitCenter"
-        android:adjustViewBounds="true"
-        android:id="@+id/np_album_art"
-        tools:src="@color/image_alt"
-        tools:layout_height="360dp"/>
+    <data>
+        <import type="com.neeplayer.R"/>
+        <variable
+            name="model"
+            type="com.neeplayer.NowPlayingActivity.ViewModel" />
+    </data>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:gravity="center">
+        android:id="@+id/np_layout"
+        tools:context="com.neeplayer.NowPlayingActivity">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:id="@+id/np_album_art"
+            app:imagePath="@{model.album.art}"
+            tools:src="@color/image_alt"
+            tools:layout_height="360dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
             android:gravity="center">
 
-            <TextView
-                style="@style/Text.Title"
-                android:textSize="24sp"
-                android:gravity="center"
-                tools:text="The Weather Report Suit"
-                android:id="@+id/np_song_title" />
-
-            <TextView
-                style="@style/Text.Regular"
-                android:textSize="20sp"
-                android:gravity="center"
-                tools:text="Jack White – Lazaretto"
-                android:id="@+id/np_artist_and_album" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center">
-
-            <ImageButton
-                android:id="@+id/np_fast_rewind"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="?android:attr/borderlessButtonStyle"
-                android:src="@drawable/ic_fast_rewind_black_48dp"/>
-            <ImageButton
-                android:layout_width="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:gravity="center">
+
+                <TextView
+                    style="@style/Text.Title"
+                    android:textSize="24sp"
+                    android:gravity="center"
+                    android:text="@{model.song.title}"
+                    tools:text="The Weather Report Suit"
+                    android:id="@+id/np_song_title" />
+
+                <TextView
+                    style="@style/Text.Regular"
+                    android:textSize="20sp"
+                    android:gravity="center"
+                    android:text="@{model.artistName + ` – ` + model.album.title}"
+                    tools:text="Jack White – Lazaretto"
+                    android:id="@+id/np_artist_and_album" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                style="?android:attr/borderlessButtonStyle"
-                android:src="@drawable/ic_pause_black_48dp"
-                android:id="@+id/np_play_pause"/>
-            <ImageButton
-                android:id="@+id/np_fast_forward"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="?android:attr/borderlessButtonStyle"
-                android:src="@drawable/ic_fast_forward_black_48dp"/>
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <ImageButton
+                    android:id="@+id/np_fast_rewind"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:src="@drawable/ic_fast_rewind_black_48dp"/>
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/borderlessButtonStyle"
+                    app:drawable="@{model.paused ? @drawable/ic_play_arrow_black_48dp : @drawable/ic_pause_black_48dp}"
+                    tools:src="@drawable/ic_pause_black_48dp"
+                    android:id="@+id/np_play_pause"/>
+                <ImageButton
+                    android:id="@+id/np_fast_forward"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:src="@drawable/ic_fast_forward_black_48dp"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 
     </LinearLayout>
 
-</LinearLayout>
+</layout>

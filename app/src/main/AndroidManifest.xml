@@ -12,6 +12,10 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        <meta-data
+            android:name="com.neeplayer.CustomGlideModule"
+            android:value="GlideModule" />
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"

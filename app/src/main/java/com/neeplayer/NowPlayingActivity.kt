@@ -7,47 +7,59 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.ServiceConnection
+import android.databinding.*
 import android.os.Bundle
 import android.os.IBinder
 import android.support.v4.content.LocalBroadcastManager
+import android.util.Log
 
 import com.bumptech.glide.Glide
+import com.neeplayer.databinding.ActivityNowPlayingBinding
 
 import java.util.ArrayList
 
 import kotlinx.android.synthetic.activity_now_playing.*
 import org.jetbrains.anko.onClick
+import kotlin.properties.Delegates
 
 class NowPlayingActivity : Activity() {
     companion object{
         val UPDATE_CURRENT_SONG = "UPDATE_CURRENT_SONG"
     }
 
-    private var albumList: ArrayList<Album>? = null
-    private var artistName: String? = null
+    class ViewModel(val albumList: ArrayList<Album>, val artistName: String,
+            var albumPosition: Int , var songPosition: Int, var paused: Boolean = true) : BaseObservable() {
 
-    private var albumPosition: Int = 0
-    private var songPosition: Int = 0
+        val album: Album
+            get() = albumList[albumPosition]
+
+        val song: Song
+            get() = album.songs[songPosition]
+    }
+
+    private var model: ViewModel? = null
+    private var binding: ActivityNowPlayingBinding? = null
 
     private var musicService: MusicService? = null
     private var playIntent: Intent? = null
 
     private var musicBound: Boolean = false
-    private var paused: Boolean = false
 
     private val musicConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
+            val model = model ?: return
+
             val binder = service as MusicService.MusicBinder
             val musicService = binder.service
 
-            musicService.setList(albumList)
-            musicService.setArtistName(artistName)
-            musicService.setPosition(albumPosition, songPosition)
+            musicService.setList(model.albumList)
+            musicService.setArtistName(model.artistName)
+            musicService.setPosition(model.albumPosition, model.songPosition)
             musicService.playSong()
+            model.paused = false
 
             this@NowPlayingActivity.musicService = musicService
 
-            paused = false
             musicBound = true
         }
 
@@ -58,8 +70,8 @@ class NowPlayingActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_now_playing)
 
+        binding = DataBindingUtil.setContentView<ActivityNowPlayingBinding>(this, R.layout.activity_now_playing)
 
         val filter = IntentFilter()
         filter.addAction(UPDATE_CURRENT_SONG)
@@ -74,22 +86,19 @@ class NowPlayingActivity : Activity() {
         }
 
         np_play_pause.onClick {
-            if (musicBound) {
+            val model = model
+            if (musicBound && model != null) {
 
-                val drawableId = if (paused) {
+                if (model.paused) {
                     musicService?.start()
-                    R.drawable.ic_pause_black_48dp
                 } else {
                     musicService?.pausePlayer()
-                    R.drawable.ic_play_arrow_black_48dp
                 }
 
-                np_play_pause.setImageDrawable(getDrawable(drawableId))
-
-                paused = !paused
+                model.paused = !model.paused
+                model.notifyChange()
             }
         }
-
 
         onNewIntent(intent)
     }
@@ -97,11 +106,14 @@ class NowPlayingActivity : Activity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
 
-        albumPosition = intent.getIntExtra("ALBUM_POSITION", 0)
-        songPosition = intent.getIntExtra("SONG_POSITION", 0)
-        albumList = intent.getSerializableExtra("ALBUM_LIST") as ArrayList<Album>
-        artistName = intent.getStringExtra("ARTIST_NAME")
+        model = ViewModel(
+            albumPosition = intent.getIntExtra("ALBUM_POSITION", 0),
+            songPosition = intent.getIntExtra("SONG_POSITION", 0),
+            albumList = intent.getSerializableExtra("ALBUM_LIST") as ArrayList<Album>,
+            artistName = intent.getStringExtra("ARTIST_NAME")
+        )
 
+        binding?.model = model
 
         if (playIntent != null) {
             unbindService(musicConnection)
@@ -111,30 +123,16 @@ class NowPlayingActivity : Activity() {
         playIntent = Intent(this, MusicService::class.java)
         bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE)
         startService(playIntent)
-
-        updateScreen()
     }
 
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action == UPDATE_CURRENT_SONG) {
-                albumPosition = intent.getIntExtra("ALBUM_POSITION", 0)
-                songPosition = intent.getIntExtra("SONG_POSITION", 0)
+                model?.albumPosition = intent.getIntExtra("ALBUM_POSITION", 0)
+                model?.songPosition = intent.getIntExtra("SONG_POSITION", 0)
+                model?.notifyChange()
             }
-            updateScreen()
         }
-    }
-
-    private fun updateScreen() {
-        val albumList = this.albumList ?: return
-
-        val album = albumList[albumPosition]
-        val song = album.songs[songPosition]
-
-        np_song_title.text = song.title
-        np_artist_and_album.text = "$artistName — ${album.title}"
-
-        Glide.with(this).load("file://" + album.art).dontAnimate().into(np_album_art)
     }
 
     override fun onDestroy() {

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/ic_equalizer_black_24dp">
+
+    <target
+        android:animation="@anim/first_column_anim"
+        android:name="first_column"/>
+
+    <target
+        android:animation="@anim/second_column_anim"
+        android:name="second_column"/>
+
+    <target
+        android:animation="@anim/third_column_anim"
+        android:name="third_column"/>
+
+</animated-vector>

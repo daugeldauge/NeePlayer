@@ -2,6 +2,9 @@ package com.neeplayer
 
 import android.app.Activity
 import android.content.SharedPreferences
+import android.graphics.drawable.Animatable2
+import android.graphics.drawable.AnimatedVectorDrawable
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
@@ -9,10 +12,13 @@ import android.provider.BaseColumns
 import android.provider.MediaStore
 import android.provider.MediaStore.Audio.ArtistColumns
 import android.support.v7.widget.LinearLayoutManager
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.AdapterView
 import kotlinx.android.synthetic.activity_main.artist_list
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.toast
 import org.jetbrains.anko.warn
 import org.json.JSONException
 import org.json.JSONObject
@@ -117,6 +123,12 @@ class MainActivity : Activity(), AnkoLogger {
 
             return null
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu);
+        (menu?.findItem(R.id.now_playing_item)?.icon as AnimatedVectorDrawable).start()
+        return true
     }
 
 

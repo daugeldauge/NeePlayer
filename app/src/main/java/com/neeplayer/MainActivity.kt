@@ -2,33 +2,29 @@ package com.neeplayer
 
 import android.app.Activity
 import android.content.SharedPreferences
-import android.graphics.drawable.Animatable2
 import android.graphics.drawable.AnimatedVectorDrawable
-import android.graphics.drawable.Drawable
-import android.net.Uri
-import android.os.AsyncTask
 import android.os.Bundle
 import android.provider.BaseColumns
 import android.provider.MediaStore
 import android.provider.MediaStore.Audio.ArtistColumns
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
-import android.view.MenuItem
-import android.widget.AdapterView
-import kotlinx.android.synthetic.activity_main.artist_list
+import kotlinx.android.synthetic.activity_main.*
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.toast
 import org.jetbrains.anko.warn
-import org.json.JSONException
 import org.json.JSONObject
-import java.io.IOException
-import java.net.URL
+import retrofit2.Retrofit
+import retrofit2.RxJavaCallAdapterFactory
+import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
 import java.util.*
 
 class MainActivity : Activity(), AnkoLogger {
 
-    internal var artistImages: SharedPreferences? = null
+    private var artistImages: SharedPreferences? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +43,17 @@ class MainActivity : Activity(), AnkoLogger {
     }
 
     fun getArtistList(): List<Artist> {
+        val httpClient = OkHttpClient.Builder()
+                .addInterceptor(
+                        HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC)
+                ).build();
+
+        val lastFm = Retrofit.Builder()
+                .baseUrl("http://ws.audioscrobbler.com")
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .client(httpClient)
+                .build().create(LastFmService::class.java)
+
         val list = ArrayList<Artist>()
 
         val cursor = contentResolver.query(
@@ -66,7 +73,18 @@ class MainActivity : Activity(), AnkoLogger {
 
                 val image = artistImages?.getString(artist.name, null)
                 if (image.isNullOrEmpty()) {
-                    RetrieveArtistImageUrl().execute(artist)
+                    lastFm.getArtistInfo(artist.name)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .map {
+                                getArtistImageUrl(it.string())
+                            }
+                            .subscribe({
+                                artist.imageURL = it
+                                artistImages?.edit()?.putString(artist.name, it)?.commit()
+                            }, {
+                                warn("Couldn't retrieve artist image", it)
+                            })
                 } else {
                     artist.imageURL = image
                 }
@@ -80,49 +98,17 @@ class MainActivity : Activity(), AnkoLogger {
         return list
     }
 
-    internal inner class RetrieveArtistImageUrl : AsyncTask<Artist, Void, Void>() {
-        override fun doInBackground(vararg params: Artist): Void? {
-            try {
-                val apiKey = "76b52a83c8c82ae436524353bcea2da0"
-                val uri = Uri.Builder()
-                        .scheme("http")
-                        .authority("ws.audioscrobbler.com")
-                        .appendPath("2.0")
-                        .appendQueryParameter("method", "artist.getinfo")
-                        .appendQueryParameter("artist", params[0].name)
-                        .appendQueryParameter("api_key", apiKey)
-                        .appendQueryParameter("format", "json")
-                        .build()
+    private fun getArtistImageUrl(artistJsonInfo: String): String? {
+        val images = JSONObject(artistJsonInfo).getJSONObject("artist").getJSONArray("image")
 
-                val response = URL(uri.toString()).openConnection().inputStream
-                val responseString = Scanner(response).useDelimiter("\\A").next()
-
-                val json = JSONObject(responseString)
-                val artistInfo = json.getJSONObject("artist")
-                val images = artistInfo.getJSONArray("image")
-
-                for (i in 0 until images.length()) {
-                    val image = images.getJSONObject(i)
-                    val size = image.getString("size")
-                    if (size == "extralarge") {
-                        val imageURL = image.getString("#text")
-                        params[0].imageURL = imageURL
-
-                        val editor = artistImages?.edit()
-                        editor?.putString(params[0].name, imageURL)
-                        editor?.commit()
-
-                        return null
-                    }
-                }
-            } catch(e: JSONException) {
-                warn("Couldn't retrieve artist image", e)
-            } catch(e: IOException) {
-                warn("Couldn't retrieve artist image", e)
+        for (i in 0 until images.length()) {
+            val image = images.getJSONObject(i)
+            val size = image.getString("size")
+            if (size == "extralarge") {
+                return image.getString("#text")
             }
-
-            return null
         }
+        return null
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

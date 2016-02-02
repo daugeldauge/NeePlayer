@@ -36,7 +36,9 @@ dependencies {
     compile 'io.reactivex:rxjava:1.1.0'
     compile 'io.reactivex:rxandroid:1.1.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.0.1'
+    compile 'com.hannesdorfmann.fragmentargs:annotation:3.0.1'
 
+    kapt 'com.hannesdorfmann.fragmentargs:processor:3.0.1'
     kapt 'com.android.databinding:compiler:1.0-rc4'
 }
 buildscript {

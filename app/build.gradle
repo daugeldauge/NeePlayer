@@ -56,4 +56,8 @@ repositories {
 }
 kapt {
     generateStubs = true
+    arguments {
+        arg("fragmentArgsLib", true)
+
+    }
 }

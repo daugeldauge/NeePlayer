@@ -1,6 +1,6 @@
 package com.neeplayer
 
-import android.app.Activity
+import android.app.Fragment
 import android.os.Bundle
 import android.provider.BaseColumns
 import android.provider.MediaStore
@@ -9,46 +9,50 @@ import android.provider.MediaStore.Audio.Artists
 import android.provider.MediaStore.Audio.AudioColumns
 import android.provider.MediaStore.Audio.Media
 import android.support.v7.widget.LinearLayoutManager
-import kotlinx.android.synthetic.activity_artist.album_list
-import org.jetbrains.anko.startActivity
-import java.io.Serializable
+import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import com.hannesdorfmann.fragmentargs.annotation.Arg
+import com.hannesdorfmann.fragmentargs.annotation.FragmentWithArgs
 import java.util.ArrayList
 
-class ArtistActivity : Activity() {
+@FragmentWithArgs
+class ArtistFragment : Fragment() {
 
-    var albumList: List<Album>? = null
-    var artistName: String? = null
+    @Arg
+    lateinit var artist: Artist
+
+    lateinit var albumList: ArrayList<Album>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_artist)
-
-        artistName = intent.getStringExtra("ARTIST_NAME")
-        val artistId = intent.getLongExtra("ARTIST_ID", -1)
-
-        title = artistName
-
-        albumList = getAlbumList(artistId)
-
-        val adapter = AlbumSongAdapter(this, albumList as List<Album>)
-        adapter.onSongClickListener = { index ->
-            startActivity<NowPlayingActivity>(
-                    "ALBUM_POSITION" to index.albumIndex,
-                    "SONG_POSITION" to index.songIndex!!,
-                    "ALBUM_LIST" to albumList as Serializable,
-                    "ARTIST_NAME" to artistName as String
-            )
-        }
-
-        album_list.adapter = adapter
-        album_list.layoutManager = LinearLayoutManager(this)
+        ArtistFragmentBuilder.injectArguments(this);
+        albumList = getAlbumList(artist.id)
     }
 
-    private fun getAlbumList(artistId: Long): List<Album>  {
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater?.inflate(R.layout.fragment_artist, container, false)
+    }
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val albumListView = view as RecyclerView
+        val adapter = AlbumSongAdapter(activity, albumList)
+        adapter.onSongClickListener = {
+            (activity as MainActivity).navigateToNowPlayingFragment(artist.name, albumList, it)
+        }
+
+        albumListView.adapter = adapter
+        albumListView.layoutManager = LinearLayoutManager(activity)
+    }
+
+    private fun getAlbumList(artistId: Long): ArrayList<Album>  {
         val albumList = ArrayList<Album>()
         val uri = Artists.Albums.getContentUri("external", artistId)
 
-        val cursor = contentResolver.query(
+        val cursor = activity.contentResolver.query(
                 uri,
                 arrayOf(BaseColumns._ID, AlbumColumns.ALBUM, AlbumColumns.FIRST_YEAR, AlbumColumns.ALBUM_ART),
                 null,
@@ -78,7 +82,7 @@ class ArtistActivity : Activity() {
     private fun getAlbumSongs(albumId: Long): List<Song> {
         val list = ArrayList<Song>()
 
-        val cursor = contentResolver.query(
+        val cursor = activity.contentResolver.query(
                 Media.EXTERNAL_CONTENT_URI,
                 arrayOf(BaseColumns._ID, MediaStore.MediaColumns.TITLE,  AudioColumns.DURATION, AudioColumns.TRACK),
                 AudioColumns.ALBUM_ID + "=?",

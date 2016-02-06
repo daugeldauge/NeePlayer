@@ -3,7 +3,7 @@ package com.neeplayer
 import java.io.Serializable
 import java.util.concurrent.TimeUnit
 
-data class Artist(val id: Long, val name: String, val numberOfSongs: Int, val numberOfAlbums: Int, var imageURL: String? = null) {
+data class Artist(val id: Long, val name: String, val numberOfSongs: Int, val numberOfAlbums: Int, var imageURL: String? = null) : Serializable {
     val description: String
     get() = "%d albums, %d songs".format(numberOfAlbums, numberOfSongs)
 }
@@ -24,4 +24,4 @@ data class Song(val id: Long, val title: String?, val duration: Long, val track:
     }
 }
 
-data class Index(val albumIndex: Int, val songIndex: Int? = null)
+data class Index(val albumIndex: Int, val songIndex: Int? = null) : Serializable

@@ -39,7 +39,7 @@ class MainFragment : Fragment(), AnkoLogger {
         val recyclerView = view as RecyclerView
 
         recyclerView.adapter = ArtistAdapter(activity, getArtistList()) {
-            activity.startActivity<ArtistActivity>("ARTIST_NAME" to it.name, "ARTIST_ID" to it.id)
+            (activity as MainActivity).navigateToArtistFragment(it)
         }
         recyclerView.layoutManager = LinearLayoutManager(activity)
 

@@ -151,7 +151,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     }
 
     private fun update() {
-        val intent = Intent(NowPlayingActivity.UPDATE_NOW_PLAYING)
+        val intent = Intent(NowPlayingFragment.UPDATE_NOW_PLAYING)
         intent.putExtra("SONG_POSITION", songPosition)
         intent.putExtra("ALBUM_POSITION", albumPosition)
         intent.putExtra("PAUSED", paused)

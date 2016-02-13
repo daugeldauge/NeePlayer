@@ -12,7 +12,7 @@
 
     <com.neeplayer.SlidingLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@color/background"
         android:visibility="@{(model == null) ? View.GONE : View.VISIBLE}"
         android:elevation="12dp"
@@ -42,6 +42,36 @@
                 android:orientation="vertical"
                 android:gravity="center">
 
+
+                <SeekBar
+                    android:id="@+id/np_seek_bar"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/Text.Regular"
+                        android:paddingStart="8dp"
+                        app:duration="@{model.timePlayed}"
+                        tools:text="0:23" />
+
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        style="@style/Text.Regular"
+                        android:paddingEnd="8dp"
+                        app:duration="@{model.song.duration}"
+                        tools:text="4:12" />
+
+                </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -51,7 +81,7 @@
 
                     <TextView
                         style="@style/Text.Title"
-                        android:textSize="24sp"
+                        android:textSize="22sp"
                         android:gravity="center"
                         android:text="@{model.song.title}"
                         tools:text="The Weather Report Suite"
@@ -59,7 +89,7 @@
 
                     <TextView
                         style="@style/Text.Regular"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
                         android:gravity="center"
                         android:text="@{model.artistName + ` – ` + model.album.title}"
                         tools:text="Jack White – Lazaretto"

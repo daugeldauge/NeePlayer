@@ -2,19 +2,16 @@ package com.neeplayer
 
 import android.app.Fragment
 import android.content.*
-import android.databinding.BaseObservable
-import android.databinding.DataBindingUtil
+import android.databinding.*
 import android.os.Bundle
 import android.os.IBinder
 import android.support.v4.content.LocalBroadcastManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.hannesdorfmann.fragmentargs.annotation.Arg
-import com.hannesdorfmann.fragmentargs.annotation.FragmentWithArgs
 import com.neeplayer.databinding.FragmentNowPlayingBinding
 import org.jetbrains.anko.onClick
-import java.util.*
+import java.util.ArrayList
 
 class NowPlayingFragment : Fragment() {
     companion object{
@@ -22,13 +19,15 @@ class NowPlayingFragment : Fragment() {
     }
 
     class ViewModel(val albumList: ArrayList<Album>, val artistName: String,
-            var albumPosition: Int , var songPosition: Int, var paused: Boolean = false) : BaseObservable() {
+                    var albumPosition: Int, var songPosition: Int, var paused: Boolean = false) : BaseObservable() {
 
         val album: Album
             get() = albumList[albumPosition]
 
         val song: Song
             get() = album.songs[songPosition]
+
+        var timePlayed: Long = 0
     }
 
     private var model: ViewModel? = null
@@ -87,6 +86,12 @@ class NowPlayingFragment : Fragment() {
                 model.paused = !model.paused
                 model.notifyChange()
             }
+        }
+
+        binding.npSeekBar.onUserSeek { progress ->
+            val timePlayed = progress.toDouble() / binding.npSeekBar.max * model.song.duration
+            model.timePlayed = Math.round(timePlayed)
+            model.notifyChange()
         }
 
 

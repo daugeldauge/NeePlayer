@@ -6,8 +6,10 @@ import android.databinding.ObservableField
 import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import android.widget.ImageView
+import android.widget.TextView
 import com.bumptech.glide.Glide
 import org.jetbrains.anko.imageBitmap
+import java.util.concurrent.TimeUnit
 import kotlin.reflect.KProperty
 
 @BindingAdapter("bind:imagePath")
@@ -52,10 +54,17 @@ fun calculateSampleSize(path: String, reqWidth: Int, reqHeight: Int): Int {
 }
 
 @BindingAdapter("bind:imageURL")
-fun loadImage(view: ImageView, url: String?) = Glide.with(view.getContext()).load(url).dontAnimate().into(view)
+fun loadImage(view: ImageView, url: String?) = Glide.with(view.context).load(url).dontAnimate().into(view)
 
 @BindingAdapter("bind:drawable")
 fun setDrawable(view: ImageView, drawable: Drawable) = view.setImageDrawable(drawable)
+
+@BindingAdapter("bind:duration")
+fun setFormattedDuration(view: TextView, duration: Long) {
+    val min = TimeUnit.MILLISECONDS.toMinutes(duration)
+    val sec = TimeUnit.MILLISECONDS.toSeconds(duration) - TimeUnit.MINUTES.toSeconds(min)
+    view.text = "%d:%02d".format(min, sec)
+}
 
 class ObservableDelegate<T>(initialValue: T, vararg val dependants: Int) {
     private val observable: ObservableField<T> = ObservableField(initialValue)

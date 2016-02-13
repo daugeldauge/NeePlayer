@@ -15,7 +15,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/background"
-        android:visibility="@{(model == null) ? View.GONE : View.VISIBLE}"
         android:elevation="12dp"
         android:layout_gravity="bottom"
         >

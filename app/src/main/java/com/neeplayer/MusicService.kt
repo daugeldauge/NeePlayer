@@ -201,9 +201,8 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         super.onTaskRemoved(rootIntent)
     }
 
-    fun getSongPosition(): Int {
-        return player.currentPosition
-    }
+    val currentPosition: Long
+        get() = player.currentPosition.toLong()
 
     val duration: Int
         get() = player.duration

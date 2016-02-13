@@ -4,6 +4,7 @@ import android.app.Fragment
 import android.content.*
 import android.databinding.*
 import android.os.Bundle
+import android.os.Handler
 import android.os.IBinder
 import android.support.v4.content.LocalBroadcastManager
 import android.view.LayoutInflater
@@ -21,13 +22,36 @@ class NowPlayingFragment : Fragment() {
     class ViewModel(val albumList: ArrayList<Album>, val artistName: String,
                     var albumPosition: Int, var songPosition: Int, var paused: Boolean = false) : BaseObservable() {
 
+        private val handler = Handler()
+
+        var needToStopTicking = false
+
         val album: Album
             get() = albumList[albumPosition]
 
         val song: Song
             get() = album.songs[songPosition]
 
-        var timePlayed: Long = 0
+        val timePlayed = ObservableLong(0)
+
+        fun tick() {
+            if (paused) {
+                return
+            }
+
+            needToStopTicking = false
+            val delay = 1000 - (timePlayed.get() % 1000)
+            handler.removeCallbacks(tock)
+            handler.postDelayed(tock, delay)
+        }
+
+        private val tock = Runnable {
+            if (!needToStopTicking) {
+                timePlayed.set(1000 * (timePlayed.get() / 1000 + 1))
+                tick()
+            }
+        }
+
     }
 
     var expanded: Boolean
@@ -43,8 +67,6 @@ class NowPlayingFragment : Fragment() {
 
     private var musicService: MusicService? = null
     private var playIntent: Intent? = null
-
-    private var musicBound: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return FragmentNowPlayingBinding.inflate(inflater, container, false).root
@@ -83,23 +105,22 @@ class NowPlayingFragment : Fragment() {
         }
 
         binding.npPlayPause.onClick {
-            if (musicBound) {
 
-                if (model.paused) {
-                    musicService?.play()
-                } else {
-                    musicService?.pause()
-                }
-
-                model.paused = !model.paused
-                model.notifyChange()
+            if (model.paused) {
+                musicService?.play()
+            } else {
+                musicService?.pause()
             }
+
+            model.paused = !model.paused
+            model.notifyChange()
+
         }
 
         binding.npSeekBar.onUserSeek { progress ->
-            val timePlayed = progress.toDouble() / binding.npSeekBar.max * model.song.duration
-            model.timePlayed = Math.round(timePlayed)
-            model.notifyChange()
+            model.timePlayed.set(progress.toLong())
+            musicService?.seekTo(progress)
+            model.tick()
         }
 
     }
@@ -117,30 +138,31 @@ class NowPlayingFragment : Fragment() {
                 model?.songPosition = intent.getIntExtra("SONG_POSITION", 0)
                 model?.paused = intent.getBooleanExtra("PAUSED", false)
                 model?.notifyChange()
+
+                val musicService = musicService ?: return
+                model?.timePlayed?.set(musicService.currentPosition)
+                model?.tick()
             }
         }
     }
 
     private val musicConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName, service: IBinder) {
+        override fun onServiceConnected(name: ComponentName, binder: IBinder) {
             val model = model ?: return
 
-            val binder = service as MusicService.MusicBinder
-            val musicService = binder.service
+            val service = (binder as MusicService.MusicBinder).service
 
-            musicService.setList(model.albumList)
-            musicService.setArtistName(model.artistName)
-            musicService.setPosition(model.albumPosition, model.songPosition)
-            musicService.playSong()
+            service.setList(model.albumList)
+            service.setArtistName(model.artistName)
+            service.setPosition(model.albumPosition, model.songPosition)
+            service.playSong()
             model.paused = false
 
-            this@NowPlayingFragment.musicService = musicService
-
-            musicBound = true
+            musicService = service
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
-            musicBound = false
+            musicService = null
         }
     }
 

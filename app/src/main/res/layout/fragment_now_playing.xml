@@ -47,7 +47,9 @@
                 <SeekBar
                     android:id="@+id/np_seek_bar"
                     android:layout_height="wrap_content"
-                    android:layout_width="match_parent" />
+                    android:layout_width="match_parent"
+                    android:progress="@{(int)model.timePlayed}"
+                    android:max="@{(int)model.song.duration}" />
 
                 <LinearLayout
                     android:layout_width="match_parent"

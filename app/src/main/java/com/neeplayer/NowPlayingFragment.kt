@@ -102,7 +102,6 @@ class NowPlayingFragment : Fragment() {
             model.notifyChange()
         }
 
-
     }
 
     override fun onDestroy() {

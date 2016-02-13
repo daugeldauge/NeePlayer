@@ -22,6 +22,7 @@ class SlidingLayout(context: Context?, attrs: AttributeSet?) : FrameLayout(conte
     private val expandedView : View
         get() = getChildAt(0)
 
+    var isFirstMeasure = true
 
     override fun onFinishInflate() {
         super.onFinishInflate()
@@ -31,11 +32,19 @@ class SlidingLayout(context: Context?, attrs: AttributeSet?) : FrameLayout(conte
         }
     }
 
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+
+        if (isFirstMeasure) {
+            applyState(animated = false)
+        }
+    }
+
     private fun applyState(animated: Boolean = true) {
 
         val targetTranslation =
                 if (expanded) 0f
-                else (height - collapsedView.height).toFloat()
+                else (measuredHeight - collapsedView.measuredHeight).toFloat()
 
         val targetCollapsedViewAlpha = if (expanded) 0f else 1f
 

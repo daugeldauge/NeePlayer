@@ -1,6 +1,7 @@
 package com.neeplayer
 
 import android.app.Activity
+import android.app.FragmentTransaction
 import android.os.Bundle
 import java.util.*
 
@@ -20,6 +21,7 @@ class MainActivity : Activity() {
 
     fun navigateToArtistFragment(artist: Artist) {
         fragmentManager.beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .replace(R.id.fragment_container, ArtistFragmentBuilder(artist).build())
                 .addToBackStack(null)
                 .commit()

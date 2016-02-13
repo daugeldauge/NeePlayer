@@ -20,9 +20,15 @@ class NowPlayingFragment : Fragment() {
     }
 
     class ViewModel(val albumList: ArrayList<Album>, val artistName: String,
-                    var albumPosition: Int, var songPosition: Int, var paused: Boolean = false) : BaseObservable() {
+                    var albumPosition: Int, var songPosition: Int, paused: Boolean = false) : BaseObservable() {
 
         private val handler = Handler()
+
+        var paused = paused
+            set(value) {
+                field = value
+                needToStopTicking = true
+            }
 
         var needToStopTicking = false
 
@@ -47,7 +53,7 @@ class NowPlayingFragment : Fragment() {
 
         private val tock = Runnable {
             if (!needToStopTicking) {
-                timePlayed.set(1000 * (timePlayed.get() / 1000 + 1))
+                timePlayed.set(Math.min(song.duration, 1000 * (timePlayed.get() / 1000 + 1)))
                 tick()
             }
         }

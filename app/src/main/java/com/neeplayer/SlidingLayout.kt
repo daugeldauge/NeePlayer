@@ -16,13 +16,11 @@ class SlidingLayout(context: Context?, attrs: AttributeSet?) : FrameLayout(conte
             applyState()
         }
 
-    private val collapsedView : View
-        get() = getChildAt(1)
+    private val collapsedView: View by lazy { getChildAt(1) }
 
-    private val expandedView : View
-        get() = getChildAt(0)
+    private val expandedView: View by lazy { getChildAt(0) }
 
-    var isFirstMeasure = true
+    private var isFirstMeasure = true
 
     override fun onFinishInflate() {
         super.onFinishInflate()

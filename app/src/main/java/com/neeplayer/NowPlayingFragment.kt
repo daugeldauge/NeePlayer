@@ -30,8 +30,16 @@ class NowPlayingFragment : Fragment() {
         var timePlayed: Long = 0
     }
 
+    var expanded: Boolean
+        get() = binding.npContainer.expanded
+        set(value) {
+            binding.npContainer.expanded = value
+        }
+
     private var model: ViewModel? = null
-    lateinit var binding: FragmentNowPlayingBinding
+
+    lateinit
+    private var binding: FragmentNowPlayingBinding
 
     private var musicService: MusicService? = null
     private var playIntent: Intent? = null

@@ -6,6 +6,10 @@ import java.util.*
 
 class MainActivity : Activity() {
 
+    val nowPlayingFragment by lazy {
+        fragmentManager.findFragmentById(R.id.now_playing_fragment) as NowPlayingFragment
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -22,7 +26,14 @@ class MainActivity : Activity() {
     }
 
     fun navigateToNowPlayingFragment(artistName: String, albumList: ArrayList<Album>, nowPlaying: Index) {
-        (fragmentManager.findFragmentById(R.id.now_playing_fragment) as NowPlayingFragment)
-            .update(artistName, albumList, nowPlaying)
+        nowPlayingFragment.update(artistName, albumList, nowPlaying)
+    }
+
+    override fun onBackPressed() {
+        if (nowPlayingFragment.expanded) {
+            nowPlayingFragment.expanded = false
+        } else {
+            super.onBackPressed()
+        }
     }
 }

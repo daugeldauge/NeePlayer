@@ -11,6 +11,10 @@ import org.jetbrains.anko.onClick
 class SlidingLayout(context: Context?, attrs: AttributeSet?) : FrameLayout(context, attrs) {
 
     var expanded = false;
+        set(value) {
+            field = value
+            applyState()
+        }
 
     private val collapsedView : View
         get() = getChildAt(1)
@@ -24,10 +28,8 @@ class SlidingLayout(context: Context?, attrs: AttributeSet?) : FrameLayout(conte
 
         onClick {
             expanded = !expanded
-            applyState()
         }
     }
-
 
     private fun applyState(animated: Boolean = true) {
 

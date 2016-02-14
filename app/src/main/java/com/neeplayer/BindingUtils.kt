@@ -14,20 +14,21 @@ import kotlin.reflect.KProperty
 
 @BindingAdapter("bind:imagePath")
 fun loadImageFile(view: ImageView, path: String?) {
-    //loadImage(view, "file://" + path)
-    path ?: return
-
-    val sampleSize = calculateSampleSize(path, view.width, view.height)
-    val tag = path + "#" + sampleSize.toString()
-
-    if (tag.equals(view.tag)) {
-        return
-    }
-
-    view.tag = tag
-    val options = BitmapFactory.Options()
-    options.inSampleSize = sampleSize
-    view.imageBitmap = BitmapFactory.decodeFile(path, options)
+    loadImage(view, "file://" + path)
+    return
+//    path ?: return
+//
+//    val sampleSize = calculateSampleSize(path, view.width, view.height)
+//    val tag = path + "#" + sampleSize.toString()
+//
+//    if (tag.equals(view.tag)) {
+//        return
+//    }
+//
+//    view.tag = tag
+//    val options = BitmapFactory.Options()
+//    options.inSampleSize = sampleSize
+//    view.imageBitmap = BitmapFactory.decodeFile(path, options)
 }
 
 // http://developer.android.com/intl/ru/training/displaying-bitmaps/load-bitmap.html

@@ -26,12 +26,14 @@ class NowPlayingFragment : Fragment() {
 
         private var needToStopTicking = false
 
+        @Bindable
         var paused = paused
             set(value) {
                 field = value
                 if (value) {
                     needToStopTicking = true
                 }
+                notifyPropertyChanged(BR.paused)
             }
 
         val album: Album
@@ -121,8 +123,6 @@ class NowPlayingFragment : Fragment() {
             }
 
             model.paused = !model.paused
-            model.notifyChange()
-
         }
 
         binding.npSeekBar.onUserSeek { progress ->
@@ -134,7 +134,9 @@ class NowPlayingFragment : Fragment() {
     }
 
     override fun onDestroy() {
-        activity.unbindService(musicConnection)
+        if (musicService != null) {
+            activity.unbindService(musicConnection)
+        }
         LocalBroadcastManager.getInstance(activity).unregisterReceiver(receiver)
         super.onDestroy()
     }

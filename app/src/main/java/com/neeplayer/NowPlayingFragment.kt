@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.neeplayer.databinding.FragmentNowPlayingBinding
 import org.jetbrains.anko.onClick
+import java.io.Serializable
 import java.util.ArrayList
 
 class NowPlayingFragment : Fragment() {
@@ -19,9 +20,10 @@ class NowPlayingFragment : Fragment() {
         val UPDATE_NOW_PLAYING = "UPDATE_NOW_PLAYING"
     }
 
-    class ViewModel(val albumList: ArrayList<Album>, val artistName: String,
-                    var albumPosition: Int, var songPosition: Int, paused: Boolean = false) : BaseObservable() {
+    class ViewModel(val albumList: ArrayList<Album>, val artistName: String, var albumPosition: Int,
+                    var songPosition: Int, paused: Boolean = false) : BaseObservable(), Serializable {
 
+        @Transient
         private val handler = Handler()
 
         private var needToStopTicking = false
@@ -42,6 +44,7 @@ class NowPlayingFragment : Fragment() {
         val song: Song
             get() = album.songs[songPosition]
 
+        @Transient
         val timePlayed = ObservableLong(0)
 
         fun tick() {
@@ -55,6 +58,7 @@ class NowPlayingFragment : Fragment() {
             handler.postDelayed(tock, delay)
         }
 
+        @Transient
         private val tock = Runnable {
             if (!needToStopTicking) {
                 timePlayed.set(Math.min(song.duration, 1000 * (timePlayed.get() / 1000 + 1)))
@@ -78,6 +82,8 @@ class NowPlayingFragment : Fragment() {
     private var musicService: MusicService? = null
     private var playIntent: Intent? = null
 
+    private var shouldStartPlaying = false
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return FragmentNowPlayingBinding.inflate(inflater, container, false).root
     }
@@ -87,14 +93,27 @@ class NowPlayingFragment : Fragment() {
         binding = DataBindingUtil.bind<FragmentNowPlayingBinding>(view)
     }
 
-    fun update(artistName: String, albumList: ArrayList<Album>, position: Index) {
-        val model = ViewModel(albumList, artistName, position.albumIndex, position.songIndex ?: 0)
-        binding.model = model
-        this.model = model
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        if (savedInstanceState != null) {
+            setupModel(savedInstanceState.get("model") as ViewModel)
+
+            playIntent = Intent(activity, MusicService::class.java)
+            activity.bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE)
+            activity.startService(playIntent)
+            model?.paused = true
+            shouldStartPlaying = false
+        }
 
         val filter = IntentFilter()
         filter.addAction(UPDATE_NOW_PLAYING)
         LocalBroadcastManager.getInstance(activity).registerReceiver(receiver, filter)
+    }
+
+    fun update(artistName: String, albumList: ArrayList<Album>, position: Index) {
+        val model = ViewModel(albumList, artistName, position.albumIndex, position.songIndex ?: 0)
+        shouldStartPlaying = !model.song.id.equals(this.model?.song?.id)
+        setupModel(model)
 
         if (playIntent != null) {
             activity.unbindService(musicConnection)
@@ -104,7 +123,24 @@ class NowPlayingFragment : Fragment() {
         playIntent = Intent(activity, MusicService::class.java)
         activity.bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE)
         activity.startService(playIntent)
+    }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putSerializable("model", model)
+    }
+
+    override fun onDestroy() {
+        if (musicService != null) {
+            activity.unbindService(musicConnection)
+        }
+        LocalBroadcastManager.getInstance(activity).unregisterReceiver(receiver)
+        super.onDestroy()
+    }
+
+    private fun setupModel(model: ViewModel) {
+        binding.model = model
+        this.model = model
 
         binding.npFastRewind.onClick {
             musicService?.choosePrevious(model.paused)
@@ -130,15 +166,12 @@ class NowPlayingFragment : Fragment() {
             musicService?.seekTo(progress)
             model.tick()
         }
-
     }
 
-    override fun onDestroy() {
-        if (musicService != null) {
-            activity.unbindService(musicConnection)
-        }
-        LocalBroadcastManager.getInstance(activity).unregisterReceiver(receiver)
-        super.onDestroy()
+    private fun startTicking() {
+        val musicService = musicService ?: return
+        model?.timePlayed?.set(musicService.currentPosition)
+        model?.tick()
     }
 
     private val receiver = object : BroadcastReceiver() {
@@ -149,26 +182,29 @@ class NowPlayingFragment : Fragment() {
                 model?.paused = intent.getBooleanExtra("PAUSED", false)
                 model?.notifyChange()
 
-                val musicService = musicService ?: return
-                model?.timePlayed?.set(musicService.currentPosition)
-                model?.tick()
+                startTicking()
             }
         }
     }
 
     private val musicConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, binder: IBinder) {
-            val model = model ?: return
 
             val service = (binder as MusicService.MusicBinder).service
-
-            service.setList(model.albumList)
-            service.setArtistName(model.artistName)
-            service.setPosition(model.albumPosition, model.songPosition)
-            service.playSong()
-            model.paused = false
-
             musicService = service
+
+            val model = model ?: return
+            if (shouldStartPlaying) {
+
+                service.setList(model.albumList)
+                service.setArtistName(model.artistName)
+                service.setPosition(model.albumPosition, model.songPosition)
+                service.playSong()
+            }
+
+            model.paused = !service.isPlaying
+            startTicking()
+
         }
 
         override fun onServiceDisconnected(name: ComponentName) {

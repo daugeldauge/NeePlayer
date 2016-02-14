@@ -22,32 +22,12 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <service
             android:name=".MusicService" />
-
-        <activity
-            android:name=".ArtistActivity"
-            android:label="@string/title_activity_artist"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="MainActivity" />
-        </activity>
-        <activity
-            android:name=".NowPlayingActivity"
-            android:label="@string/title_activity_now_playing"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".ArtistActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ArtistActivity" />>
-        </activity>
     </application>
 
 </manifest>

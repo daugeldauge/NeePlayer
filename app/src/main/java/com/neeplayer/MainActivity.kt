@@ -15,8 +15,9 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        fragmentManager.beginTransaction().add(R.id.fragment_container, MainFragment()).commit()
-
+        if (savedInstanceState == null) {
+            fragmentManager.beginTransaction().add(R.id.fragment_container, MainFragment()).commit()
+        }
     }
 
     fun navigateToArtistFragment(artist: Artist) {

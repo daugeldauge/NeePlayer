@@ -207,7 +207,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     val duration: Int
         get() = player.duration
 
-    val isPlaying: Boolean?
+    val isPlaying: Boolean
         get() = player.isPlaying
 
 

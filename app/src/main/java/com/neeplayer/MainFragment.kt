@@ -14,11 +14,10 @@ import okhttp3.logging.HttpLoggingInterceptor
 import org.jetbrains.anko.AnkoLogger
 import org.json.JSONObject
 import retrofit2.Retrofit
-import retrofit2.RxJavaCallAdapterFactory
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
-import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.warn
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
 import java.util.*
 
 class MainFragment : Fragment(), AnkoLogger {

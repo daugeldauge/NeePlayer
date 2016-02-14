@@ -24,13 +24,15 @@ class NowPlayingFragment : Fragment() {
 
         private val handler = Handler()
 
+        private var needToStopTicking = false
+
         var paused = paused
             set(value) {
                 field = value
-                needToStopTicking = true
+                if (value) {
+                    needToStopTicking = true
+                }
             }
-
-        var needToStopTicking = false
 
         val album: Album
             get() = albumList[albumPosition]

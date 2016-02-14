@@ -26,11 +26,12 @@
             android:id="@+id/np_layout"
             tools:context="com.neeplayer.NowPlayingActivity">
 
-            <ImageView
+            <com.neeplayer.SquareImageView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
+                android:background="@color/image_alt"
                 android:id="@+id/np_album_art"
                 app:imagePath="@{model.album.art}"
                 tools:src="@color/image_alt"

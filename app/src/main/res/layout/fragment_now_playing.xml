@@ -10,160 +10,175 @@
             type="com.neeplayer.NowPlayingFragment.ViewModel" />
     </data>
 
-    <com.neeplayer.SlidingLayout
-        android:id="@+id/np_container"
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/background"
-        android:elevation="12dp"
-        android:layout_gravity="bottom"
-        >
+        android:layout_height="match_parent">
 
-        <LinearLayout
+        <FrameLayout
+            android:id="@+id/np_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:id="@+id/np_layout"
-            tools:context="com.neeplayer.NowPlayingActivity">
-
-            <com.neeplayer.SquareImageView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scaleType="fitCenter"
-                android:adjustViewBounds="true"
-                android:background="@color/image_alt"
-                android:id="@+id/np_album_art"
-                app:imagePath="@{model.album.art}"
-                tools:src="@color/image_alt"
-                tools:layout_height="360dp"/>
+            android:layout_height="match_parent"
+            android:background="@color/background"
+            android:elevation="12dp"
+            android:layout_gravity="bottom"
+            app:behavior_peekHeight="@dimen/now_playing_peek_height"
+            app:layout_behavior="com.neeplayer.MyBottomSheetBehavior">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:gravity="center">
+                android:id="@+id/np_layout"
+                tools:context="com.neeplayer.NowPlayingActivity">
 
-
-                <SeekBar
-                    android:id="@+id/np_seek_bar"
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
-                    android:progress="@{(int)model.timePlayed}"
-                    android:max="@{(int)model.song.duration}" />
-
-                <LinearLayout
+                <com.neeplayer.SquareImageView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:scaleType="fitCenter"
+                    android:adjustViewBounds="true"
+                    android:background="@color/image_alt"
+                    android:id="@+id/np_album_art"
+                    app:imagePath="@{model.album.art}"
+                    tools:src="@color/image_alt"
+                    tools:layout_height="360dp" />
 
-                    <TextView
-                        style="@style/Text.Regular"
-                        android:paddingStart="8dp"
-                        app:duration="@{model.timePlayed}"
-                        tools:text="0:23" />
 
-                    <Space
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:layout_weight="1" />
+                    <SeekBar
+                        android:id="@+id/np_seek_bar"
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:progress="@{(int)model.timePlayed}"
+                        android:max="@{(int)model.song.duration}" />
 
-                    <TextView
-                        style="@style/Text.Regular"
-                        android:paddingEnd="8dp"
-                        app:duration="@{model.song.duration}"
-                        tools:text="4:12" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="-8dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            style="@style/Text.Regular"
+                            android:paddingStart="8dp"
+                            app:duration="@{model.timePlayed}"
+                            tools:text="0:23" />
+
+                        <Space
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            style="@style/Text.Regular"
+                            android:paddingEnd="8dp"
+                            app:duration="@{model.song.duration}"
+                            tools:text="4:12" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:orientation="vertical">
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="8dp"
+                            android:gravity="center">
+
+                            <TextView
+                                style="@style/Text.Title"
+                                android:textSize="22sp"
+                                android:gravity="center"
+                                android:text="@{model.song.title}"
+                                tools:text="The Weather Report Suite"
+                                android:id="@+id/np_song_title" />
+
+                            <TextView
+                                style="@style/Text.Regular"
+                                android:textSize="18sp"
+                                android:gravity="center"
+                                android:text="@{model.artistName + ` – ` + model.album.title}"
+                                tools:text="Jack White – Lazaretto"
+                                android:id="@+id/np_artist_and_album" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center">
+
+                            <ImageButton
+                                android:id="@+id/np_fast_rewind"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                style="?android:attr/borderlessButtonStyle"
+                                android:src="@drawable/ic_fast_rewind_black_48dp" />
+
+                            <ImageButton
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                style="?android:attr/borderlessButtonStyle"
+                                app:drawable="@{model.paused ? @drawable/ic_play_arrow_black_48dp : @drawable/ic_pause_black_48dp}"
+                                tools:src="@drawable/ic_pause_black_48dp"
+                                android:id="@+id/np_play_pause" />
+
+                            <ImageButton
+                                android:id="@+id/np_fast_forward"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                style="?android:attr/borderlessButtonStyle"
+                                android:src="@drawable/ic_fast_forward_black_48dp" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
 
                 </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/now_playing_peek_height"
+                android:padding="4dp"
+                android:gravity="start|center_vertical"
+                android:orientation="horizontal"
+                android:background="@color/background">
+
+                <ImageView
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:background="@color/image_alt"
+                    app:imagePath="@{model.album.art}" />
+
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="8dp"
-                    android:gravity="center">
+                    android:layout_width="wrap_content"
+                    android:padding="12dp"
+                    android:layout_height="wrap_content">
 
                     <TextView
                         style="@style/Text.Title"
-                        android:textSize="22sp"
-                        android:gravity="center"
                         android:text="@{model.song.title}"
-                        tools:text="The Weather Report Suite"
-                        android:id="@+id/np_song_title" />
+                        tools:text="The Weather Report Suite" />
 
                     <TextView
                         style="@style/Text.Regular"
-                        android:textSize="18sp"
-                        android:gravity="center"
-                        android:text="@{model.artistName + ` – ` + model.album.title}"
-                        tools:text="Jack White – Lazaretto"
-                        android:id="@+id/np_artist_and_album" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center">
-
-                    <ImageButton
-                        android:id="@+id/np_fast_rewind"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        style="?android:attr/borderlessButtonStyle"
-                        android:src="@drawable/ic_fast_rewind_black_48dp"/>
-                    <ImageButton
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        style="?android:attr/borderlessButtonStyle"
-                        app:drawable="@{model.paused ? @drawable/ic_play_arrow_black_48dp : @drawable/ic_pause_black_48dp}"
-                        tools:src="@drawable/ic_pause_black_48dp"
-                        android:id="@+id/np_play_pause"/>
-                    <ImageButton
-                        android:id="@+id/np_fast_forward"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        style="?android:attr/borderlessButtonStyle"
-                        android:src="@drawable/ic_fast_forward_black_48dp"/>
+                        android:text="@{model.artistName}"
+                        tools:text="Jack White" />
 
                 </LinearLayout>
 
             </LinearLayout>
 
-        </LinearLayout>
+        </FrameLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="72dp"
-            android:padding="4dp"
-            android:gravity="start|center_vertical"
-            android:orientation="horizontal"
-            android:background="@color/background">
-
-            <ImageView
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:background="@color/image_alt"
-                app:imagePath="@{model.album.art}" />
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:padding="12dp"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    style="@style/Text.Title"
-                    android:text="@{model.song.title}"
-                    tools:text="The Weather Report Suite" />
-
-                <TextView
-                    style="@style/Text.Regular"
-                    android:text="@{model.artistName}"
-                    tools:text="Jack White" />
-
-            </LinearLayout>
-
-        </LinearLayout>
-    </com.neeplayer.SlidingLayout>
+    </android.support.design.widget.CoordinatorLayout>
 
 </layout>

@@ -1,11 +1,11 @@
 package com.neeplayer
 
-import android.app.Activity
 import android.app.FragmentTransaction
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import java.util.*
 
-class MainActivity : Activity() {
+class MainActivity : AppCompatActivity() {
 
     val nowPlayingFragment by lazy {
         fragmentManager.findFragmentById(R.id.now_playing_fragment) as NowPlayingFragment
@@ -33,9 +33,7 @@ class MainActivity : Activity() {
     }
 
     override fun onBackPressed() {
-        if (nowPlayingFragment.expanded) {
-            nowPlayingFragment.expanded = false
-        } else {
+        if (!nowPlayingFragment.tryCollapse()) {
             super.onBackPressed()
         }
     }

@@ -1,14 +1,13 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="72dp"
-        />
+        android:layout_marginBottom="@dimen/now_playing_peek_height" />
 
     <fragment
         android:id="@+id/now_playing_fragment"
@@ -16,6 +15,6 @@
         android:layout_gravity="bottom"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        />
+        tools:layout="@layout/fragment_now_playing" />
 
 </FrameLayout>

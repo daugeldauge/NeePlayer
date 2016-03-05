@@ -6,6 +6,7 @@ import android.databinding.*
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
+import android.support.design.widget.BottomSheetBehavior
 import android.support.v4.content.LocalBroadcastManager
 import android.view.LayoutInflater
 import android.view.View
@@ -68,16 +69,13 @@ class NowPlayingFragment : Fragment() {
 
     }
 
-    var expanded: Boolean
-        get() = binding.npContainer.expanded
-        set(value) {
-            binding.npContainer.expanded = value
-        }
-
     private var model: ViewModel? = null
 
     lateinit
     private var binding: FragmentNowPlayingBinding
+
+    lateinit
+    private var bottomSheet: BottomSheetBehavior<View>
 
     private var musicService: MusicService? = null
     private var playIntent: Intent? = null
@@ -91,6 +89,7 @@ class NowPlayingFragment : Fragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = DataBindingUtil.bind<FragmentNowPlayingBinding>(view)
+        bottomSheet = BottomSheetBehavior.from(binding.npContainer)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -123,6 +122,15 @@ class NowPlayingFragment : Fragment() {
         playIntent = Intent(activity, MusicService::class.java)
         activity.bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE)
         activity.startService(playIntent)
+    }
+
+    fun tryCollapse(): Boolean {
+        if (bottomSheet.state == BottomSheetBehavior.STATE_COLLAPSED) {
+            return false
+        } else {
+            bottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
+            return true
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

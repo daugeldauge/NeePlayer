@@ -1,11 +1,11 @@
 package com.neeplayer
 
-import android.app.Fragment
 import android.content.SharedPreferences
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.os.Bundle
 import android.provider.BaseColumns
 import android.provider.MediaStore
+import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.*

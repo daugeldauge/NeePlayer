@@ -8,7 +8,7 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
 
     val nowPlayingFragment by lazy {
-        fragmentManager.findFragmentById(R.id.now_playing_fragment) as NowPlayingFragment
+        supportFragmentManager.findFragmentById(R.id.now_playing_fragment) as NowPlayingFragment
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,12 +16,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         if (savedInstanceState == null) {
-            fragmentManager.beginTransaction().add(R.id.fragment_container, MainFragment()).commit()
+            supportFragmentManager.beginTransaction().add(R.id.fragment_container, MainFragment()).commit()
         }
     }
 
     fun navigateToArtistFragment(artist: Artist) {
-        fragmentManager.beginTransaction()
+        supportFragmentManager.beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .replace(R.id.fragment_container, ArtistFragmentBuilder(artist).build())
                 .addToBackStack(null)

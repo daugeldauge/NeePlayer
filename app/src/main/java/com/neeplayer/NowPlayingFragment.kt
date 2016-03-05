@@ -1,12 +1,12 @@
 package com.neeplayer
 
-import android.app.Fragment
 import android.content.*
 import android.databinding.*
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.support.design.widget.BottomSheetBehavior
+import android.support.v4.app.Fragment
 import android.support.v4.content.LocalBroadcastManager
 import android.view.LayoutInflater
 import android.view.View

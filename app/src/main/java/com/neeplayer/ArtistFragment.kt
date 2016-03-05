@@ -1,6 +1,5 @@
 package com.neeplayer
 
-import android.app.Fragment
 import android.os.Bundle
 import android.provider.BaseColumns
 import android.provider.MediaStore
@@ -8,6 +7,7 @@ import android.provider.MediaStore.Audio.AlbumColumns
 import android.provider.MediaStore.Audio.Artists
 import android.provider.MediaStore.Audio.AudioColumns
 import android.provider.MediaStore.Audio.Media
+import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater

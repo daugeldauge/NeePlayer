@@ -90,6 +90,14 @@ class NowPlayingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding = DataBindingUtil.bind<FragmentNowPlayingBinding>(view)
         bottomSheet = BottomSheetBehavior.from(binding.npContainer)
+
+        bottomSheet.setCallback(onSlide = {
+            binding.npCollapsed.alpha = it
+        })
+
+        binding.npCollapsed.onClick {
+            bottomSheet.state = BottomSheetBehavior.STATE_EXPANDED
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

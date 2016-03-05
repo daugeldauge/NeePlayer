@@ -144,6 +144,7 @@
                 </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/np_collapsed"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/now_playing_peek_height"
                 android:padding="4dp"

@@ -143,31 +143,34 @@
 
                 </LinearLayout>
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/np_collapsed"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/now_playing_peek_height"
                 android:padding="4dp"
-                android:gravity="start|center_vertical"
-                android:orientation="horizontal"
+                android:gravity="center_vertical"
                 android:background="@color/background">
 
                 <ImageView
+                    android:id="@+id/np_collapsed_album_art"
+                    android:layout_alignParentStart="true"
                     android:layout_width="64dp"
                     android:layout_height="64dp"
                     android:background="@color/image_alt"
                     app:imagePath="@{model.album.art}" />
 
                 <LinearLayout
-                    android:orientation="vertical"
+                    android:layout_toEndOf="@id/np_collapsed_album_art"
+                    android:layout_toStartOf="@+id/np_collapsed_play_pause"
                     android:layout_width="wrap_content"
-                    android:padding="12dp"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
 
                     <TextView
                         style="@style/Text.Title"
                         android:text="@{model.song.title}"
-                        tools:text="The Weather Report Suite" />
+                        tools:text="The Weather Report Suite laa lala lalallalallal" />
 
                     <TextView
                         style="@style/Text.Regular"
@@ -176,7 +179,19 @@
 
                 </LinearLayout>
 
-            </LinearLayout>
+                <ImageButton
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="@null"
+                    android:padding="2dp"
+                    style="?android:attr/borderlessButtonStyle"
+                    app:drawable="@{model.paused ? @drawable/ic_play_arrow_black_48dp : @drawable/ic_pause_black_48dp}"
+                    tools:src="@drawable/ic_pause_black_48dp"
+                    android:id="@+id/np_collapsed_play_pause" />
+
+            </RelativeLayout>
 
         </FrameLayout>
 

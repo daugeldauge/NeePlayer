@@ -166,8 +166,7 @@ class NowPlayingFragment : Fragment() {
             musicService?.chooseNext(model.paused)
         }
 
-        binding.npPlayPause.onClick {
-
+        val onPlayPauseClick = { view: View? ->
             if (model.paused) {
                 musicService?.play()
             } else {
@@ -176,6 +175,9 @@ class NowPlayingFragment : Fragment() {
 
             model.paused = !model.paused
         }
+
+        binding.npPlayPause.onClick(onPlayPauseClick)
+        binding.npCollapsedPlayPause.onClick(onPlayPauseClick)
 
         binding.npSeekBar.onUserSeek { progress ->
             model.timePlayed.set(progress.toLong())

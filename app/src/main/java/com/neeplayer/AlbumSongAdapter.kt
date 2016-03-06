@@ -26,13 +26,6 @@ class AlbumSongAdapter(private val context: Context, private val albums: List<Al
                 album.songs.mapIndexed { songIndex, song -> Index(albumIndex, songIndex) }
         )
     }.flatten()
-// TODO:
-//    private sealed class Item {
-//        class AlbumItem(val album: Album)
-//        class SongItem(val song: Song)
-//    }
-//
-//    private val items = albums.flatMap { listOf(Item.AlbumItem(it) as Item).plus(it.songs.map { Item.SongItem(it) as Item}) }
 
     var onSongClickListener: (Index) -> Unit = {}
 

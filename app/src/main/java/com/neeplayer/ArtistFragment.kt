@@ -12,7 +12,6 @@ import com.hannesdorfmann.fragmentargs.annotation.FragmentWithArgs
 import com.neeplayer.model.Album
 import com.neeplayer.model.Artist
 import com.neeplayer.model.Model
-import java.util.ArrayList
 
 @FragmentWithArgs
 class ArtistFragment : Fragment() {

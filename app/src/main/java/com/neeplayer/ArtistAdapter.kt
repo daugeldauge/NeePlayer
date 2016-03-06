@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.neeplayer.databinding.ArtistBinding
+import com.neeplayer.model.Artist
 
 
 import org.jetbrains.anko.onClick

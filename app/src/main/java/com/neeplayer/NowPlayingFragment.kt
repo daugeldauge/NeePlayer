@@ -12,16 +12,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.neeplayer.databinding.FragmentNowPlayingBinding
+import com.neeplayer.model.Album
+import com.neeplayer.model.Index
+import com.neeplayer.model.Song
 import org.jetbrains.anko.onClick
 import java.io.Serializable
-import java.util.ArrayList
 
 class NowPlayingFragment : Fragment() {
     companion object{
         val UPDATE_NOW_PLAYING = "UPDATE_NOW_PLAYING"
     }
 
-    class ViewModel(val albumList: ArrayList<Album>, val artistName: String, var albumPosition: Int,
+    class ViewModel(val albumList: List<Album>, val artistName: String, var albumPosition: Int,
                     var songPosition: Int, paused: Boolean = false) : BaseObservable(), Serializable {
 
         @Transient
@@ -117,7 +119,7 @@ class NowPlayingFragment : Fragment() {
         LocalBroadcastManager.getInstance(activity).registerReceiver(receiver, filter)
     }
 
-    fun update(artistName: String, albumList: ArrayList<Album>, position: Index) {
+    fun update(artistName: String, albumList: List<Album>, position: Index) {
         val model = ViewModel(albumList, artistName, position.albumIndex, position.songIndex ?: 0)
         shouldStartPlaying = !model.song.id.equals(this.model?.song?.id)
         setupModel(model)

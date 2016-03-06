@@ -40,7 +40,7 @@ dependencies {
     compile 'com.hannesdorfmann.fragmentargs:annotation:3.0.1'
     compile 'com.android.support:design:23.2.0'
     compile 'com.android.support:appcompat-v7:23.2.0'
-
+    compile 'com.pushtorefresh.storio:content-resolver:1.8.0'
 
     kapt 'com.hannesdorfmann.fragmentargs:processor:3.0.1'
     kapt 'com.android.databinding:compiler:1.0-rc4'

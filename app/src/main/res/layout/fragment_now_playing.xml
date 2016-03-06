@@ -22,7 +22,7 @@
             android:elevation="12dp"
             android:layout_gravity="bottom"
             app:behavior_peekHeight="@dimen/now_playing_peek_height"
-            app:layout_behavior="com.neeplayer.MyBottomSheetBehavior">
+            app:layout_behavior="com.neeplayer.SlidingPanelBehavior">
 
             <LinearLayout
                 android:layout_width="match_parent"

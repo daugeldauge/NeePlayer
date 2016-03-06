@@ -3,12 +3,12 @@ package com.neeplayer
 import android.content.SharedPreferences
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.os.Bundle
-import android.provider.BaseColumns
-import android.provider.MediaStore
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.*
+import com.neeplayer.model.Artist
+import com.neeplayer.model.Model
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.jetbrains.anko.AnkoLogger
@@ -18,7 +18,6 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import org.jetbrains.anko.warn
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
-import java.util.*
 
 class MainFragment : Fragment(), AnkoLogger {
 
@@ -61,45 +60,26 @@ class MainFragment : Fragment(), AnkoLogger {
                 .client(httpClient)
                 .build().create(LastFmService::class.java)
 
-        val list = ArrayList<Artist>()
+        val list = Model.getArtists()
 
-        val cursor = activity.contentResolver.query(
-                MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
-                arrayOf(BaseColumns._ID, MediaStore.Audio.ArtistColumns.ARTIST, MediaStore.Audio.ArtistColumns.NUMBER_OF_TRACKS, MediaStore.Audio.ArtistColumns.NUMBER_OF_ALBUMS),
-                null,
-                null,
-                null)
-
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                val artist = Artist(
-                        cursor.getLong(0),
-                        cursor.getString(1),
-                        cursor.getInt(2),
-                        cursor.getInt(3))
-
-                val image = artistImages?.getString(artist.name, null)
-                if (image.isNullOrEmpty()) {
-                    lastFm.getArtistInfo(artist.name)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .map {
-                                getArtistImageUrl(it.string())
-                            }
-                            .subscribe({
-                                artist.imageURL = it
-                                artistImages?.edit()?.putString(artist.name, it)?.commit()
-                            }, {
-                                warn("Couldn't retrieve artist image", it)
-                            })
-                } else {
-                    artist.imageURL = image
-                }
-
-                list.add(artist)
-            } while (cursor.moveToNext())
-
-            cursor.close()
+        list.forEach { artist ->
+            val image = artistImages?.getString(artist.name, null)
+            if (image.isNullOrEmpty()) {
+                lastFm.getArtistInfo(artist.name)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .map {
+                            getArtistImageUrl(it.string())
+                        }
+                        .subscribe({
+                            artist.imageURL = it
+                            artistImages?.edit()?.putString(artist.name, it)?.commit()
+                        }, {
+                            warn("Couldn't retrieve artist image", it)
+                        })
+            } else {
+                artist.imageURL = image
+            }
         }
 
         return list

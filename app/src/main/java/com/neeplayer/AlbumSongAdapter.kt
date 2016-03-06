@@ -8,6 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import com.neeplayer.databinding.AlbumBinding
 import com.neeplayer.databinding.SongBinding
+import com.neeplayer.model.Album
+import com.neeplayer.model.Index
+import com.neeplayer.model.Song
 import org.jetbrains.anko.onClick
 
 
@@ -23,6 +26,13 @@ class AlbumSongAdapter(private val context: Context, private val albums: List<Al
                 album.songs.mapIndexed { songIndex, song -> Index(albumIndex, songIndex) }
         )
     }.flatten()
+// TODO:
+//    private sealed class Item {
+//        class AlbumItem(val album: Album)
+//        class SongItem(val song: Song)
+//    }
+//
+//    private val items = albums.flatMap { listOf(Item.AlbumItem(it) as Item).plus(it.songs.map { Item.SongItem(it) as Item}) }
 
     var onSongClickListener: (Index) -> Unit = {}
 

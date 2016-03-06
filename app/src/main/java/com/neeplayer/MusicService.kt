@@ -16,6 +16,8 @@ import android.provider.MediaStore
 import android.support.annotation.IdRes
 import android.support.v4.content.LocalBroadcastManager
 import android.widget.RemoteViews
+import com.neeplayer.model.Album
+import com.neeplayer.model.Song
 import org.jetbrains.anko.toast
 
 class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener {

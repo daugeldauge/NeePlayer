@@ -1,4 +1,4 @@
-package com.neeplayer
+package com.neeplayer.model
 
 import java.io.Serializable
 import java.util.concurrent.TimeUnit
@@ -18,3 +18,5 @@ data class Album(val id: Long, val title: String?, val year: Int?, val art: Stri
 data class Song(val id: Long, val title: String?, val duration: Long, val track: Int?) : Serializable
 
 data class Index(val albumIndex: Int, val songIndex: Int? = null) : Serializable
+
+data class Playlist(val artist: Artist, val albumList: List<Album>, val song: Song)

@@ -6,7 +6,7 @@
     <data>
         <variable
             name="artist"
-            type="com.neeplayer.Artist"/>
+            type="com.neeplayer.model.Artist"/>
     </data>
 
     <LinearLayout

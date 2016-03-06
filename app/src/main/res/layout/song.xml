@@ -7,7 +7,7 @@
    <data>
         <variable
             name="song"
-            type="com.neeplayer.Song" />
+            type="com.neeplayer.model.Song" />
    </data>
 
 

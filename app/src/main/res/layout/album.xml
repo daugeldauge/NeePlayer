@@ -7,7 +7,7 @@
     <data>
         <variable
             name="album"
-            type="com.neeplayer.Album"/>
+            type="com.neeplayer.model.Album"/>
     </data>
 
     <LinearLayout

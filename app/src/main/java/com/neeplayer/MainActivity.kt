@@ -3,6 +3,10 @@ package com.neeplayer
 import android.app.FragmentTransaction
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import com.neeplayer.model.Album
+import com.neeplayer.model.Artist
+import com.neeplayer.model.Index
+import com.neeplayer.model.Model
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -18,6 +22,9 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction().add(R.id.fragment_container, MainFragment()).commit()
         }
+
+        Model.init(this)
+        Model.getArtists().toString()
     }
 
     fun navigateToArtistFragment(artist: Artist) {
@@ -28,7 +35,7 @@ class MainActivity : AppCompatActivity() {
                 .commit()
     }
 
-    fun navigateToNowPlayingFragment(artistName: String, albumList: ArrayList<Album>, nowPlaying: Index) {
+    fun navigateToNowPlayingFragment(artistName: String, albumList: List<Album>, nowPlaying: Index) {
         nowPlayingFragment.update(artistName, albumList, nowPlaying)
     }
 

@@ -119,7 +119,7 @@ class NowPlayingFragment : Fragment() {
         LocalBroadcastManager.getInstance(activity).registerReceiver(receiver, filter)
     }
 
-    fun update(artistName: String, albumList: List<Album>, position: Index) {
+    fun update(artistName: String, albumList: List<Album>, position: Index.Song) {
         val model = ViewModel(albumList, artistName, position.albumIndex, position.songIndex ?: 0)
         shouldStartPlaying = !model.song.id.equals(this.model?.song?.id)
         setupModel(model)

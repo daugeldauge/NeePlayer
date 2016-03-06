@@ -25,9 +25,6 @@ object Model {
                 .build()
     }
 
-    var nowPlaying: Playlist? = null;
-
-
     fun init(context: Context) {
         this.context = context.applicationContext
     }

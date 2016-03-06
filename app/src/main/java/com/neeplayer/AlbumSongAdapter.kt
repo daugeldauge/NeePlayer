@@ -10,7 +10,6 @@ import com.neeplayer.databinding.AlbumBinding
 import com.neeplayer.databinding.SongBinding
 import com.neeplayer.model.Album
 import com.neeplayer.model.Index
-import com.neeplayer.model.Song
 import org.jetbrains.anko.onClick
 
 
@@ -19,19 +18,20 @@ class AlbumSongAdapter(private val context: Context, private val albums: List<Al
     private val ALBUM_ITEM = 0
     private val SONG_ITEM = 1
 
-    private val types = albums.flatMap { listOf(ALBUM_ITEM).plus(it.songs.map { SONG_ITEM }) }
-
     private val indices = albums.mapIndexed { albumIndex, album ->
-        listOf(Index(albumIndex)).plus(
-                album.songs.mapIndexed { songIndex, song -> Index(albumIndex, songIndex) }
+        listOf(Index.Album(albumIndex)).plus(
+                album.songs.mapIndexed { songIndex, song -> Index.Song(albumIndex, songIndex) }
         )
     }.flatten()
 
-    var onSongClickListener: (Index) -> Unit = {}
+    var onSongClickListener: (Index.Song) -> Unit = {}
 
-    override fun getItemCount(): Int = types.size
+    override fun getItemCount(): Int = indices.size
 
-    override fun getItemViewType(position: Int): Int = types[position]
+    override fun getItemViewType(position: Int): Int = when(indices[position]) {
+        is Index.Album -> ALBUM_ITEM
+        is Index.Song -> SONG_ITEM
+    }
 
     class SongViewHolder(view: View): RecyclerView.ViewHolder(view) {
         val binding = DataBindingUtil.bind<SongBinding>(view)
@@ -52,11 +52,11 @@ class AlbumSongAdapter(private val context: Context, private val albums: List<Al
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
         val index = indices[position]
-        when(types[position]) {
-            ALBUM_ITEM -> (holder as AlbumViewHolder).binding.album = albums[index.albumIndex]
-            SONG_ITEM -> {
+        when(index) {
+            is Index.Album -> (holder as AlbumViewHolder).binding.album = albums[index.value]
+            is Index.Song -> {
                 val binding = (holder as SongViewHolder).binding
-                binding.song = albums[index.albumIndex].songs[index.songIndex!!]
+                binding.song = albums[index.albumIndex].songs[index.songIndex]
                 binding.root.onClick { onSongClickListener(index) }
             }
         }

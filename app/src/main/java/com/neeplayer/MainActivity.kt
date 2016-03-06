@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
                 .commit()
     }
 
-    fun navigateToNowPlayingFragment(artistName: String, albumList: List<Album>, nowPlaying: Index) {
+    fun navigateToNowPlayingFragment(artistName: String, albumList: List<Album>, nowPlaying: Index.Song) {
         nowPlayingFragment.update(artistName, albumList, nowPlaying)
     }
 

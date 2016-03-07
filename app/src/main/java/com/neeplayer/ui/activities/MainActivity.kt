@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
 
     fun navigateToNowPlayingFragment(artist: Artist, albumList: List<Album>, nowPlaying: Index.Song) {
         Model.nowPlaying = Playlist(artist, albumList, nowPlaying)
-        nowPlayingFragment.play()
+        nowPlayingFragment.update(true)
     }
 
     override fun onBackPressed() {

@@ -2,6 +2,7 @@ package com.neeplayer.ui.adapters
 
 import android.content.Context
 import android.databinding.DataBindingUtil
+import android.graphics.drawable.AnimatedVectorDrawable
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,8 @@ import com.neeplayer.databinding.AlbumBinding
 import com.neeplayer.databinding.SongBinding
 import com.neeplayer.model.Album
 import com.neeplayer.model.Index
+import com.neeplayer.model.Model
+import com.neeplayer.model.Playlist
 import org.jetbrains.anko.onClick
 
 
@@ -58,7 +61,23 @@ class AlbumSongAdapter(private val context: Context, private val albums: List<Al
                 val binding = (holder as SongViewHolder).binding
                 binding.song = albums[index.albumIndex].songs[index.songIndex]
                 binding.root.onClick { onSongClickListener(index) }
+
+                val listener = {
+                    if (binding.song == Model.nowPlaying?.currentSong) {
+                        binding.songTrack.visibility = View.GONE
+                        binding.animationNowPlaying.visibility = View.VISIBLE
+                        (binding.animationNowPlaying.drawable as AnimatedVectorDrawable).start()
+                    } else {
+                        binding.songTrack.visibility = View.VISIBLE
+                        binding.animationNowPlaying.visibility = View.GONE
+                    }
+                }
+
+                Model.onNowPlayingChangeListeners.add(listener)
+                listener()
             }
         }
     }
+
+
 }

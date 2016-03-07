@@ -19,6 +19,12 @@ object Model {
     }
 
     var nowPlaying: Playlist? = null
+    set(value) {
+        field = value
+        onNowPlayingChangeListeners.forEach { it() }
+    }
+
+    val onNowPlayingChangeListeners: MutableSet<(() -> Unit)> = mutableSetOf()
 
     private val storIOContentResolver by lazy {
         DefaultStorIOContentResolver

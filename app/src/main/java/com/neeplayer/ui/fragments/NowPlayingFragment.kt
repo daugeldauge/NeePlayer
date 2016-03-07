@@ -56,22 +56,16 @@ class NowPlayingFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        prepare()
+        update(false)
 
         val filter = IntentFilter()
         filter.addAction(UPDATE_NOW_PLAYING)
         LocalBroadcastManager.getInstance(activity).registerReceiver(receiver, filter)
     }
 
-    fun play() {
-        prepare()
-
-        shouldStartPlaying = true
-    }
-
-    fun prepare() {
+    fun update(shouldStartPlaying: Boolean) {
         setupViewModel()
-        shouldStartPlaying = false
+        this.shouldStartPlaying = shouldStartPlaying
 
         if (playIntent != null) {
             activity.unbindService(musicConnection)

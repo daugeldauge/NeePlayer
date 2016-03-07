@@ -7,17 +7,17 @@
     <group>
         <path
             android:name="first_column"
-            android:fillColor="#fff"
+            android:fillColor="@color/black87"
             android:pathData="M4,20 h4 v-8 h-4 v8 z"/>
 
         <path
             android:name="second_column"
-            android:fillColor="#fff"
+            android:fillColor="@color/black87"
             android:pathData="M10,20 h4 v-16 h-4 v16 z"/>
 
         <path
             android:name="third_column"
-            android:fillColor="#fff"
+            android:fillColor="@color/black87"
             android:pathData="M16,9 v11 h4 v-11 h-4 z"/>
 
 

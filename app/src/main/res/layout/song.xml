@@ -17,28 +17,43 @@
         android:layout_height="50dp"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
-        android:paddingLeft="25dp"
-        android:paddingRight="25dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="25dp"
         android:clickable="true"
         android:focusable="true"
         android:background="?android:attr/selectableItemBackground"
         android:onClick="songPicked">
 
 
-        <TextView
-            style="@style/Text.Regular"
-            android:id="@+id/song_track"
-            android:layout_width="30dp"
+        <FrameLayout
+            android:id="@+id/song_track_container"
+            android:layout_width="35dp"
+            android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_alignParentStart="true"
-            android:text="@{(song.track % 1000).toString()}"
-            tools:text="3"/>
+            android:layout_alignParentStart="true">
+
+            <TextView
+                android:id="@+id/song_track"
+                style="@style/Text.Regular"
+                android:layout_gravity="end|center_vertical"
+                android:layout_width="30dp"
+                android:text="@{(song.track % 1000).toString()}"
+                tools:text="3" />
+
+            <ImageView
+                android:id="@+id/animation_now_playing"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/now_playing" />
+
+        </FrameLayout>
+
 
         <TextView
             style="@style/Text.Title"
             android:id="@+id/song_title"
             android:layout_centerVertical="true"
-            android:layout_toEndOf="@id/song_track"
+            android:layout_toEndOf="@id/song_track_container"
             android:layout_toStartOf="@+id/song_duration"
             android:text="@{song.title}"
             tools:text="Everlasting Love and the end of somet"/>

@@ -32,8 +32,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
 
     private var paused = true
 
-    lateinit
-    private var playlist: Playlist
+    private var playlist: Playlist? = null
 
     private val musicBind = MusicBinder()
 
@@ -70,8 +69,13 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         player.setOnErrorListener(this)
     }
 
-    fun setPlaylist(playlist: Playlist) {
-        this.playlist = playlist
+    fun trySetPlaylist(playlist: Playlist): Boolean {
+        if (this.playlist != playlist) {
+            this.playlist = playlist
+            return true
+        } else {
+            return false
+        }
     }
 
     fun playSong() {
@@ -83,7 +87,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         Model.nowPlaying = playlist
         player.reset()
 
-        val songUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, playlist.currentSong.id)
+        val songUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, playlist!!.currentSong.id)
 
         try {
             player.setDataSource(applicationContext, songUri)
@@ -110,20 +114,22 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
 
     override fun onCompletion(mp: MediaPlayer) {
         if (player.currentPosition > 0) {
-            mp.reset()
+            player.reset()
             chooseNext()
         }
     }
 
     override fun onError(mp: MediaPlayer, what: Int, extra: Int): Boolean {
         mp.reset()
-        return false
+        applicationContext.toast("Media player error")
+        return true
     }
 
     override fun onDestroy() {
         player.stop()
         player.release()
         stopForeground(true)
+        Model.save()
     }
 
     override fun onPrepared(mp: MediaPlayer) {
@@ -134,6 +140,8 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     }
 
     private fun update() {
+        val playlist = playlist!!
+
         val intent = Intent(NowPlayingFragment.UPDATE_NOW_PLAYING)
         intent.putExtra("POSITION", playlist.currentPosition)
         intent.putExtra("PAUSED", paused)
@@ -161,6 +169,8 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     }
 
     private fun fillNotificationContent(content: RemoteViews) {
+        val playlist = playlist!!
+
         val albumArt = BitmapFactory.decodeFile(playlist.currentAlbum.art);
         content.setImageViewBitmap(R.id.notification_album_art, albumArt);
         content.setTextViewText(R.id.notification_song_title, playlist.currentSong.title)
@@ -210,7 +220,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     }
 
     fun choosePrevious(paused: Boolean? = null) {
-        playlist = playlist.previous()
+        playlist = playlist?.previous()
 
         if (paused != null) {
             this.paused = paused
@@ -219,7 +229,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     }
 
     fun chooseNext(paused: Boolean? = null) {
-        playlist = playlist.next()
+        playlist = playlist?.next()
 
         if (paused != null) {
             this.paused = paused

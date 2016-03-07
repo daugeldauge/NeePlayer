@@ -32,9 +32,6 @@ class NowPlayingFragment : Fragment() {
     private var bottomSheet: BottomSheetBehavior<View>
 
     private var musicService: MusicService? = null
-    private var playIntent: Intent? = null
-
-    private var shouldStartPlaying = false
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return FragmentNowPlayingBinding.inflate(inflater, container, false).root
@@ -56,7 +53,7 @@ class NowPlayingFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        update(false)
+        setupViewModel(true)
 
         val filter = IntentFilter()
         filter.addAction(UPDATE_NOW_PLAYING)
@@ -64,18 +61,8 @@ class NowPlayingFragment : Fragment() {
     }
 
     fun update(shouldStartPlaying: Boolean) {
-        setupViewModel()
-        this.shouldStartPlaying = shouldStartPlaying
-
-        if (playIntent != null) {
-            activity.unbindService(musicConnection)
-            activity.stopService(playIntent)
-        }
-
-        playIntent = Intent(activity, MusicService::class.java)
-        activity.bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE)
-        activity.startService(playIntent)
-
+        setupViewModel(!shouldStartPlaying)
+        setupService()
     }
 
     fun tryCollapse(): Boolean {
@@ -95,9 +82,9 @@ class NowPlayingFragment : Fragment() {
         super.onDestroy()
     }
 
-    private fun setupViewModel() {
+    private fun setupViewModel(paused: Boolean) {
         val playlist = Model.nowPlaying ?: return
-        val model = NowPlayingViewModel(playlist.artist, playlist.currentAlbum, playlist.currentSong, paused = false)
+        val model = NowPlayingViewModel(playlist.artist, playlist.currentAlbum, playlist.currentSong, paused)
 
         binding.model = model
         this.viewModel = model
@@ -111,13 +98,8 @@ class NowPlayingFragment : Fragment() {
         }
 
         val onPlayPauseClick = { view: View? ->
-            if (model.paused) {
-                musicService?.play()
-            } else {
-                musicService?.pause()
-            }
-
             model.paused = !model.paused
+            setupService()
         }
 
         binding.npPlayPause.onClick(onPlayPauseClick)
@@ -136,6 +118,37 @@ class NowPlayingFragment : Fragment() {
         viewModel?.tick()
     }
 
+    private fun setupService() {
+        if (musicService == null) {
+            val playIntent = Intent(activity, MusicService::class.java)
+            activity.bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE)
+            activity.startService(playIntent)
+        } else {
+            syncService()
+        }
+    }
+
+    private fun syncService() {
+        val service = musicService ?: return
+        val model = viewModel ?: return
+        val nowPlaying = Model.nowPlaying ?: return
+
+
+        if (model.paused) {
+            if (service.isPlaying) {
+                service.pause()
+            }
+        } else {
+            if (service.trySetPlaylist(nowPlaying)) {
+                service.playSong()
+                startTicking()
+            } else {
+                service.play()
+            }
+        }
+
+    }
+
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action == UPDATE_NOW_PLAYING) {
@@ -152,22 +165,8 @@ class NowPlayingFragment : Fragment() {
 
     private val musicConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, binder: IBinder) {
-
-            val service = (binder as MusicService.MusicBinder).service
-            musicService = service
-
-            val model = viewModel ?: return
-            val nowPlaying = Model.nowPlaying ?: return
-
-            if (shouldStartPlaying) {
-
-                service.setPlaylist(nowPlaying)
-                service.playSong()
-            }
-
-            model.paused = !service.isPlaying
-            startTicking()
-
+            musicService = (binder as MusicService.MusicBinder).service
+            syncService()
         }
 
         override fun onServiceDisconnected(name: ComponentName) {

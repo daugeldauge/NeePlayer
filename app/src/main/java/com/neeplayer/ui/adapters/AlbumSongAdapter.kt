@@ -1,4 +1,4 @@
-package com.neeplayer
+package com.neeplayer.ui.adapters
 
 import android.content.Context
 import android.databinding.DataBindingUtil

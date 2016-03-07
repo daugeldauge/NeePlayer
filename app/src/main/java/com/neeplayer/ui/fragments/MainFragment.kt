@@ -1,4 +1,4 @@
-package com.neeplayer
+package com.neeplayer.ui.fragments
 
 import android.content.SharedPreferences
 import android.graphics.drawable.AnimatedVectorDrawable
@@ -7,8 +7,12 @@ import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.*
+import com.neeplayer.LastFmService
+import com.neeplayer.R
 import com.neeplayer.model.Artist
 import com.neeplayer.model.Model
+import com.neeplayer.ui.activities.MainActivity
+import com.neeplayer.ui.adapters.ArtistAdapter
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.jetbrains.anko.AnkoLogger

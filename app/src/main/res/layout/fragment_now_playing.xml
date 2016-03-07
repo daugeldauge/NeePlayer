@@ -7,7 +7,7 @@
         <import type="android.view.View"/>
         <variable
             name="model"
-            type="com.neeplayer.NowPlayingFragment.ViewModel" />
+            type="com.neeplayer.ui.view_models.NowPlayingViewModel" />
     </data>
 
     <android.support.design.widget.CoordinatorLayout
@@ -22,16 +22,15 @@
             android:elevation="12dp"
             android:layout_gravity="bottom"
             app:behavior_peekHeight="@dimen/now_playing_peek_height"
-            app:layout_behavior="com.neeplayer.SlidingPanelBehavior">
+            app:layout_behavior="com.neeplayer.ui.custom.SlidingPanelBehavior">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:id="@+id/np_layout"
-                tools:context="com.neeplayer.NowPlayingActivity">
+                android:id="@+id/np_layout">
 
-                <com.neeplayer.SquareImageView
+                <com.neeplayer.ui.custom.SquareImageView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:scaleType="fitCenter"
@@ -103,7 +102,7 @@
                                 android:layout_width="match_parent"
                                 android:textSize="18sp"
                                 android:gravity="center"
-                                android:text="@{model.artistName + ` – ` + model.album.title}"
+                                android:text="@{model.artist.name + ` – ` + model.album.title}"
                                 tools:text="Jack White – Lazaretto"
                                 android:id="@+id/np_artist_and_album" />
 
@@ -177,7 +176,7 @@
                     <TextView
                         style="@style/Text.Regular"
                         android:layout_width="match_parent"
-                        android:text="@{model.artistName}"
+                        android:text="@{model.artist.name}"
                         tools:text="Jack White" />
 
                 </LinearLayout>

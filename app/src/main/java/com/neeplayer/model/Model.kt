@@ -18,6 +18,8 @@ object Model {
         context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
     }
 
+    var nowPlaying: Playlist? = null
+
     private val storIOContentResolver by lazy {
         DefaultStorIOContentResolver
                 .builder()
@@ -64,6 +66,7 @@ object Model {
                         .columns(Media._ID, Media.TITLE,  Media.DURATION, Media.TRACK)
                         .where(Media.ALBUM_ID + "=?")
                         .whereArgs(albumId)
+                        .sortOrder(Media.TRACK)
                         .build())
                 .withGetResolver(SongResolver())
                 .prepare()

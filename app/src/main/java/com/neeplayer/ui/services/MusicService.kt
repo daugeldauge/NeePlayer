@@ -1,11 +1,10 @@
-package com.neeplayer
+package com.neeplayer.ui.services
 
 import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
 import android.content.ContentUris
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.AudioManager
 import android.media.MediaPlayer
@@ -16,8 +15,10 @@ import android.provider.MediaStore
 import android.support.annotation.IdRes
 import android.support.v4.content.LocalBroadcastManager
 import android.widget.RemoteViews
-import com.neeplayer.model.Album
-import com.neeplayer.model.Song
+import com.neeplayer.R
+import com.neeplayer.model.Model
+import com.neeplayer.model.Playlist
+import com.neeplayer.ui.fragments.NowPlayingFragment
 import org.jetbrains.anko.toast
 
 class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener {
@@ -29,22 +30,15 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
 
     private val player: MediaPlayer = MediaPlayer()
 
-    private var albums: List<Album>? = null
-
-    private var artistName: String? = null
-    private var songPosition: Int = 0
-    private var albumPosition: Int = 0
-    private var nowPlaying: Song? = null
     private var paused = true
 
-    private var albumArt: Bitmap? = null
-    private var notificationContent: RemoteViews? = null
+    lateinit
+    private var playlist: Playlist
 
     private val musicBind = MusicBinder()
 
     override fun onCreate() {
         super.onCreate()
-        songPosition = 0
         initMediaPLayer()
     }
 
@@ -76,17 +70,8 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         player.setOnErrorListener(this)
     }
 
-    fun setList(albums: List<Album>?) {
-        this.albums = albums
-    }
-
-    fun setArtistName(artistName: String?) {
-        this.artistName = artistName
-    }
-
-    fun setPosition(albumPosition: Int, songPosition: Int) {
-        this.songPosition = songPosition
-        this.albumPosition = albumPosition
+    fun setPlaylist(playlist: Playlist) {
+        this.playlist = playlist
     }
 
     fun playSong() {
@@ -95,18 +80,14 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     }
 
     fun chooseSong() {
+        Model.nowPlaying = playlist
         player.reset()
-        val albums = this.albums ?: return
 
-        val song = albums.get(albumPosition).songs.get(songPosition)
-        val id = song.id
-
-        val trackUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id)
+        val songUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, playlist.currentSong.id)
 
         try {
-            player.setDataSource(applicationContext, trackUri)
+            player.setDataSource(applicationContext, songUri)
             player.prepareAsync()
-            this.nowPlaying = song
         } catch (e: Exception) {
             applicationContext.toast("Error on setting data source")
         }
@@ -154,8 +135,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
 
     private fun update() {
         val intent = Intent(NowPlayingFragment.UPDATE_NOW_PLAYING)
-        intent.putExtra("SONG_POSITION", songPosition)
-        intent.putExtra("ALBUM_POSITION", albumPosition)
+        intent.putExtra("POSITION", playlist.currentPosition)
         intent.putExtra("PAUSED", paused)
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
 
@@ -170,7 +150,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
                 .setPriority(Notification.PRIORITY_MAX)
                 .setCategory(Notification.CATEGORY_STATUS)
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
-                .setTicker(nowPlaying?.title)
+                .setTicker(playlist.currentSong.title)
                 .setSmallIcon(R.drawable.ic_play_arrow_white)
                 .setContent(smallContent)
                 .build()
@@ -181,10 +161,10 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     }
 
     private fun fillNotificationContent(content: RemoteViews) {
-        val albumArt = BitmapFactory.decodeFile(albums?.get(albumPosition)?.art);
+        val albumArt = BitmapFactory.decodeFile(playlist.currentAlbum.art);
         content.setImageViewBitmap(R.id.notification_album_art, albumArt);
-        content.setTextViewText(R.id.notification_song_title, nowPlaying?.title)
-        content.setTextViewText(R.id.notification_artist, artistName)
+        content.setTextViewText(R.id.notification_song_title, playlist.currentSong.title)
+        content.setTextViewText(R.id.notification_artist, playlist.artist.name)
         content.setImageViewResource(R.id.notification_play_pause_button, if (paused) R.drawable.ic_play_arrow_black_medium else R.drawable.ic_pause_black_medium)
 
         setupPendingIntent(content, R.id.notification_fast_rewind_button, PLAY_PREVIOUS_ACTION)
@@ -230,16 +210,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     }
 
     fun choosePrevious(paused: Boolean? = null) {
-        val albums = this.albums ?: return
-
-        --songPosition
-        if (songPosition < 0) {
-            --albumPosition
-            if (albumPosition < 0) {
-                albumPosition = albums.size - 1
-            }
-            songPosition = albums.get(albumPosition).songs.size - 1
-        }
+        playlist = playlist.previous()
 
         if (paused != null) {
             this.paused = paused
@@ -248,16 +219,8 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     }
 
     fun chooseNext(paused: Boolean? = null) {
-        val albums = this.albums ?: return
+        playlist = playlist.next()
 
-        ++songPosition
-        if (songPosition >= albums.get(albumPosition).songs.size) {
-            songPosition = 0
-            ++albumPosition
-            if (albumPosition >= albums.size) {
-                albumPosition = 0
-            }
-        }
         if (paused != null) {
             this.paused = paused
         }

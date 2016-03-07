@@ -1,4 +1,4 @@
-package com.neeplayer
+package com.neeplayer.ui.custom
 
 import android.databinding.BaseObservable
 import android.databinding.BindingAdapter

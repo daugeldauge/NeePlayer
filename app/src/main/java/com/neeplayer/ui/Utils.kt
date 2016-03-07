@@ -1,4 +1,4 @@
-package com.neeplayer
+package com.neeplayer.ui
 
 import android.support.design.widget.BottomSheetBehavior
 import android.view.View

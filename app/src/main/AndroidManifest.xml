@@ -17,7 +17,7 @@
             android:value="GlideModule" />
 
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.activities.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -27,7 +27,7 @@
         </activity>
 
         <service
-            android:name=".MusicService" />
+            android:name=".ui.services.MusicService" />
     </application>
 
 </manifest>

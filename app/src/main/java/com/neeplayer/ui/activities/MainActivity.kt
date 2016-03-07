@@ -1,17 +1,17 @@
-package com.neeplayer
+package com.neeplayer.ui.activities
 
 import android.app.FragmentTransaction
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import com.neeplayer.model.Album
-import com.neeplayer.model.Artist
-import com.neeplayer.model.Index
-import com.neeplayer.model.Model
-import java.util.*
+import com.neeplayer.ui.fragments.MainFragment
+import com.neeplayer.ui.fragments.NowPlayingFragment
+import com.neeplayer.R
+import com.neeplayer.model.*
+import com.neeplayer.ui.fragments.ArtistFragmentBuilder
 
 class MainActivity : AppCompatActivity() {
 
-    val nowPlayingFragment by lazy {
+    private val nowPlayingFragment by lazy {
         supportFragmentManager.findFragmentById(R.id.now_playing_fragment) as NowPlayingFragment
     }
 
@@ -24,7 +24,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         Model.init(this)
-        Model.getArtists().toString()
     }
 
     fun navigateToArtistFragment(artist: Artist) {
@@ -35,8 +34,9 @@ class MainActivity : AppCompatActivity() {
                 .commit()
     }
 
-    fun navigateToNowPlayingFragment(artistName: String, albumList: List<Album>, nowPlaying: Index.Song) {
-        nowPlayingFragment.update(artistName, albumList, nowPlaying)
+    fun navigateToNowPlayingFragment(artist: Artist, albumList: List<Album>, nowPlaying: Index.Song) {
+        Model.nowPlaying = Playlist(artist, albumList, nowPlaying)
+        nowPlayingFragment.play()
     }
 
     override fun onBackPressed() {

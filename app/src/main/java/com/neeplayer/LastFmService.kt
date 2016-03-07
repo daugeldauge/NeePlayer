@@ -5,7 +5,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 import rx.Observable
 
-public interface LastFmService {
+interface LastFmService {
 
     @GET("2.0?method=artist.getinfo&format=json")
     fun getArtistInfo(

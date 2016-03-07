@@ -1,4 +1,4 @@
-package com.neeplayer
+package com.neeplayer.ui.custom
 
 import android.content.Context
 import android.util.AttributeSet

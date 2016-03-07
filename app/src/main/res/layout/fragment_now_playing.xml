@@ -148,6 +148,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/now_playing_peek_height"
                 android:padding="4dp"
+                android:paddingEnd="0dp"
                 android:gravity="center_vertical"
                 android:background="@color/background">
 
@@ -187,7 +188,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:minWidth="@null"
-                    android:padding="6dp"
                     style="?android:attr/borderlessButtonStyle"
                     app:drawable="@{model.paused ? @drawable/ic_play_arrow_black_48dp : @drawable/ic_pause_black_48dp}"
                     tools:src="@drawable/ic_pause_black_48dp"

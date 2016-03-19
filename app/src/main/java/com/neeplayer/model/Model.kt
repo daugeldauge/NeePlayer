@@ -14,9 +14,12 @@ object Model {
 
     var nowPlaying: Playlist? = null
     set(value) {
+        val oldValue = field
         field = value
-        progress = 0
-        nowPlayingListeners.forEach { it() }
+        if (oldValue != value) {
+            progress = 0
+            nowPlayingListeners.forEach { it() }
+        }
     }
 
     var paused = true

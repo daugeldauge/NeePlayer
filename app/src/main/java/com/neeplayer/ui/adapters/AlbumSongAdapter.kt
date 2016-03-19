@@ -72,7 +72,12 @@ class AlbumSongAdapter(private val context: Context, private val albums: List<Al
                     if (song == Model.nowPlaying?.currentSong) {
                         binding.songTrack.visibility = View.GONE
                         binding.animationNowPlaying.visibility = View.VISIBLE
-                        (binding.animationNowPlaying.drawable as AnimatedVectorDrawable).start()
+                        val animation = binding.animationNowPlaying.drawable as AnimatedVectorDrawable
+                        if (Model.paused) {
+                            animation.stop()
+                        }  else {
+                            animation.start()
+                        }
                     } else {
                         binding.songTrack.visibility = View.VISIBLE
                         binding.animationNowPlaying.visibility = View.GONE

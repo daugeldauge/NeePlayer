@@ -32,7 +32,7 @@ sealed class Index {
     class Song(val albumIndex: Int, val songIndex: Int) : Index(), Serializable
 }
 
-class Playlist(private val songs: List<Song>, private val index: Int) {
+data class Playlist(private val songs: List<Song>, private val index: Int) {
 
     init {
         if (index < 0 || index >= songs.size) {

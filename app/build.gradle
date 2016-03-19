@@ -42,8 +42,8 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.2.0'
     compile 'com.pushtorefresh.storio:content-resolver:1.8.0'
 
-    kapt 'com.hannesdorfmann.fragmentargs:processor:3.0.1'
     kapt 'com.android.databinding:compiler:1.0-rc4'
+    kapt 'com.hannesdorfmann.fragmentargs:processor:3.0.1'
 }
 buildscript {
     ext.kotlin_version = '1.0.0-rc-1036'

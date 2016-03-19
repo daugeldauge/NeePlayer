@@ -23,25 +23,26 @@ class ArtistResolver : DefaultGetResolver<Artist>() {
     }
 }
 
-class AlbumResolver : DefaultGetResolver<Album>() {
+class AlbumResolver(val artist: Artist) : DefaultGetResolver<Album>() {
     override fun mapFromCursor(cursor: Cursor): Album {
         val id = cursor.getLong(BaseColumns._ID)!!
         return Album(
-                id    = id,
-                title = cursor.getString( Albums.ALBUM),
-                year  = cursor.getInt(    Albums.FIRST_YEAR),
-                art   = cursor.getString( Albums.ALBUM_ART),
-                songs = Model.getSongs(   id)
+                artist = artist,
+                id     = id,
+                title  = cursor.getString( Albums.ALBUM),
+                year   = cursor.getInt(    Albums.FIRST_YEAR),
+                art    = cursor.getString( Albums.ALBUM_ART)
         )
     }
 }
 
-class SongResolver : DefaultGetResolver<Song>() {
+class SongResolver(val album: Album) : DefaultGetResolver<Song>() {
     override fun mapFromCursor(cursor: Cursor): Song {
         return Song(
+                album    = album,
                 id       = cursor.getLong(   Media._ID)!!,
                 title    = cursor.getString( Media.TITLE),
-                duration = cursor.getLong(   Media.DURATION)!!,
+                duration = cursor.getInt(    Media.DURATION)!!,
                 track    = cursor.getInt(    Media.TRACK)
         )
     }

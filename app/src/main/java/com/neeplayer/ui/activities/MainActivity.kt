@@ -1,13 +1,16 @@
 package com.neeplayer.ui.activities
 
 import android.app.FragmentTransaction
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import com.neeplayer.ui.fragments.MainFragment
-import com.neeplayer.ui.fragments.NowPlayingFragment
+
 import com.neeplayer.R
-import com.neeplayer.model.*
+import com.neeplayer.ui.fragments.MainFragment
+import com.neeplayer.model.Artist
 import com.neeplayer.ui.fragments.ArtistFragmentBuilder
+import com.neeplayer.ui.views.impl.MusicService
+import com.neeplayer.ui.views.impl.NowPlayingFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,6 +21,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        startService(Intent(this, MusicService::class.java))
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction().add(R.id.fragment_container, MainFragment()).commit()
@@ -30,11 +35,6 @@ class MainActivity : AppCompatActivity() {
                 .replace(R.id.fragment_container, ArtistFragmentBuilder(artist).build())
                 .addToBackStack(null)
                 .commit()
-    }
-
-    fun navigateToNowPlayingFragment(artist: Artist, albumList: List<Album>, nowPlaying: Index.Song) {
-        Model.nowPlaying = Playlist(artist, albumList, nowPlaying)
-        nowPlayingFragment.update(true)
     }
 
     override fun onBackPressed() {

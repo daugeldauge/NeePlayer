@@ -10,7 +10,7 @@ import android.view.*
 import com.neeplayer.LastFmService
 import com.neeplayer.R
 import com.neeplayer.model.Artist
-import com.neeplayer.model.Model
+import com.neeplayer.model.Database
 import com.neeplayer.ui.activities.MainActivity
 import com.neeplayer.ui.adapters.ArtistAdapter
 import okhttp3.OkHttpClient
@@ -23,13 +23,12 @@ import rx.schedulers.Schedulers
 import org.jetbrains.anko.warn
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
 
+// TODO Refactor to MVP
 class MainFragment : Fragment(), AnkoLogger {
+    private val artistImages = mutableMapOf<Artist, String>()
 
-    private var artistImages: SharedPreferences? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        artistImages = activity.getSharedPreferences("ArtistImages", 0)
+    private val savedArtistImages: SharedPreferences by lazy {
+        activity.getSharedPreferences("ArtistImages", 0)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -40,7 +39,7 @@ class MainFragment : Fragment(), AnkoLogger {
         super.onViewCreated(view, savedInstanceState)
         val recyclerView = view as RecyclerView
 
-        recyclerView.adapter = ArtistAdapter(activity, getArtistList()) {
+        recyclerView.adapter = ArtistAdapter(activity, getArtistList(), artistImages) {
             (activity as MainActivity).navigateToArtistFragment(it)
         }
         recyclerView.layoutManager = LinearLayoutManager(activity)
@@ -64,10 +63,10 @@ class MainFragment : Fragment(), AnkoLogger {
                 .client(httpClient)
                 .build().create(LastFmService::class.java)
 
-        val list = Model.getArtists()
+        val list = Database.getArtists()
 
         list.forEach { artist ->
-            val image = artistImages?.getString(artist.name, null)
+            val image = savedArtistImages.getString(artist.name, null)
             if (image.isNullOrEmpty()) {
                 lastFm.getArtistInfo(artist.name)
                         .subscribeOn(Schedulers.io())
@@ -76,13 +75,15 @@ class MainFragment : Fragment(), AnkoLogger {
                             getArtistImageUrl(it.string())
                         }
                         .subscribe({
-                            artist.imageURL = it
-                            artistImages?.edit()?.putString(artist.name, it)?.commit()
+                            val retrievedImage = it ?: return@subscribe
+
+                            artistImages.put(artist, retrievedImage)
+                            savedArtistImages.edit().putString(artist.name, retrievedImage).apply()
                         }, {
-                            warn("Couldn't retrieve artist image", it)
+                            warn("Couldn't retrieve artist image url", it)
                         })
             } else {
-                artist.imageURL = image
+                artistImages.put(artist, image)
             }
         }
 
@@ -99,6 +100,8 @@ class MainFragment : Fragment(), AnkoLogger {
                 return image.getString("#text")
             }
         }
+
+        warn("Invalid json")
         return null
     }
 

@@ -8,6 +8,10 @@
         <variable
             name="album"
             type="com.neeplayer.model.Album"/>
+
+        <variable
+            name="info"
+            type="String"/>
     </data>
 
     <LinearLayout
@@ -43,7 +47,7 @@
             <TextView
                 style="@style/Text.Regular"
                 android:id="@+id/album_info"
-                android:text="@{album.info}"
+                android:text="@{info}"
                 tools:text="12 songs, 57 min"/>
 
             <TextView

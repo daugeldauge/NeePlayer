@@ -13,7 +13,14 @@ import com.neeplayer.model.Artist
 import org.jetbrains.anko.onClick
 
 
-class ArtistAdapter(private val context: Context, private val artists: List<Artist>, private val onClickListener: (Artist) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ArtistAdapter(
+
+        private val context: Context,
+        private val artists: List<Artist>,
+        private val artistImages: Map<Artist, String>,
+        private val onClickListener: (Artist) -> Unit
+
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun getItemCount(): Int = artists.size
 
@@ -27,8 +34,10 @@ class ArtistAdapter(private val context: Context, private val artists: List<Arti
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
         val binding = (holder as ViewHolder).binding
-        binding.artist = artists[position]
-        binding.root.onClick { onClickListener(artists[position]) }
+        val artist = artists[position]
+        binding.artist = artist
+        binding.artistImageUrl = artistImages[artist]
+        binding.root.onClick { onClickListener(artist) }
     }
 
 }

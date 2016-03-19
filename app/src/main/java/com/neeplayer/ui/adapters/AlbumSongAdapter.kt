@@ -9,14 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import com.neeplayer.databinding.AlbumBinding
 import com.neeplayer.databinding.SongBinding
-import com.neeplayer.model.Album
-import com.neeplayer.model.Index
-import com.neeplayer.model.Model
-import com.neeplayer.model.Playlist
+import com.neeplayer.model.*
 import org.jetbrains.anko.onClick
 
 
-class AlbumSongAdapter(private val context: Context, private val albums: List<Album>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class AlbumSongAdapter(private val context: Context, private val albums: List<AlbumWithSongs>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val ALBUM_ITEM = 0
     private val SONG_ITEM = 1
@@ -27,7 +24,7 @@ class AlbumSongAdapter(private val context: Context, private val albums: List<Al
         )
     }.flatten()
 
-    var onSongClickListener: (Index.Song) -> Unit = {}
+    private val songs = albums.flatMap { it.songs }
 
     override fun getItemCount(): Int = indices.size
 
@@ -56,14 +53,23 @@ class AlbumSongAdapter(private val context: Context, private val albums: List<Al
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
         val index = indices[position]
         when(index) {
-            is Index.Album -> (holder as AlbumViewHolder).binding.album = albums[index.value]
+            is Index.Album -> {
+                val binding = (holder as AlbumViewHolder).binding
+                val albumWithSongs = albums[index.value]
+                binding.album = albumWithSongs.album
+                binding.info = albumWithSongs.info
+            }
             is Index.Song -> {
                 val binding = (holder as SongViewHolder).binding
-                binding.song = albums[index.albumIndex].songs[index.songIndex]
-                binding.root.onClick { onSongClickListener(index) }
+                val song = albums[index.albumIndex].songs[index.songIndex]
+                binding.song = song
+                binding.root.onClick {
+                    Model.nowPlaying = Playlist(songs, songs.indexOf(song))
+                    Model.paused = false
+                }
 
                 val listener = {
-                    if (binding.song == Model.nowPlaying?.currentSong) {
+                    if (song == Model.nowPlaying?.currentSong) {
                         binding.songTrack.visibility = View.GONE
                         binding.animationNowPlaying.visibility = View.VISIBLE
                         (binding.animationNowPlaying.drawable as AnimatedVectorDrawable).start()
@@ -73,8 +79,8 @@ class AlbumSongAdapter(private val context: Context, private val albums: List<Al
                     }
                 }
 
-                Model.onNowPlayingChangeListeners.add(listener)
-                listener()
+                //TODO Fix memory leak
+                Model.addNowPlayingListener(listener)
             }
         }
     }

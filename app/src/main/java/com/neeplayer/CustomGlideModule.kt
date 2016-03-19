@@ -11,5 +11,5 @@ class CustomGlideModule : GlideModule {
         builder.setMemoryCache(LruResourceCache(50 * 1024 * 1024))
     }
 
-    override fun registerComponents(context: Context?, glide: Glide?) {}
+    override fun registerComponents(context: Context, glide: Glide) {}
 }

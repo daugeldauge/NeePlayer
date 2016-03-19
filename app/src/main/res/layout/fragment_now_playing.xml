@@ -6,8 +6,14 @@
     <data>
         <import type="android.view.View"/>
         <variable
-            name="model"
-            type="com.neeplayer.ui.view_models.NowPlayingViewModel" />
+            name="song"
+            type="com.neeplayer.model.Song"/>
+        <variable
+            name="paused"
+            type="boolean"/>
+        <variable
+            name="progress"
+            type="int"/>
     </data>
 
     <android.support.design.widget.CoordinatorLayout
@@ -37,7 +43,7 @@
                     android:adjustViewBounds="true"
                     android:background="@color/image_alt"
                     android:id="@+id/np_album_art"
-                    app:imagePath="@{model.album.art}"
+                    app:imagePath="@{song.album.art}"
                     tools:src="@color/image_alt"
                     tools:layout_height="360dp" />
 
@@ -45,8 +51,8 @@
                         android:id="@+id/np_seek_bar"
                         android:layout_height="wrap_content"
                         android:layout_width="match_parent"
-                        android:progress="@{(int)model.timePlayed}"
-                        android:max="@{(int)model.song.duration}" />
+                        android:progress="@{progress}"
+                        android:max="@{song.duration}" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -57,7 +63,7 @@
                         <TextView
                             style="@style/Text.Regular"
                             android:paddingStart="8dp"
-                            app:duration="@{model.timePlayed}"
+                            app:duration="@{progress}"
                             tools:text="0:23" />
 
                         <Space
@@ -68,7 +74,7 @@
                         <TextView
                             style="@style/Text.Regular"
                             android:paddingEnd="8dp"
-                            app:duration="@{model.song.duration}"
+                            app:duration="@{song.duration}"
                             tools:text="4:12" />
 
                     </LinearLayout>
@@ -93,7 +99,7 @@
                                 android:layout_width="match_parent"
                                 android:textSize="22sp"
                                 android:gravity="center"
-                                android:text="@{model.song.title}"
+                                android:text="@{song.title}"
                                 tools:text="The Weather Report Suite"
                                 android:id="@+id/np_song_title" />
 
@@ -102,7 +108,7 @@
                                 android:layout_width="match_parent"
                                 android:textSize="18sp"
                                 android:gravity="center"
-                                android:text="@{model.artist.name + ` – ` + model.album.title}"
+                                android:text="@{song.album.artist.name + ` – ` + song.album.title}"
                                 tools:text="Jack White – Lazaretto"
                                 android:id="@+id/np_artist_and_album" />
 
@@ -125,7 +131,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 style="?android:attr/borderlessButtonStyle"
-                                app:drawable="@{model.paused ? @drawable/ic_play_arrow_black_48dp : @drawable/ic_pause_black_48dp}"
+                                app:drawable="@{paused ? @drawable/ic_play_arrow_black_48dp : @drawable/ic_pause_black_48dp}"
                                 tools:src="@drawable/ic_pause_black_48dp"
                                 android:id="@+id/np_play_pause" />
 
@@ -158,7 +164,7 @@
                     android:layout_width="64dp"
                     android:layout_height="64dp"
                     android:background="@color/image_alt"
-                    app:imagePath="@{model.album.art}" />
+                    app:imagePath="@{song.album.art}" />
 
                 <LinearLayout
                     android:layout_toEndOf="@id/np_collapsed_album_art"
@@ -171,13 +177,13 @@
                     <TextView
                         style="@style/Text.Title"
                         android:layout_width="match_parent"
-                        android:text="@{model.song.title}"
+                        android:text="@{song.title}"
                         tools:text="The Weather Report Suite laa lala lalallalallal" />
 
                     <TextView
                         style="@style/Text.Regular"
                         android:layout_width="match_parent"
-                        android:text="@{model.artist.name}"
+                        android:text="@{song.album.artist.name}"
                         tools:text="Jack White" />
 
                 </LinearLayout>
@@ -189,7 +195,7 @@
                     android:layout_height="wrap_content"
                     android:minWidth="@null"
                     style="?android:attr/borderlessButtonStyle"
-                    app:drawable="@{model.paused ? @drawable/ic_play_arrow_black_48dp : @drawable/ic_pause_black_48dp}"
+                    app:drawable="@{paused ? @drawable/ic_play_arrow_black_48dp : @drawable/ic_pause_black_48dp}"
                     tools:src="@drawable/ic_pause_black_48dp"
                     android:id="@+id/np_collapsed_play_pause" />
 

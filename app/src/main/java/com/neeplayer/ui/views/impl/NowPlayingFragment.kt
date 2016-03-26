@@ -58,6 +58,11 @@ class NowPlayingFragment : Fragment(), NowPlayingView {
 
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        presenter.onDestroy()
+    }
+
     override fun setSong(song: Song) {
         binding.song = song
     }

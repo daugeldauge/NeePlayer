@@ -9,9 +9,13 @@ import android.view.View
 import android.view.ViewGroup
 import com.hannesdorfmann.fragmentargs.annotation.Arg
 import com.hannesdorfmann.fragmentargs.annotation.FragmentWithArgs
-import com.neeplayer.R
+import com.neeplayer.*
 import com.neeplayer.model.*
 import com.neeplayer.ui.adapters.AlbumSongAdapter
+import org.jetbrains.anko.toast
+import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
+import javax.inject.Inject
 
 @FragmentWithArgs
 class ArtistFragment : Fragment() {

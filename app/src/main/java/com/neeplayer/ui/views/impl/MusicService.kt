@@ -119,7 +119,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     override fun onError(mp: MediaPlayer, what: Int, extra: Int): Boolean {
         mp.reset()
         state = State.IDLE
-        applicationContext.toast("Media player error")
+        applicationContext.toast(R.string.media_player_error)
         return true
     }
     //endregion

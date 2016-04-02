@@ -3,6 +3,7 @@ package com.neeplayer.ui.presenters
 import com.neeplayer.model.Model
 import com.neeplayer.model.Song
 import com.neeplayer.ui.views.NowPlayingView
+import java.util.concurrent.TimeUnit
 
 class NowPlayingPresenter(view: NowPlayingView) : BasePresenter<NowPlayingView>(view) {
     private var lastSong: Song? = null
@@ -12,6 +13,7 @@ class NowPlayingPresenter(view: NowPlayingView) : BasePresenter<NowPlayingView>(
 
         if (song != null && song != lastSong) {
             lastSong = song
+            isCurrentSongScrobbled = false
             view.setSong(song)
         }
 
@@ -46,6 +48,24 @@ class NowPlayingPresenter(view: NowPlayingView) : BasePresenter<NowPlayingView>(
 
     fun onSeek(progress: Int) {
         Model.progress = progress
+    }
+
+    val minSongLengthToScrobble = TimeUnit.SECONDS.toMillis(30)
+    val scrobbleFractionThreshold = 0.5
+    val scrobbleThreshold = TimeUnit.MINUTES.toMillis(4)
+
+    var isCurrentSongScrobbled = false
+
+    fun onTick(ticking: Int) {
+        val song = lastSong
+        if (song == null || isCurrentSongScrobbled) {
+            return
+        }
+
+        if (song.duration > minSongLengthToScrobble && (ticking >= song.duration * scrobbleFractionThreshold || ticking >= scrobbleThreshold )) {
+            isCurrentSongScrobbled = true
+            Model.scrobble()
+        }
     }
 
     override fun onDestroy() {

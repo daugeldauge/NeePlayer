@@ -21,6 +21,7 @@ class NowPlayingFragment : Fragment(), NowPlayingView {
     private val handler = Handler()
     private var needToStopTicking = false
     private val TICK_PERIOD = 1000
+    private var overallTicking = 0
 
     lateinit
     private var binding: FragmentNowPlayingBinding
@@ -65,6 +66,7 @@ class NowPlayingFragment : Fragment(), NowPlayingView {
 
     override fun setSong(song: Song) {
         binding.song = song
+        overallTicking = 0
     }
 
     override fun play() {
@@ -104,6 +106,8 @@ class NowPlayingFragment : Fragment(), NowPlayingView {
 
     private val tock = Runnable {
         if (!needToStopTicking) {
+            overallTicking += TICK_PERIOD
+            presenter.onTick(overallTicking)
             binding.progress = Math.min(binding.song.duration, TICK_PERIOD * (binding.progress / TICK_PERIOD).inc())
             tick()
         }

@@ -3,4 +3,9 @@
 
     <string name="last_fm_auth_error">Authentication error. Please try again.</string>
     <string name="last_fm_auth_success">Authentication succeeded</string>
+
+    <string name="media_player_error">Media player error</string>
+
+    <string name="scrobble_error">Scrobbling error</string>
+    <string name="scrobble_success">\"%1$s\" scrobbled</string>
 </resources>

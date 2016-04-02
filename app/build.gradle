@@ -28,25 +28,28 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.github.bumptech.glide:glide:3.6.1'
-    compile 'com.android.support:support-v4:23.2.0'
+    compile 'com.android.support:support-v4:23.2.1'
     compile 'org.jetbrains.anko:anko-sdk21:0.8.2'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile 'com.android.support:recyclerview-v7:23.2.0'
-    compile 'com.squareup.retrofit2:retrofit:2.0.0-beta4'
-    compile 'com.squareup.retrofit2:adapter-rxjava:2.0.0-beta4'
+    compile 'com.android.support:recyclerview-v7:23.2.1'
+    compile 'com.squareup.retrofit2:retrofit:2.0.0'
+    compile 'com.squareup.retrofit2:adapter-rxjava:2.0.0'
     compile 'io.reactivex:rxjava:1.1.0'
     compile 'io.reactivex:rxandroid:1.1.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.0.1'
     compile 'com.hannesdorfmann.fragmentargs:annotation:3.0.1'
-    compile 'com.android.support:design:23.2.0'
-    compile 'com.android.support:appcompat-v7:23.2.0'
+    compile 'com.android.support:design:23.2.1'
+    compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.pushtorefresh.storio:content-resolver:1.8.0'
+    compile 'com.google.dagger:dagger:2.1'
 
     kapt 'com.android.databinding:compiler:1.0-rc4'
     kapt 'com.hannesdorfmann.fragmentargs:processor:3.0.1'
+    kapt "com.google.dagger:dagger-compiler:2.1"
+
 }
 buildscript {
-    ext.kotlin_version = '1.0.0-rc-1036'
+    ext.kotlin_version = '1.0.1'
     repositories {
         mavenCentral()
     }

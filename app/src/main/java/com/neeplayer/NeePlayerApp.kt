@@ -1,8 +1,6 @@
 package com.neeplayer
 
 import android.app.Application
-import android.content.Context
-import com.neeplayer.model.NowPlayingModel
 
 class NeePlayerApp : Application() {
     companion object {

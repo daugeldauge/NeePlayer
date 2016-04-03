@@ -12,10 +12,6 @@ class NowPlayingPresenter(view: NowPlayingView) : BasePresenter<NowPlayingView>(
 
     private var lastSong: Song? = null
 
-    private val progressListener = {
-        view.seek(model.progress)
-    }
-
     private val subscription = CompositeSubscription()
 
     @Inject
@@ -27,7 +23,7 @@ class NowPlayingPresenter(view: NowPlayingView) : BasePresenter<NowPlayingView>(
             val song = it.currentSong
 
             if (song != lastSong) {
-                lastSong
+                lastSong = song
                 isCurrentSongScrobbled = false
                 view.setSong(song)
             }
@@ -39,8 +35,9 @@ class NowPlayingPresenter(view: NowPlayingView) : BasePresenter<NowPlayingView>(
             }
         })
 
-
-        model.addProgressListener(progressListener)
+        subscription.add(model.progressObservable.subscribe {
+            view.seek(model.progress)
+        })
     }
 
     fun onPreviousClicked() {
@@ -73,13 +70,13 @@ class NowPlayingPresenter(view: NowPlayingView) : BasePresenter<NowPlayingView>(
 
         if (song.duration > minSongLengthToScrobble && (ticking >= song.duration * scrobbleFractionThreshold || ticking >= scrobbleThreshold )) {
             isCurrentSongScrobbled = true
-            model.scrobble()
+            model.scrobble(song)
         }
     }
 
     override fun onDestroy() {
+        super.onDestroy()
         model.save()
-        subscription.clear()
-        model.removeProgressListener(progressListener)
+        subscription.unsubscribe()
     }
 }

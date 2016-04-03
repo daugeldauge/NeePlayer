@@ -10,11 +10,16 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import rx.subjects.BehaviorSubject
 
-class NowPlayingModel(val context: Context, val lastFm: LastFmService, val preferences: Preferences, val database: Database) {
+class NowPlayingModel(
+        private val context: Context,
+        private val lastFm: LastFmService,
+        private val preferences: Preferences,
+        private val database: Database
+) {
 
     private val nowPlayingSubject = BehaviorSubject.create<Playlist>()
 
-    var nowPlaying: Playlist? = database.restorePlaylist(preferences.get(NOW_PLAYING_SONG_ID))
+    var nowPlaying: Playlist? = null
         set(value) {
             field = value
             if (value != null) {
@@ -25,22 +30,19 @@ class NowPlayingModel(val context: Context, val lastFm: LastFmService, val prefe
     val nowPlayingObservable: Observable<Playlist>
         get() = nowPlayingSubject
 
+    private val progressSubject = BehaviorSubject.create<Int>()
+
+    val progressObservable: Observable<Int>
+        get() = progressSubject
+
     var progress = 0
     set(value) {
         field = value
-        progressListeners.forEach { it() }
+        progressSubject.onNext(value)
     }
 
-    private val progressListeners = mutableSetOf<() -> Unit>()
-
-    fun addProgressListener(listener: () -> Unit) {
-        listener()
-        progressListeners.add(listener)
-    }
-
-
-    fun removeProgressListener(listener: () -> Unit) {
-        progressListeners.remove(listener)
+    init {
+        nowPlaying = database.restorePlaylist(preferences.get(NOW_PLAYING_SONG_ID))
     }
 
     fun save() {
@@ -48,8 +50,7 @@ class NowPlayingModel(val context: Context, val lastFm: LastFmService, val prefe
         preferences.put(NOW_PLAYING_SONG_ID, nowPlaying.currentSong.id)
     }
 
-    fun scrobble() {
-        val song = (nowPlaying?.currentSong) ?: return
+    fun scrobble(song: Song) {
 
         lastFm.scrobble(
                 track = song.title ?: return,

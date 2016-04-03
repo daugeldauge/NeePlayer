@@ -61,6 +61,7 @@ class NowPlayingFragment : Fragment(), NowPlayingView {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        handler.removeCallbacks(tock)
         presenter.onDestroy()
     }
 

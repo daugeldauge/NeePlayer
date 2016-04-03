@@ -1,15 +1,18 @@
 package com.neeplayer.ui.presenters
 
-import com.neeplayer.model.Model
+import com.neeplayer.NeePlayerApp
+import com.neeplayer.model.NowPlayingModel
 import com.neeplayer.model.Song
 import com.neeplayer.ui.views.NowPlayingView
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 class NowPlayingPresenter(view: NowPlayingView) : BasePresenter<NowPlayingView>(view) {
+
     private var lastSong: Song? = null
 
     private val nowPlayingListener = {
-        val song = Model.nowPlaying?.currentSong
+        val song = model.nowPlaying?.currentSong
 
         if (song != null && song != lastSong) {
             lastSong = song
@@ -17,7 +20,7 @@ class NowPlayingPresenter(view: NowPlayingView) : BasePresenter<NowPlayingView>(
             view.setSong(song)
         }
 
-        if (Model.paused) {
+        if (model.paused) {
             view.pause()
         } else {
             view.play()
@@ -26,28 +29,32 @@ class NowPlayingPresenter(view: NowPlayingView) : BasePresenter<NowPlayingView>(
     }
 
     private val progressListener = {
-        view.seek(Model.progress)
+        view.seek(model.progress)
     }
 
+    @Inject
+    internal lateinit var model: NowPlayingModel
+
     init {
-        Model.addNowPlayingListener(nowPlayingListener)
-        Model.addProgressListener(progressListener)
+        NeePlayerApp.component!!.inject(this)
+        model.addNowPlayingListener(nowPlayingListener)
+        model.addProgressListener(progressListener)
     }
 
     fun onPreviousClicked() {
-        Model.nowPlaying = Model.nowPlaying?.previous()
+        model.nowPlaying = model.nowPlaying?.previous()
     }
 
     fun onNextClicked() {
-        Model.nowPlaying = Model.nowPlaying?.next()
+        model.nowPlaying = model.nowPlaying?.next()
     }
 
     fun onPlayPauseClicked() {
-        Model.paused = !Model.paused
+        model.paused = !model.paused
     }
 
     fun onSeek(progress: Int) {
-        Model.progress = progress
+        model.progress = progress
     }
 
     val minSongLengthToScrobble = TimeUnit.SECONDS.toMillis(30)
@@ -64,13 +71,13 @@ class NowPlayingPresenter(view: NowPlayingView) : BasePresenter<NowPlayingView>(
 
         if (song.duration > minSongLengthToScrobble && (ticking >= song.duration * scrobbleFractionThreshold || ticking >= scrobbleThreshold )) {
             isCurrentSongScrobbled = true
-            Model.scrobble()
+            model.scrobble()
         }
     }
 
     override fun onDestroy() {
-        Model.save()
-        Model.removeNowPlayingListener(nowPlayingListener)
-        Model.removeProgressListener(progressListener)
+        model.save()
+        model.removeNowPlayingListener(nowPlayingListener)
+        model.removeProgressListener(progressListener)
     }
 }

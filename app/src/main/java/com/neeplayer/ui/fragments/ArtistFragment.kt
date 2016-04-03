@@ -12,30 +12,26 @@ import com.hannesdorfmann.fragmentargs.annotation.FragmentWithArgs
 import com.neeplayer.*
 import com.neeplayer.model.*
 import com.neeplayer.ui.adapters.AlbumSongAdapter
-import org.jetbrains.anko.toast
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
 import javax.inject.Inject
 
 @FragmentWithArgs
 class ArtistFragment : Fragment() {
 
     @Arg
-    lateinit var artist: Artist
+    internal lateinit var artist: Artist
 
-    lateinit var albums: List<Album>
+    @Inject
+    internal lateinit var database: Database
 
-    lateinit var albumsWithSongs: List<AlbumWithSongs>
+    @Inject
+    internal lateinit var model: NowPlayingModel
 
+    var adapter: AlbumSongAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ArtistFragmentBuilder.injectArguments(this)
-        albums = Database.getAlbums(artist)
-
-        albumsWithSongs = albums.map {
-            AlbumWithSongs(it, Database.getSongs(it))
-        }
+        NeePlayerApp.component!!.inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -45,10 +41,33 @@ class ArtistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val albums = database.getAlbums(artist)
+
+        val albumsWithSongs = albums.map {
+            AlbumWithSongs(it, database.getSongs(it))
+        }
+
+        val songs = albumsWithSongs.flatMap { it.songs }
+
         val albumListView = view as RecyclerView
-        val adapter = AlbumSongAdapter(activity, albumsWithSongs)
+        adapter = AlbumSongAdapter(activity, albumsWithSongs) {
+            model.paused = false
+            model.nowPlaying = Playlist(songs, songs.indexOf(it))
+        }
 
         albumListView.adapter = adapter
         albumListView.layoutManager = LinearLayoutManager(activity)
+
+        model.addNowPlayingListener(nowPlayingListener)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        model.removeNowPlayingListener(nowPlayingListener)
+    }
+
+    private val nowPlayingListener = {
+        adapter?.paused = model.paused
+        adapter?.nowPlaying = model.nowPlaying?.currentSong
     }
 }

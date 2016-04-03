@@ -9,16 +9,11 @@ import com.pushtorefresh.storio.contentresolver.impl.DefaultStorIOContentResolve
 import com.pushtorefresh.storio.contentresolver.queries.Query
 
 
-object Database {
+class Database(context: Context) {
 
-    lateinit
-    private var storIOContentResolver: DefaultStorIOContentResolver
-
-    fun init(context: Context) {
-        storIOContentResolver = DefaultStorIOContentResolver.builder()
+    private val storIOContentResolver = DefaultStorIOContentResolver.builder()
                 .contentResolver(context.contentResolver)
                 .build()
-    }
 
     fun getArtists(): List<Artist> {
         return storIOContentResolver

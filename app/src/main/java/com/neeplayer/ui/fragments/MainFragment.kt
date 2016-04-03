@@ -11,6 +11,7 @@ import android.view.*
 import com.neeplayer.LastFmService
 import com.neeplayer.NeePlayerApp
 import com.neeplayer.Preferences
+import com.neeplayer.Preferences.Item.StringItem.SESSION_KEY
 import com.neeplayer.R
 import com.neeplayer.model.Artist
 import com.neeplayer.model.Database
@@ -40,11 +41,14 @@ class MainFragment : Fragment(), AnkoLogger {
     @Inject
     lateinit internal var preferences: Preferences
 
+    @Inject
+    lateinit internal var database: Database
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         NeePlayerApp.component!!.inject(this)
 
-        if (preferences.get(Preferences.Item.SESSION_KEY) != null) {
+        if (preferences.get(SESSION_KEY) != null) {
             return
         }
 
@@ -84,7 +88,7 @@ class MainFragment : Fragment(), AnkoLogger {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                preferences.put(Preferences.Item.SESSION_KEY, it.getJSONObject("session").getString("key"))
+                preferences.put(SESSION_KEY, it.getJSONObject("session").getString("key"))
                 context.toast(R.string.last_fm_auth_success)
             }, {
                 context.toast(R.string.last_fm_auth_error)
@@ -93,7 +97,7 @@ class MainFragment : Fragment(), AnkoLogger {
 
     private fun getArtistList(): List<Artist> {
 
-        val list = Database.getArtists()
+        val list = database.getArtists()
 
         list.forEach { artist ->
             val image = savedArtistImages.getString(artist.name, null)

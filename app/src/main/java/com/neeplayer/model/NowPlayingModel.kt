@@ -2,26 +2,13 @@ package com.neeplayer.model
 
 import android.content.Context
 import com.neeplayer.*
+import com.neeplayer.Preferences.Item.LongItem.*
+import com.neeplayer.Preferences.Item.StringItem.*
 import org.jetbrains.anko.toast
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
-import javax.inject.Inject
 
-object Model {
-    private val SHARED_PREFERENCES_NAME = "MAIN"
-    private val NOW_PLAYING_SONG = "NOW_PLAYING_SONG"
-
-    private lateinit var context: Context
-
-    private val prefs by lazy {
-        context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
-    }
-
-    @Inject
-    lateinit internal var lastFm: LastFmService
-
-    @Inject
-    lateinit internal var preferences: Preferences
+class NowPlayingModel(val context: Context, val lastFm: LastFmService, val preferences: Preferences, val database: Database) {
 
     var nowPlaying: Playlist? = null
     set(value) {
@@ -68,24 +55,17 @@ object Model {
     }
 
 
-    fun init(context: Context) {
-        this.context = context.applicationContext
-        Database.init(context)
+    init {
+        val nowPlayingSongId = preferences.get(NOW_PLAYING_SONG_ID)
 
-        val nowPlayingSongId = prefs.getLong(NOW_PLAYING_SONG, -1L)
-        if (nowPlayingSongId == -1L) {
-            return
+        if (nowPlayingSongId != null) {
+            nowPlaying = database.restorePlaylist(nowPlayingSongId)
         }
-        nowPlaying = Database.restorePlaylist(nowPlayingSongId)
-
-        //TODO inject
-        lastFm = LastFmModule().provideLastFmService()
-        preferences = AppModule(context).providePreferences()
     }
 
     fun save() {
         val nowPlaying = nowPlaying ?: return
-        prefs.edit().putLong(NOW_PLAYING_SONG, nowPlaying.currentSong.id).apply()
+        preferences.put(NOW_PLAYING_SONG_ID, nowPlaying.currentSong.id)
     }
 
     fun scrobble() {
@@ -96,7 +76,7 @@ object Model {
                 album = song.album.title,
                 artist = song.album.artist.name,
                 timestamp = System.currentTimeMillis() / 1000,
-                sessionKey = preferences.get(Preferences.Item.SESSION_KEY) ?: return
+                sessionKey = preferences.get(SESSION_KEY) ?: return
         )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

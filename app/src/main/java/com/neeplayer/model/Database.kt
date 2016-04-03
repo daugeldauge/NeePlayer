@@ -57,7 +57,8 @@ class Database(context: Context) {
                 .executeAsBlocking()
     }
 
-    fun restorePlaylist(songId: Long): Playlist? {
+    fun restorePlaylist(songId: Long?): Playlist? {
+        songId ?: return null
         val artistId = getArtistId(songId) ?: return null
         val artist = getArtist(artistId) ?: return null
 
@@ -67,7 +68,7 @@ class Database(context: Context) {
         val index = songs.indexOfFirst { it.id == songId }
 
         return if (index < 0) null
-               else Playlist(songs, index)
+               else Playlist(songs, index, true)
     }
 
     fun getArtist(artistId: Long): Artist? {

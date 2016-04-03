@@ -4,6 +4,7 @@ import com.neeplayer.NeePlayerApp
 import com.neeplayer.model.NowPlayingModel
 import com.neeplayer.model.Song
 import com.neeplayer.ui.views.NowPlayingView
+import rx.subscriptions.CompositeSubscription
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -11,33 +12,34 @@ class NowPlayingPresenter(view: NowPlayingView) : BasePresenter<NowPlayingView>(
 
     private var lastSong: Song? = null
 
-    private val nowPlayingListener = {
-        val song = model.nowPlaying?.currentSong
-
-        if (song != null && song != lastSong) {
-            lastSong = song
-            isCurrentSongScrobbled = false
-            view.setSong(song)
-        }
-
-        if (model.paused) {
-            view.pause()
-        } else {
-            view.play()
-        }
-
-    }
-
     private val progressListener = {
         view.seek(model.progress)
     }
+
+    private val subscription = CompositeSubscription()
 
     @Inject
     internal lateinit var model: NowPlayingModel
 
     init {
         NeePlayerApp.component!!.inject(this)
-        model.addNowPlayingListener(nowPlayingListener)
+        subscription.add(model.nowPlayingObservable.subscribe {
+            val song = it.currentSong
+
+            if (song != lastSong) {
+                lastSong
+                isCurrentSongScrobbled = false
+                view.setSong(song)
+            }
+
+            if (it.paused) {
+                view.pause()
+            } else {
+                view.play()
+            }
+        })
+
+
         model.addProgressListener(progressListener)
     }
 
@@ -50,7 +52,7 @@ class NowPlayingPresenter(view: NowPlayingView) : BasePresenter<NowPlayingView>(
     }
 
     fun onPlayPauseClicked() {
-        model.paused = !model.paused
+        model.nowPlaying = model.nowPlaying?.togglePaused()
     }
 
     fun onSeek(progress: Int) {
@@ -77,7 +79,7 @@ class NowPlayingPresenter(view: NowPlayingView) : BasePresenter<NowPlayingView>(
 
     override fun onDestroy() {
         model.save()
-        model.removeNowPlayingListener(nowPlayingListener)
+        subscription.clear()
         model.removeProgressListener(progressListener)
     }
 }

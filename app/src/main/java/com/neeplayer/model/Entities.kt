@@ -27,12 +27,7 @@ class AlbumWithSongs(val album: Album, val songs: List<Song>) {
                 TimeUnit.MILLISECONDS.toMinutes(songs.map { it.duration.toLong() }.sum()))
 }
 
-sealed class Index {
-    class Album(val value: Int) : Index()
-    class Song(val albumIndex: Int, val songIndex: Int) : Index(), Serializable
-}
-
-data class Playlist(private val songs: List<Song>, private val index: Int) {
+data class Playlist(private val songs: List<Song>, private val index: Int, val paused: Boolean) {
 
     init {
         if (index < 0 || index >= songs.size) {
@@ -43,8 +38,9 @@ data class Playlist(private val songs: List<Song>, private val index: Int) {
     val currentSong: Song
         get() = songs[index]
 
-    fun next(): Playlist = Playlist(songs, index.inc() % songs.size)
+    fun next(): Playlist = copy(index = index.inc() % songs.size)
 
-    fun previous(): Playlist = Playlist(songs, (songs.size + index.dec()) % songs.size)
+    fun previous(): Playlist = copy(index = (songs.size + index.dec()) % songs.size)
 
+    fun togglePaused(): Playlist = copy(paused = !paused)
 }

@@ -5,28 +5,25 @@ import com.neeplayer.*
 import com.neeplayer.Preferences.Item.LongItem.*
 import com.neeplayer.Preferences.Item.StringItem.*
 import org.jetbrains.anko.toast
+import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
+import rx.subjects.BehaviorSubject
 
 class NowPlayingModel(val context: Context, val lastFm: LastFmService, val preferences: Preferences, val database: Database) {
 
-    var nowPlaying: Playlist? = null
-    set(value) {
-        val oldValue = field
-        field = value
-        if (oldValue != value) {
-            progress = 0
-            nowPlayingListeners.forEach { it() }
+    private val nowPlayingSubject = BehaviorSubject.create<Playlist>()
+
+    var nowPlaying: Playlist? = database.restorePlaylist(preferences.get(NOW_PLAYING_SONG_ID))
+        set(value) {
+            field = value
+            if (value != null) {
+                nowPlayingSubject.onNext(value)
+            }
         }
-    }
 
-    var paused = true
-    set(value) {
-        field = value
-        nowPlayingListeners.forEach { it() }
-    }
-
-    private val nowPlayingListeners = mutableSetOf<() -> Unit>()
+    val nowPlayingObservable: Observable<Playlist>
+        get() = nowPlayingSubject
 
     var progress = 0
     set(value) {
@@ -36,31 +33,14 @@ class NowPlayingModel(val context: Context, val lastFm: LastFmService, val prefe
 
     private val progressListeners = mutableSetOf<() -> Unit>()
 
-    fun addNowPlayingListener(listener: () -> Unit) {
-        listener()
-        nowPlayingListeners.add(listener)
-    }
-
     fun addProgressListener(listener: () -> Unit) {
         listener()
         progressListeners.add(listener)
     }
 
-    fun removeNowPlayingListener(listener: () -> Unit) {
-        nowPlayingListeners.remove(listener)
-    }
 
     fun removeProgressListener(listener: () -> Unit) {
         progressListeners.remove(listener)
-    }
-
-
-    init {
-        val nowPlayingSongId = preferences.get(NOW_PLAYING_SONG_ID)
-
-        if (nowPlayingSongId != null) {
-            nowPlaying = database.restorePlaylist(nowPlayingSongId)
-        }
     }
 
     fun save() {

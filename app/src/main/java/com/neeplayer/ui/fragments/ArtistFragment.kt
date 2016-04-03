@@ -12,6 +12,7 @@ import com.hannesdorfmann.fragmentargs.annotation.FragmentWithArgs
 import com.neeplayer.*
 import com.neeplayer.model.*
 import com.neeplayer.ui.adapters.AlbumSongAdapter
+import rx.Subscription
 import javax.inject.Inject
 
 @FragmentWithArgs
@@ -26,7 +27,7 @@ class ArtistFragment : Fragment() {
     @Inject
     internal lateinit var model: NowPlayingModel
 
-    var adapter: AlbumSongAdapter? = null
+    private var subscription: Subscription? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,24 +51,21 @@ class ArtistFragment : Fragment() {
         val songs = albumsWithSongs.flatMap { it.songs }
 
         val albumListView = view as RecyclerView
-        adapter = AlbumSongAdapter(activity, albumsWithSongs) {
-            model.paused = false
-            model.nowPlaying = Playlist(songs, songs.indexOf(it))
+        val adapter = AlbumSongAdapter(activity, albumsWithSongs) {
+            model.nowPlaying = Playlist(songs, songs.indexOf(it), false)
         }
 
         albumListView.adapter = adapter
         albumListView.layoutManager = LinearLayoutManager(activity)
 
-        model.addNowPlayingListener(nowPlayingListener)
+        subscription = model.nowPlayingObservable.subscribe {
+            adapter.paused = it.paused
+            adapter.nowPlaying = it.currentSong
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        model.removeNowPlayingListener(nowPlayingListener)
-    }
-
-    private val nowPlayingListener = {
-        adapter?.paused = model.paused
-        adapter?.nowPlaying = model.nowPlaying?.currentSong
+        subscription?.unsubscribe()
     }
 }

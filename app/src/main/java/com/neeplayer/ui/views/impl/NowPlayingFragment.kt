@@ -81,7 +81,9 @@ class NowPlayingFragment : Fragment(), NowPlayingView {
 
     override fun seek(progress: Int) {
         binding.progress = progress
-        tick()
+        if (binding.song != null) {
+            tick()
+        }
     }
 
     fun tryCollapse(): Boolean {

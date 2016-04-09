@@ -8,4 +8,5 @@
 
     <string name="scrobble_error">Scrobbling error</string>
     <string name="scrobble_success">\"%1$s\" scrobbled</string>
+    <string name="audio_focus_request_error">Audio focus request failed</string>
 </resources>

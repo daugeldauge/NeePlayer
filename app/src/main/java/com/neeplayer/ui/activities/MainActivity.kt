@@ -22,11 +22,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        startService(Intent(this, MusicService::class.java))
-
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction().add(R.id.fragment_container, MainFragment()).commit()
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        startService(Intent(this, MusicService::class.java))
     }
 
     fun navigateToArtistFragment(artist: Artist) {

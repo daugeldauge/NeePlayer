@@ -35,8 +35,8 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
 
     private var paused = true
     private var song: Song? = null
-
     private var state = State.IDLE
+    private var lastKnownAudioFocusState: Int? = null
 
     lateinit
     private var presenter: NowPlayingPresenter
@@ -77,8 +77,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     override fun play() {
         paused = false
         if (state == State.PREPARED || state == State.PAUSED)  {
-            player.start()
-            state = State.STARTED
+            startPlaying()
             updateNotification(song!!)
         }
     }
@@ -91,7 +90,6 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
             updateNotification(song!!)
         }
     }
-
     override fun seek(progress: Int) {
         if (state == State.STARTED || state == State.PAUSED) {
             player.seekTo(progress)
@@ -103,9 +101,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     override fun onPrepared(mp: MediaPlayer) {
         state = State.PREPARED
         if (!paused) {
-            mp.start()
-            state = State.STARTED
-            presenter.onSeek(mp.currentPosition)
+            startPlaying()
         }
         updateNotification(song!!)
     }
@@ -115,13 +111,13 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         state = State.IDLE
         presenter.onNextClicked()
     }
-
     override fun onError(mp: MediaPlayer, what: Int, extra: Int): Boolean {
         mp.reset()
         state = State.IDLE
         applicationContext.toast(R.string.media_player_error)
         return true
     }
+
     //endregion
 
     override fun onDestroy() {
@@ -179,12 +175,51 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         setupPendingIntent(content, R.id.notification_play_pause_button, PLAY_OR_PAUSE_ACTION)
         setupPendingIntent(content, R.id.notification_fast_forward_button, PLAY_NEXT_ACTION)
     }
-
     private fun setupPendingIntent(content: RemoteViews, @IdRes viewId: Int, action: String) {
         val intent = Intent(this, MusicService::class.java).setAction(action)
         val pendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         content.setOnClickPendingIntent(viewId, pendingIntent)
     }
+
     //endregion
 
+    private fun startPlaying() {
+        when((getSystemService(AUDIO_SERVICE) as AudioManager).requestAudioFocus(audioFocusListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)) {
+            AudioManager.AUDIOFOCUS_REQUEST_GRANTED -> {
+                player.start()
+                state = State.STARTED
+                presenter.onSeek(player.currentPosition)
+            }
+            AudioManager.AUDIOFOCUS_REQUEST_FAILED -> {
+                toast(R.string.audio_focus_request_error)
+                presenter.onPlayPauseClicked()
+            }
+        }
+    }
+
+    private val audioFocusListener = AudioManager.OnAudioFocusChangeListener {
+        when (it) {
+            AudioManager.AUDIOFOCUS_GAIN -> {
+                when (lastKnownAudioFocusState) {
+                    AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
+                        presenter.onPlayPauseClicked()
+                    }
+                    AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
+                        player.setVolume(1f, 1f)
+                    }
+                }
+            }
+            AudioManager.AUDIOFOCUS_LOSS -> {
+                presenter.onPlayPauseClicked()
+                stopSelf()
+            }
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
+                presenter.onPlayPauseClicked()
+            }
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
+                player.setVolume(0.2f, 0.2f)
+            }
+        }
+        lastKnownAudioFocusState = it
+    }
 }

@@ -6,6 +6,7 @@ import com.neeplayer.Preferences.Item.LongItem.*
 import com.neeplayer.Preferences.Item.StringItem.*
 import org.jetbrains.anko.toast
 import rx.Observable
+import rx.Single
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import rx.subjects.BehaviorSubject
@@ -42,7 +43,9 @@ class NowPlayingModel(
     }
 
     init {
-        nowPlaying = database.restorePlaylist(preferences.get(NOW_PLAYING_SONG_ID))
+        Single.create<Playlist?> { it.onSuccess(database.restorePlaylist(preferences.get(NOW_PLAYING_SONG_ID))) }
+        .subscribeOn(Schedulers.io())
+        .subscribe { nowPlaying = it }
     }
 
     fun save() {

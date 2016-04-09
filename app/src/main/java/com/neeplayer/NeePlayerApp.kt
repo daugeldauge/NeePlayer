@@ -4,7 +4,7 @@ import android.app.Application
 
 class NeePlayerApp : Application() {
     companion object {
-        var component: AppComponent? = null
+        lateinit var component: AppComponent
     }
 
     override fun onCreate() {

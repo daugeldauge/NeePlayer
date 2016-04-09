@@ -32,7 +32,7 @@ class ArtistFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ArtistFragmentBuilder.injectArguments(this)
-        NeePlayerApp.component!!.inject(this)
+        NeePlayerApp.component.inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

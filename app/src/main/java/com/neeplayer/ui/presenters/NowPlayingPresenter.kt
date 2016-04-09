@@ -18,7 +18,7 @@ class NowPlayingPresenter(view: NowPlayingView) : BasePresenter<NowPlayingView>(
     internal lateinit var model: NowPlayingModel
 
     init {
-        NeePlayerApp.component!!.inject(this)
+        NeePlayerApp.component.inject(this)
         subscription.add(model.nowPlayingObservable.subscribe {
             val song = it.currentSong
 

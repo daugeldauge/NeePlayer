@@ -46,7 +46,7 @@ class MainFragment : Fragment(), AnkoLogger {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        NeePlayerApp.component!!.inject(this)
+        NeePlayerApp.component.inject(this)
 
         if (preferences.get(SESSION_KEY) != null) {
             return

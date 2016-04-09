@@ -4,6 +4,7 @@ import android.content.Context
 import com.neeplayer.*
 import com.neeplayer.Preferences.Item.LongItem.*
 import com.neeplayer.Preferences.Item.StringItem.*
+import com.neeplayer.Preferences.Item.BooleanItem.*
 import org.jetbrains.anko.toast
 import rx.Observable
 import rx.Single
@@ -54,6 +55,9 @@ class NowPlayingModel(
     }
 
     fun scrobble(song: Song) {
+        if (preferences.getOrDefault(SCROBBLING) == false) {
+            return
+        }
 
         lastFm.scrobble(
                 track = song.title ?: return,

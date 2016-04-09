@@ -1,10 +1,23 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" tools:context=".ui.activities.MainActivity">
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.activities.MainActivity">
 
     <item
-        android:id="@+id/now_playing_item"
-        android:icon="@drawable/now_playing"
-        android:showAsAction="always"
-        android:title="NOW PLAYING" />
+        android:id="@+id/scrobbling"
+        android:title="@string/scrobbling"
+        android:checkable="true"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/sign_in"
+        android:title="@string/sign_in"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/sign_out"
+        android:title="@string/sign_out"
+        app:showAsAction="never" />
 
 </menu>

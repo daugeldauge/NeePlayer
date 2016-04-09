@@ -1,5 +1,6 @@
 package com.neeplayer
 
+import com.neeplayer.ui.activities.MainActivity
 import com.neeplayer.ui.fragments.ArtistFragment
 import com.neeplayer.ui.fragments.MainFragment
 import com.neeplayer.ui.presenters.NowPlayingPresenter
@@ -12,4 +13,5 @@ interface AppComponent {
     fun inject(fragment: MainFragment)
     fun inject(artistFragment: ArtistFragment)
     fun inject(nowPlayingPresenter: NowPlayingPresenter)
+    fun inject(mainActivity: MainActivity)
 }

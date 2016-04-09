@@ -1,8 +1,6 @@
 package com.neeplayer.ui.fragments
 
-import android.content.Intent
 import android.content.SharedPreferences
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -10,15 +8,12 @@ import android.support.v7.widget.RecyclerView
 import android.view.*
 import com.neeplayer.LastFmService
 import com.neeplayer.NeePlayerApp
-import com.neeplayer.Preferences
-import com.neeplayer.Preferences.Item.StringItem.SESSION_KEY
 import com.neeplayer.R
 import com.neeplayer.model.Artist
 import com.neeplayer.model.Database
 import com.neeplayer.ui.activities.MainActivity
 import com.neeplayer.ui.adapters.ArtistAdapter
 import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.toast
 import org.jetbrains.anko.warn
 import org.json.JSONObject
 import rx.android.schedulers.AndroidSchedulers
@@ -29,8 +24,6 @@ import javax.inject.Inject
 class MainFragment : Fragment(), AnkoLogger {
     private val artistImages = mutableMapOf<Artist, String>()
 
-    private var token: String? = null
-
     private val savedArtistImages: SharedPreferences by lazy {
         activity.getSharedPreferences("ArtistImages", 0)
     }
@@ -39,30 +32,11 @@ class MainFragment : Fragment(), AnkoLogger {
     lateinit internal var lastFm: LastFmService
 
     @Inject
-    lateinit internal var preferences: Preferences
-
-    @Inject
     lateinit internal var database: Database
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         NeePlayerApp.component.inject(this)
-
-        if (preferences.get(SESSION_KEY) != null) {
-            return
-        }
-
-        lastFm.getToken().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    token = it.getString("token")
-
-                    val intent = Intent(Intent.ACTION_VIEW)
-                    intent.data = Uri.parse("http://www.last.fm/api/auth/?api_key=${LastFmService.apiKey}&token=$token")
-                    startActivity(intent)
-                }, {
-                    context.toast(R.string.last_fm_auth_error)
-                })
-
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -78,21 +52,6 @@ class MainFragment : Fragment(), AnkoLogger {
         }
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
-    }
-
-    override fun onResume() {
-        super.onResume()
-        val token = token ?: return
-
-        lastFm.getSession(token)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                preferences.put(SESSION_KEY, it.getJSONObject("session").getString("key"))
-                context.toast(R.string.last_fm_auth_success)
-            }, {
-                context.toast(R.string.last_fm_auth_error)
-            })
     }
 
     private fun getArtistList(): List<Artist> {

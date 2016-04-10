@@ -3,16 +3,19 @@ package com.neeplayer.ui.views.impl
 import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
-import android.content.ContentUris
-import android.content.Intent
+import android.content.*
 import android.graphics.BitmapFactory
 import android.media.AudioManager
+import android.media.MediaMetadata
 import android.media.MediaPlayer
+import android.media.session.MediaSession
+import android.media.session.PlaybackState
 import android.os.IBinder
 import android.os.PowerManager
 import android.provider.MediaStore
 import android.support.annotation.IdRes
 import android.widget.RemoteViews
+import com.neeplayer.BuildConfig
 import com.neeplayer.R
 import com.neeplayer.model.Song
 import com.neeplayer.ui.presenters.NowPlayingPresenter
@@ -41,10 +44,17 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     lateinit
     private var presenter: NowPlayingPresenter
 
+    private val mediaSession by lazy { MediaSession(this, BuildConfig.APPLICATION_ID) }
+
     override fun onCreate() {
         super.onCreate()
         initMediaPLayer()
         presenter = NowPlayingPresenter(this)
+        mediaSession.setCallback(mediaSessionCallback)
+        mediaSession.setFlags(MediaSession.FLAG_HANDLES_MEDIA_BUTTONS or MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS)
+        mediaSession.isActive = true
+
+        registerReceiver(headsetPlugReceiver, IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY))
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -78,7 +88,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         paused = false
         if (state == State.PREPARED || state == State.PAUSED)  {
             startPlaying()
-            updateNotification(song!!)
+            updateInfo(song!!)
         }
     }
 
@@ -87,7 +97,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         if (state == State.STARTED) {
             player.pause()
             state = State.PAUSED
-            updateNotification(song!!)
+            updateInfo(song!!)
         }
     }
     override fun seek(progress: Int) {
@@ -103,7 +113,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         if (!paused) {
             startPlaying()
         }
-        updateNotification(song!!)
+        updateInfo(song!!)
     }
 
     override fun onCompletion(mp: MediaPlayer) {
@@ -123,6 +133,8 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     override fun onDestroy() {
         player.stop()
         player.release()
+        mediaSession.release()
+        unregisterReceiver(headsetPlugReceiver)
         stopForeground(true)
         presenter.onDestroy()
     }
@@ -139,6 +151,26 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         player.setOnPreparedListener(this)
         player.setOnCompletionListener(this)
         player.setOnErrorListener(this)
+    }
+
+    private fun updateInfo(song: Song) {
+        mediaSession.setMetadata(
+                MediaMetadata.Builder()
+                        .putString(MediaMetadata.METADATA_KEY_ARTIST, song.album.artist.name)
+                        .putString(MediaMetadata.METADATA_KEY_ALBUM, song.album.title)
+                        .putString(MediaMetadata.METADATA_KEY_TITLE, song.title)
+                        .putBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART, BitmapFactory.decodeFile(song.album.art))
+                        .build()
+        )
+
+        mediaSession.setPlaybackState(
+                PlaybackState.Builder()
+                        .setState(if (paused) PlaybackState.STATE_PAUSED else PlaybackState.STATE_PLAYING, PlaybackState.PLAYBACK_POSITION_UNKNOWN, 1f)
+                        .setActions(PlaybackState.ACTION_PLAY or PlaybackState.ACTION_PAUSE or PlaybackState.ACTION_PLAY_PAUSE or PlaybackState.ACTION_SKIP_TO_NEXT or PlaybackState.ACTION_SKIP_TO_PREVIOUS)
+                        .build()
+        )
+
+        updateNotification(song)
     }
 
     //region Notifications
@@ -221,5 +253,17 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
             }
         }
         lastKnownAudioFocusState = it
+    }
+
+    private val mediaSessionCallback = object : MediaSession.Callback() {
+        //TODO implement methods
+    }
+
+    private val headsetPlugReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            if (!paused) {
+                presenter.onPlayPauseClicked()
+            }
+        }
     }
 }

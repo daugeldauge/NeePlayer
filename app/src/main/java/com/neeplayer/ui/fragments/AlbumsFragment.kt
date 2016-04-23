@@ -16,7 +16,7 @@ import rx.Subscription
 import javax.inject.Inject
 
 @FragmentWithArgs
-class ArtistFragment : Fragment() {
+class AlbumsFragment : Fragment() {
 
     @Arg
     internal lateinit var artist: Artist
@@ -31,7 +31,7 @@ class ArtistFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ArtistFragmentBuilder.injectArguments(this)
+        AlbumsFragmentBuilder.injectArguments(this)
         NeePlayerApp.component.inject(this)
     }
 

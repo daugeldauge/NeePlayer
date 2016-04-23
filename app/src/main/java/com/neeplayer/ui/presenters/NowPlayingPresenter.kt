@@ -1,6 +1,5 @@
 package com.neeplayer.ui.presenters
 
-import com.neeplayer.NeePlayerApp
 import com.neeplayer.model.NowPlayingModel
 import com.neeplayer.model.Song
 import com.neeplayer.ui.views.NowPlayingView
@@ -8,17 +7,14 @@ import rx.subscriptions.CompositeSubscription
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class NowPlayingPresenter(view: NowPlayingView) : BasePresenter<NowPlayingView>(view) {
+
+class NowPlayingPresenter @Inject constructor(val model: NowPlayingModel) : BasePresenter<NowPlayingView>() {
 
     private var lastSong: Song? = null
 
     private val subscription = CompositeSubscription()
 
-    @Inject
-    internal lateinit var model: NowPlayingModel
-
-    init {
-        NeePlayerApp.component.inject(this)
+    override fun bind(view: NowPlayingView) {
         subscription.add(model.nowPlayingObservable.subscribe {
             val song = it.currentSong
 
@@ -56,11 +52,11 @@ class NowPlayingPresenter(view: NowPlayingView) : BasePresenter<NowPlayingView>(
         model.progress = progress
     }
 
-    val minSongLengthToScrobble = TimeUnit.SECONDS.toMillis(30)
-    val scrobbleFractionThreshold = 0.5
-    val scrobbleThreshold = TimeUnit.MINUTES.toMillis(4)
+    private val minSongLengthToScrobble = TimeUnit.SECONDS.toMillis(30)
+    private val scrobbleFractionThreshold = 0.5
+    private val scrobbleThreshold = TimeUnit.MINUTES.toMillis(4)
 
-    var isCurrentSongScrobbled = false
+    private var isCurrentSongScrobbled = false
 
     fun onTick(ticking: Int) {
         val song = lastSong
@@ -74,9 +70,9 @@ class NowPlayingPresenter(view: NowPlayingView) : BasePresenter<NowPlayingView>(
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun unbind() {
         model.save()
-        subscription.unsubscribe()
+        subscription.clear()
+        super.unbind()
     }
 }

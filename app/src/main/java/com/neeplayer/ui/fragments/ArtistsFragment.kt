@@ -21,7 +21,7 @@ import rx.schedulers.Schedulers
 import javax.inject.Inject
 
 // TODO Refactor to MVP
-class MainFragment : Fragment(), AnkoLogger {
+class ArtistsFragment : Fragment(), AnkoLogger {
     private val artistImages = mutableMapOf<Artist, String>()
 
     private val savedArtistImages: SharedPreferences by lazy {

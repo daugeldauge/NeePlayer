@@ -14,9 +14,9 @@ import com.neeplayer.Preferences
 import com.neeplayer.Preferences.Item.BooleanItem.SCROBBLING
 import com.neeplayer.Preferences.Item.StringItem.SESSION_KEY
 import com.neeplayer.R
-import com.neeplayer.ui.fragments.MainFragment
+import com.neeplayer.ui.fragments.ArtistsFragment
 import com.neeplayer.model.Artist
-import com.neeplayer.ui.fragments.ArtistFragmentBuilder
+import com.neeplayer.ui.fragments.AlbumsFragmentBuilder
 import com.neeplayer.ui.views.impl.MusicService
 import com.neeplayer.ui.views.impl.NowPlayingFragment
 
@@ -25,6 +25,7 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import javax.inject.Inject
 
+// TODO: refactor to MVP
 class MainActivity : AppCompatActivity() {
 
     private var token: String? = null
@@ -45,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction().add(R.id.fragment_container, MainFragment()).commit()
+            supportFragmentManager.beginTransaction().add(R.id.fragment_container, ArtistsFragment()).commit()
         }
     }
 
@@ -73,7 +74,7 @@ class MainActivity : AppCompatActivity() {
     fun navigateToArtistFragment(artist: Artist) {
         supportFragmentManager.beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .replace(R.id.fragment_container, ArtistFragmentBuilder(artist).build())
+                .replace(R.id.fragment_container, AlbumsFragmentBuilder(artist).build())
                 .addToBackStack(null)
                 .commit()
     }

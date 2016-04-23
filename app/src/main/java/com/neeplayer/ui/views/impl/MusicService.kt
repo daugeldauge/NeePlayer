@@ -16,11 +16,13 @@ import android.provider.MediaStore
 import android.support.annotation.IdRes
 import android.widget.RemoteViews
 import com.neeplayer.BuildConfig
+import com.neeplayer.NeePlayerApp
 import com.neeplayer.R
 import com.neeplayer.model.Song
 import com.neeplayer.ui.presenters.NowPlayingPresenter
 import com.neeplayer.ui.views.NowPlayingView
 import org.jetbrains.anko.toast
+import javax.inject.Inject
 
 class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener, NowPlayingView {
 
@@ -41,15 +43,16 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     private var state = State.IDLE
     private var lastKnownAudioFocusState: Int? = null
 
-    lateinit
-    private var presenter: NowPlayingPresenter
+    @Inject
+    lateinit var presenter: NowPlayingPresenter
 
     private val mediaSession by lazy { MediaSession(this, BuildConfig.APPLICATION_ID) }
 
     override fun onCreate() {
         super.onCreate()
+        NeePlayerApp.component.inject(this)
+        presenter.bind(this)
         initMediaPLayer()
-        presenter = NowPlayingPresenter(this)
         mediaSession.setCallback(mediaSessionCallback)
         mediaSession.setFlags(MediaSession.FLAG_HANDLES_MEDIA_BUTTONS or MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS)
         mediaSession.isActive = true
@@ -136,7 +139,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         mediaSession.release()
         unregisterReceiver(headsetPlugReceiver)
         stopForeground(true)
-        presenter.onDestroy()
+        presenter.unbind()
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {

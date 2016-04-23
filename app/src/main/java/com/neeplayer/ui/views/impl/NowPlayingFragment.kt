@@ -8,13 +8,16 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.neeplayer.NeePlayerApp
 import com.neeplayer.databinding.FragmentNowPlayingBinding
 import com.neeplayer.model.Song
 import com.neeplayer.ui.onUserSeek
 import com.neeplayer.ui.presenters.NowPlayingPresenter
 import com.neeplayer.ui.setCallback
+import com.neeplayer.ui.uiThread
 import com.neeplayer.ui.views.NowPlayingView
 import org.jetbrains.anko.onClick
+import javax.inject.Inject
 
 class NowPlayingFragment : Fragment(), NowPlayingView {
 
@@ -29,8 +32,13 @@ class NowPlayingFragment : Fragment(), NowPlayingView {
     lateinit
     private var bottomSheet: BottomSheetBehavior<View>
 
-    lateinit
-    private var presenter: NowPlayingPresenter
+    @Inject
+    lateinit var presenter: NowPlayingPresenter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        NeePlayerApp.component.inject(this)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return FragmentNowPlayingBinding.inflate(inflater, container, false).root
@@ -38,9 +46,9 @@ class NowPlayingFragment : Fragment(), NowPlayingView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        presenter.bind(this)
         binding = DataBindingUtil.bind<FragmentNowPlayingBinding>(view)
         bottomSheet = BottomSheetBehavior.from(binding.npContainer)
-        presenter = NowPlayingPresenter(this)
 
         bottomSheet.setCallback(onSlide = {
             binding.npCollapsed.alpha = it
@@ -63,27 +71,27 @@ class NowPlayingFragment : Fragment(), NowPlayingView {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
         handler.removeCallbacks(tock)
-        presenter.onDestroy()
+        presenter.unbind()
+        super.onDestroyView()
     }
 
-    override fun setSong(song: Song) {
+    override fun setSong(song: Song) = uiThread {
         binding.song = song
         overallTicking = 0
     }
 
-    override fun play() {
+    override fun play() = uiThread {
         binding.paused = false
         tick()
     }
 
-    override fun pause() {
+    override fun pause() = uiThread {
         binding.paused = true
         needToStopTicking = true
     }
 
-    override fun seek(progress: Int) {
+    override fun seek(progress: Int) = uiThread {
         binding.progress = progress
         if (binding.song != null) {
             tick()

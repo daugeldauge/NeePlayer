@@ -1,6 +1,10 @@
 package com.neeplayer.ui
 
+import android.os.Handler
+import android.os.Looper
 import android.support.design.widget.BottomSheetBehavior
+import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.View
 import android.widget.SeekBar
 
@@ -41,4 +45,20 @@ fun BottomSheetBehavior<out View>.setCallback(
             onStateChanged?.invoke(state)
         }
     })
+}
+
+private val uiThreadHandler = Handler(Looper.getMainLooper())
+
+private fun Fragment.isAlive() = activity != null && isAdded && !isDetached && view != null && !isRemoving
+
+fun Fragment.uiThread(action: () -> Unit) {
+    if (Looper.myLooper() == uiThreadHandler.looper && isAlive()) {
+        action.invoke()
+    } else {
+        uiThreadHandler.post {
+            if (isAlive()) {
+                action.invoke()
+            }
+        }
+    }
 }

@@ -55,7 +55,10 @@ class NowPlayingFragment : Fragment(), NowPlayingView {
         binding.npPlayPause.onClick          { presenter.onPlayPauseClicked() }
         binding.npCollapsedPlayPause.onClick { presenter.onPlayPauseClicked() }
 
-        binding.npSeekBar.onUserSeek { progress -> presenter.onSeek(progress) }
+        binding.npSeekBar.onUserSeek(
+                onProgress = { binding.progress = it },
+                onTouchStopped = { presenter.onSeek(binding.progress) }
+        )
 
     }
 

@@ -7,9 +7,6 @@
         <variable
             name="artist"
             type="com.neeplayer.model.Artist"/>
-        <variable
-            name="artistImageUrl"
-            type="String"/>
     </data>
 
     <LinearLayout
@@ -29,7 +26,7 @@
             android:layout_width="90dp"
             android:layout_height="90dp"
             android:scaleType="centerCrop"
-            app:imageURL="@{artistImageUrl}"
+            app:imageURL="@{artist.imageUrl}"
             android:id="@+id/artist_image" />
 
         <LinearLayout

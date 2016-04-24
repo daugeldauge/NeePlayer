@@ -1,38 +1,32 @@
 package com.neeplayer.ui.fragments
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.*
-import com.neeplayer.LastFmService
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import com.neeplayer.NeePlayerApp
 import com.neeplayer.R
 import com.neeplayer.model.Artist
-import com.neeplayer.model.Database
 import com.neeplayer.ui.activities.MainActivity
 import com.neeplayer.ui.adapters.ArtistAdapter
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.warn
-import org.json.JSONObject
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
+import com.neeplayer.ui.presenters.ArtistsPresenter
+import com.neeplayer.ui.uiThread
+import com.neeplayer.ui.views.ArtistsView
 import javax.inject.Inject
 
-// TODO Refactor to MVP
-class ArtistsFragment : Fragment(), AnkoLogger {
-    private val artistImages = mutableMapOf<Artist, String>()
+class ArtistsFragment : Fragment(), ArtistsView {
+    @Inject
+    lateinit internal var presenter: ArtistsPresenter
 
-    private val savedArtistImages: SharedPreferences by lazy {
-        activity.getSharedPreferences("ArtistImages", 0)
+    private val adapter by lazy {
+        ArtistAdapter(activity) {
+            (activity as MainActivity).navigateToArtistFragment(it)
+            presenter.onArtistClicked(it)
+        }
     }
-
-    @Inject
-    lateinit internal var lastFm: LastFmService
-
-    @Inject
-    lateinit internal var database: Database
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,55 +41,22 @@ class ArtistsFragment : Fragment(), AnkoLogger {
         super.onViewCreated(view, savedInstanceState)
         val recyclerView = view as RecyclerView
 
-        recyclerView.adapter = ArtistAdapter(activity, getArtistList(), artistImages) {
-            (activity as MainActivity).navigateToArtistFragment(it)
-        }
+        recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(activity)
-
+        presenter.bind(this)
     }
 
-    private fun getArtistList(): List<Artist> {
-
-        val list = database.getArtists()
-
-        list.forEach { artist ->
-            val image = savedArtistImages.getString(artist.name, null)
-            if (image.isNullOrEmpty()) {
-                lastFm.getArtistInfo(artist.name)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .map {
-                            getArtistImageUrl(it)
-                        }
-                        .subscribe({
-                            val retrievedImage = it ?: return@subscribe
-
-                            artistImages.put(artist, retrievedImage)
-                            savedArtistImages.edit().putString(artist.name, retrievedImage).apply()
-                        }, {
-                            warn("Couldn't retrieve artist image url", it)
-                        })
-            } else {
-                artistImages.put(artist, image)
-            }
-        }
-
-        return list
+    override fun onDestroyView() {
+        presenter.unbind()
+        super.onDestroyView()
     }
 
-    private fun getArtistImageUrl(artistJsonInfo: JSONObject): String? {
-        val images = artistJsonInfo.getJSONObject("artist").getJSONArray("image")
+    override fun showArtists(artists: List<Artist>) = uiThread {
+        adapter.setArtists(artists)
+    }
 
-        for (i in 0 until images.length()) {
-            val image = images.getJSONObject(i)
-            val size = image.getString("size")
-            if (size == "extralarge") {
-                return image.getString("#text")
-            }
-        }
-
-        warn("Invalid json")
-        return null
+    override fun updateArtist(artist: Artist) = uiThread {
+        adapter.updateArtist(artist)
     }
 
 }

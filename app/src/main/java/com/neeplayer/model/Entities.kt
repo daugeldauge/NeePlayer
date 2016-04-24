@@ -11,9 +11,11 @@ open class Entity(val id: Long) : Serializable {
     override fun hashCode(): Int = id.hashCode()
 }
 
-class Artist(id: Long, val name: String, val numberOfSongs: Int, val numberOfAlbums: Int) : Entity(id), Serializable {
+class Artist(id: Long, val name: String, val numberOfSongs: Int, val numberOfAlbums: Int, val imageUrl: String? = null) : Entity(id), Serializable {
     val description: String
     get() = "%d albums, %d songs".format(numberOfAlbums, numberOfSongs)
+
+    fun withImage(imageUrl: String) = Artist(id, name, numberOfSongs, numberOfAlbums, imageUrl)
 }
 
 class Album(id: Long, val artist: Artist, val title: String?, val year: Int?, val art: String?) : Entity(id)

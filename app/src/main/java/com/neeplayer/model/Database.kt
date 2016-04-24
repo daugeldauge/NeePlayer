@@ -1,19 +1,17 @@
 package com.neeplayer.model
 
-import android.content.Context
 import android.provider.BaseColumns
 import android.provider.MediaStore.Audio.Artists
 import android.provider.MediaStore.Audio.Artists.Albums
 import android.provider.MediaStore.Audio.Media
-import com.pushtorefresh.storio.contentresolver.impl.DefaultStorIOContentResolver
+import com.pushtorefresh.storio.contentresolver.StorIOContentResolver
 import com.pushtorefresh.storio.contentresolver.queries.Query
+import javax.inject.Inject
+import javax.inject.Singleton
 
 
-class Database(context: Context) {
-
-    private val storIOContentResolver = DefaultStorIOContentResolver.builder()
-                .contentResolver(context.contentResolver)
-                .build()
+@Singleton
+class Database @Inject constructor (private val storIOContentResolver: StorIOContentResolver, private val artistResolver: ArtistResolver) {
 
     fun getArtists(): List<Artist> {
         return storIOContentResolver
@@ -22,7 +20,7 @@ class Database(context: Context) {
                 .withQuery(Query.builder()
                         .uri(Artists.EXTERNAL_CONTENT_URI)
                         .columns(Artists._ID, Artists.ARTIST, Artists.NUMBER_OF_TRACKS, Artists.NUMBER_OF_ALBUMS).build())
-                .withGetResolver(ArtistResolver())
+                .withGetResolver(artistResolver)
                 .prepare()
                 .executeAsBlocking()
     }
@@ -81,7 +79,7 @@ class Database(context: Context) {
                         .where(Artists._ID + "=?")
                         .whereArgs(artistId)
                         .build())
-                .withGetResolver(ArtistResolver())
+                .withGetResolver(artistResolver)
                 .prepare()
                 .executeAsBlocking()
     }

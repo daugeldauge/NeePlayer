@@ -6,19 +6,22 @@ import android.provider.MediaStore.Audio.Artists
 import android.provider.MediaStore.Audio.Artists.Albums
 import android.provider.MediaStore.Audio.Media
 import com.pushtorefresh.storio.contentresolver.operations.get.DefaultGetResolver
+import javax.inject.Inject
 
 
 fun Cursor.getInt(column: String)    : Int?    = getInt   (getColumnIndexOrThrow(column))
 fun Cursor.getLong(column: String)   : Long?   = getLong  (getColumnIndexOrThrow(column))
 fun Cursor.getString(column: String) : String? = getString(getColumnIndexOrThrow(column))
 
-class ArtistResolver : DefaultGetResolver<Artist>() {
+class ArtistResolver @Inject constructor (private val artistImagesStorage: ArtistImagesStorage) : DefaultGetResolver<Artist>() {
     override fun mapFromCursor(cursor: Cursor): Artist {
+        val name = cursor.getString(Artists.ARTIST)!!
         return Artist(
-            id             = cursor.getLong(   Artists._ID)!!,
-            name           = cursor.getString( Artists.ARTIST)!!,
-            numberOfSongs  = cursor.getInt(    Artists.NUMBER_OF_TRACKS)!!,
-            numberOfAlbums = cursor.getInt(    Artists.NUMBER_OF_ALBUMS)!!
+            id             = cursor.getLong(Artists._ID)!!,
+            name           = name,
+            numberOfSongs  = cursor.getInt(Artists.NUMBER_OF_TRACKS)!!,
+            numberOfAlbums = cursor.getInt(Artists.NUMBER_OF_ALBUMS)!!,
+            imageUrl       = artistImagesStorage.get(name)
         )
     }
 }

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.neeplayer.databinding.ArtistBinding
+import com.neeplayer.indexRange
 import com.neeplayer.model.Artist
 
 
@@ -14,13 +15,11 @@ import org.jetbrains.anko.onClick
 
 
 class ArtistAdapter(
-
         private val context: Context,
-        private val artists: List<Artist>,
-        private val artistImages: Map<Artist, String>,
         private val onClickListener: (Artist) -> Unit
-
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    private var artists: MutableList<Artist> = mutableListOf()
 
     override fun getItemCount(): Int = artists.size
 
@@ -36,8 +35,21 @@ class ArtistAdapter(
         val binding = (holder as ViewHolder).binding
         val artist = artists[position]
         binding.artist = artist
-        binding.artistImageUrl = artistImages[artist]
         binding.root.onClick { onClickListener(artist) }
+    }
+
+    fun setArtists(artists: List<Artist>) {
+        this.artists = artists.toMutableList()
+        notifyDataSetChanged()
+    }
+
+    fun updateArtist(updatedArtist: Artist) {
+        artists.mapIndexed { i, artist -> if (artist == updatedArtist) i else null }
+                .filterNotNull()
+                .forEach {
+                    artists[it] = updatedArtist
+                    notifyItemChanged(it)
+                }
     }
 
 }

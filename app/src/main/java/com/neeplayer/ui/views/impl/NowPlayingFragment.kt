@@ -46,7 +46,6 @@ class NowPlayingFragment : Fragment(), NowPlayingView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        presenter.bind(this)
         binding = DataBindingUtil.bind<FragmentNowPlayingBinding>(view)
         bottomSheet = BottomSheetBehavior.from(binding.npContainer)
 
@@ -67,7 +66,7 @@ class NowPlayingFragment : Fragment(), NowPlayingView {
                 onProgress = { binding.progress = it },
                 onTouchStopped = { presenter.onSeek(binding.progress) }
         )
-
+        presenter.bind(this)
     }
 
     override fun onDestroyView() {

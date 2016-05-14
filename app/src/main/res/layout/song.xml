@@ -21,8 +21,7 @@
         android:paddingEnd="25dp"
         android:clickable="true"
         android:focusable="true"
-        android:background="?android:attr/selectableItemBackground"
-        android:onClick="songPicked">
+        android:background="?android:attr/selectableItemBackground">
 
 
         <FrameLayout

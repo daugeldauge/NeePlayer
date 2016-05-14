@@ -1,9 +1,13 @@
 package com.neeplayer.ui.activities
 
+import android.Manifest
 import android.app.FragmentTransaction
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
@@ -16,6 +20,7 @@ import com.neeplayer.Preferences.Item.StringItem.SESSION_KEY
 import com.neeplayer.R
 import com.neeplayer.ui.fragments.ArtistsFragment
 import com.neeplayer.model.Artist
+import com.neeplayer.model.NowPlayingModel
 import com.neeplayer.ui.fragments.AlbumsFragmentBuilder
 import com.neeplayer.ui.views.impl.MusicService
 import com.neeplayer.ui.views.impl.NowPlayingFragment
@@ -36,6 +41,11 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit internal var preferences: Preferences
 
+    @Inject
+    lateinit internal var nowPlayingModel: NowPlayingModel;
+
+    private val READ_EXTERNAL_STORAGE_REQUEST_CODE = 42;
+
     private val nowPlayingFragment by lazy {
         supportFragmentManager.findFragmentById(R.id.now_playing_fragment) as NowPlayingFragment
     }
@@ -45,8 +55,31 @@ class MainActivity : AppCompatActivity() {
         NeePlayerApp.component.inject(this)
         setContentView(R.layout.activity_main)
 
-        if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction().add(R.id.fragment_container, ArtistsFragment()).commit()
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), READ_EXTERNAL_STORAGE_REQUEST_CODE);
+        } else {
+            onReadStoragePermissionGranted()
+        }
+
+
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (requestCode == READ_EXTERNAL_STORAGE_REQUEST_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                onReadStoragePermissionGranted()
+            } else {
+                finish()
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
+    }
+
+    fun onReadStoragePermissionGranted() {
+        nowPlayingModel.tryRestoreNowPlaying()
+        if (supportFragmentManager.findFragmentByTag(ArtistsFragment.TAG) == null) {
+            supportFragmentManager.beginTransaction().add(R.id.fragment_container, ArtistsFragment(), ArtistsFragment.TAG).commitAllowingStateLoss()
         }
     }
 

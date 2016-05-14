@@ -43,10 +43,14 @@ class NowPlayingModel(
         progressSubject.onNext(value)
     }
 
-    init {
+    fun tryRestoreNowPlaying() {
+        if (nowPlaying != null) {
+            return
+        }
+
         Single.create<Playlist?> { it.onSuccess(database.restorePlaylist(preferences.get(NOW_PLAYING_SONG_ID))) }
-        .subscribeOn(Schedulers.io())
-        .subscribe { nowPlaying = it }
+            .subscribeOn(Schedulers.io())
+            .subscribe { nowPlaying = it }
     }
 
     fun save() {

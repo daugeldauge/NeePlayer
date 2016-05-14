@@ -18,6 +18,10 @@ import com.neeplayer.ui.views.ArtistsView
 import javax.inject.Inject
 
 class ArtistsFragment : Fragment(), ArtistsView {
+    companion object {
+        val TAG = ArtistsFragment::class.java.name;
+    }
+
     @Inject
     lateinit internal var presenter: ArtistsPresenter
 

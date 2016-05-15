@@ -27,12 +27,9 @@ class Preferences(context: Context) {
             object NOW_PLAYING_SONG_ID: LongItem()
         }
 
-        sealed class BooleanItem(default: Boolean) : Item<Boolean>(), ItemWithDefaultValue<Boolean> {
-            override val default = default
+        sealed class BooleanItem(override val default: Boolean) : Item<Boolean>(), ItemWithDefaultValue<Boolean> {
 
-            override fun put(editor: SharedPreferences.Editor, value: Boolean) {
-                editor.putBoolean(key, value)
-            }
+            override fun put(editor: SharedPreferences.Editor, value: Boolean) { editor.putBoolean(key, value) }
             override fun get(preferences: SharedPreferences): Boolean? = if (preferences.contains(key)) preferences.getBoolean(key, false) else null
 
             object SCROBBLING : BooleanItem(default = true)

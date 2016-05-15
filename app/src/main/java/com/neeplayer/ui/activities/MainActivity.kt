@@ -90,15 +90,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        val token = token ?: return
-
-        lastFm.getSession(token)
+        lastFm.getSession(token ?: return)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     preferences.put(SESSION_KEY, it.getJSONObject("session").getString("key"))
                     invalidateOptionsMenu()
                     toast(R.string.last_fm_auth_success)
+                    token = null
                 }, {
                     toast(R.string.last_fm_auth_error)
                 })

@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import com.neeplayer.NeePlayerApp
 import com.neeplayer.R
 import com.neeplayer.model.Artist
+import com.neeplayer.ui.actionBar
 import com.neeplayer.ui.activities.MainActivity
 import com.neeplayer.ui.adapters.ArtistAdapter
 import com.neeplayer.ui.presenters.ArtistsPresenter
@@ -48,6 +49,10 @@ class ArtistsFragment : Fragment(), ArtistsView {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(activity)
         presenter.bind(this)
+
+        actionBar?.title = context.getString(R.string.app_name);
+        actionBar?.setDisplayShowHomeEnabled(false)
+        actionBar?.setDisplayHomeAsUpEnabled(false)
     }
 
     override fun onDestroyView() {

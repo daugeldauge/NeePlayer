@@ -13,4 +13,6 @@
     <string name="scrobbling">Scrobbling</string>
     <string name="sign_in">Sign in to Last.fm</string>
     <string name="sign_out">Sign out</string>
+
+    <string name="now_playing">Now playing</string>
 </resources>

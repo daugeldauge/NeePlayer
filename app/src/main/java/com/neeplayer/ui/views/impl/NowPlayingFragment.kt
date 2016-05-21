@@ -5,12 +5,15 @@ import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.BottomSheetBehavior
 import android.support.v4.app.Fragment
+import android.support.v7.app.ActionBar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.neeplayer.NeePlayerApp
+import com.neeplayer.R
 import com.neeplayer.databinding.FragmentNowPlayingBinding
 import com.neeplayer.model.Song
+import com.neeplayer.ui.actionBar
 import com.neeplayer.ui.onUserSeek
 import com.neeplayer.ui.presenters.NowPlayingPresenter
 import com.neeplayer.ui.setCallback
@@ -25,6 +28,13 @@ class NowPlayingFragment : Fragment(), NowPlayingView {
     private var needToStopTicking = false
     private val TICK_PERIOD = 1000
     private var overallTicking = 0
+
+
+    @ActionBar.DisplayOptions
+    private var oldActionBarDisplayOptions: Int = 0
+    private var oldActionBarTitle: CharSequence? = null
+    private val ACTION_BAR_THRESHOLD = 0.2
+    private var actionBarConfigured = false
 
     lateinit
     private var binding: FragmentNowPlayingBinding
@@ -51,6 +61,22 @@ class NowPlayingFragment : Fragment(), NowPlayingView {
 
         bottomSheet.setCallback(onSlide = {
             binding.npCollapsed.alpha = it
+            val actionBar = actionBar ?: return@setCallback
+
+            if (it < ACTION_BAR_THRESHOLD && !actionBarConfigured) {
+                actionBarConfigured = true
+                oldActionBarDisplayOptions = actionBar.displayOptions
+                oldActionBarTitle = actionBar.title
+                actionBar.setDisplayShowHomeEnabled(true)
+                actionBar.setDisplayHomeAsUpEnabled(true)
+                actionBar.setHomeAsUpIndicator(R.drawable.ic_close_white_24dp)
+                actionBar.title = context.getString(R.string.now_playing)
+            } else if (it >= ACTION_BAR_THRESHOLD && actionBarConfigured) {
+                actionBarConfigured = false
+                actionBar.displayOptions = oldActionBarDisplayOptions ?: 0
+                actionBar.title = oldActionBarTitle
+                actionBar.setHomeAsUpIndicator(null)
+            }
         })
 
         binding.npCollapsed.onClick {

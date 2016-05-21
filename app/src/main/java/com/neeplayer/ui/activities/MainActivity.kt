@@ -60,8 +60,6 @@ class MainActivity : AppCompatActivity() {
         } else {
             onReadStoragePermissionGranted()
         }
-
-
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -151,6 +149,11 @@ class MainActivity : AppCompatActivity() {
             else -> return false
         }
         return true
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed();
+        return true;
     }
 
     override fun onBackPressed() {

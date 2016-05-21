@@ -9,8 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import com.hannesdorfmann.fragmentargs.annotation.Arg
 import com.hannesdorfmann.fragmentargs.annotation.FragmentWithArgs
-import com.neeplayer.*
+import com.neeplayer.NeePlayerApp
+import com.neeplayer.R
 import com.neeplayer.model.*
+import com.neeplayer.ui.actionBar
 import com.neeplayer.ui.adapters.AlbumSongAdapter
 import rx.Subscription
 import javax.inject.Inject
@@ -62,6 +64,11 @@ class AlbumsFragment : Fragment() {
             adapter.paused = it.paused
             adapter.nowPlaying = it.currentSong
         }
+
+        actionBar?.title = artist.name
+        actionBar?.setDisplayShowHomeEnabled(true)
+        actionBar?.setDisplayHomeAsUpEnabled(true)
+        actionBar?.displayOptions
     }
 
     override fun onDestroyView() {

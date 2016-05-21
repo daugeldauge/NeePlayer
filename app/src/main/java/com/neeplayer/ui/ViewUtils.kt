@@ -4,6 +4,8 @@ import android.os.Handler
 import android.os.Looper
 import android.support.design.widget.BottomSheetBehavior
 import android.support.v4.app.Fragment
+import android.support.v7.app.ActionBar
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.widget.SeekBar
@@ -62,3 +64,6 @@ fun Fragment.uiThread(action: () -> Unit) {
         }
     }
 }
+
+val Fragment.actionBar: ActionBar?
+    get() = (activity as AppCompatActivity).supportActionBar

@@ -147,7 +147,7 @@
                 android:id="@+id/np_seek_bar"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
-                android:layout_marginTop="352dp"
+                android:layout_margin="0dp"
                 android:padding="0dp"
                 android:progress="@{progress}"
                 android:max="@{song.duration}" />

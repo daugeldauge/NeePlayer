@@ -1,5 +1,7 @@
 package com.neeplayer
 
+import android.annotation.TargetApi
+import android.os.Build
 import java.math.BigInteger
 import java.security.MessageDigest
 import java.util.*
@@ -21,3 +23,19 @@ inline fun <K, V, R> Map<K, V>.fold(initial: R, operation: (R, K, V) -> R): R {
     }
     return accumulator
 }
+
+inline fun <R> targetApi(api: Int, success: () -> R, failure: () -> R) =
+        if (Build.VERSION.SDK_INT >= api) {
+            success()
+        } else {
+            failure()
+        }
+
+inline fun targetApi(api: Int, block: () -> Unit) =
+        targetApi(api, block) {}
+
+inline fun <R> lollipop(success: () -> R, failure: () -> R) =
+        targetApi(Build.VERSION_CODES.LOLLIPOP, success, failure)
+
+inline fun lollipop(block: () -> Unit) =
+        lollipop(block) {}

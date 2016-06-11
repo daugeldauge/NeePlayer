@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import com.neeplayer.NeePlayerApp
 import com.neeplayer.R
 import com.neeplayer.databinding.FragmentNowPlayingBinding
@@ -58,6 +59,14 @@ class NowPlayingFragment : Fragment(), NowPlayingView {
         super.onViewCreated(view, savedInstanceState)
         binding = DataBindingUtil.bind<FragmentNowPlayingBinding>(view)
         bottomSheet = BottomSheetBehavior.from(binding.npContainer)
+
+        view.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                binding.npSeekBar.translationY = binding.npAlbumArt.measuredHeight - binding.npSeekBar.measuredHeight / 2f
+                view.viewTreeObserver.removeGlobalOnLayoutListener(this)
+            }
+
+        })
 
         bottomSheet.setCallback(onSlide = {
             binding.npCollapsed.alpha = it

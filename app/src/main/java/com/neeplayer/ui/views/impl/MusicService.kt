@@ -20,9 +20,7 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.app.NotificationCompat
 import android.widget.RemoteViews
-import com.neeplayer.BuildConfig
-import com.neeplayer.NeePlayerApp
-import com.neeplayer.R
+import com.neeplayer.*
 import com.neeplayer.model.Song
 import com.neeplayer.ui.presenters.NowPlayingPresenter
 import com.neeplayer.ui.views.NowPlayingView
@@ -194,15 +192,15 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
                 .setCategory(NotificationCompat.CATEGORY_STATUS)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setTicker(song.title)
-                .setSmallIcon(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                .setSmallIcon(lollipop({
                     R.drawable.ic_play_arrow_white
-                } else {
+                }, {
                     R.mipmap.ic_launcher
-                })
+                }))
                 .setContent(smallContent)
                 .build()
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+        targetApi(Build.VERSION_CODES.JELLY_BEAN) {
             notification.bigContentView = bigContent
         }
 
@@ -225,15 +223,15 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     }
 
     private fun RemoteViews.setImageViewVectorResource(@IdRes viewId: Int, @DrawableRes vectorId: Int) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            setImageViewResource(viewId, vectorId);
-        } else {
-            val drawable = VectorDrawableCompat.create(resources, vectorId, theme) ?: return;
+        lollipop({ setImageViewResource(viewId, vectorId) }) {
+
+            val drawable = VectorDrawableCompat.create(resources, vectorId, theme) ?: return
             val bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(bitmap)
             drawable.setBounds(0, 0, canvas.width, canvas.height)
             drawable.draw(canvas)
             setImageViewBitmap(viewId, bitmap)
+
         }
     }
 

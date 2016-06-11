@@ -16,6 +16,8 @@ import com.neeplayer.model.*
 import org.jetbrains.anko.onClick
 
 import com.neeplayer.R
+import com.neeplayer.lollipop
+import com.neeplayer.targetApi
 
 class AlbumSongAdapter(private val context: Context, private val albums: List<AlbumWithSongs>, private val onSongClicked: (Song) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val ALBUM_ITEM = 0
@@ -60,11 +62,7 @@ class AlbumSongAdapter(private val context: Context, private val albums: List<Al
             SONG_ITEM -> {
                 val binding = SongBinding.inflate(inflater, parent, false)
                 binding.animationNowPlaying.setImageResource(
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            R.drawable.now_playing
-                        } else {
-                            R.drawable.ic_equalizer_black_24dp
-                        }
+                        lollipop({ R.drawable.now_playing },{ R.drawable.ic_equalizer_black_24dp })
                 )
                 SongViewHolder(binding.root)
             }
@@ -91,12 +89,13 @@ class AlbumSongAdapter(private val context: Context, private val albums: List<Al
                 if (song == nowPlaying) {
                     binding.songTrack.visibility = View.GONE
                     binding.animationNowPlaying.visibility = View.VISIBLE
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        val animation = binding.animationNowPlaying.drawable as AnimatedVectorDrawable
-                        if (paused) {
-                            animation.stop()
-                        }  else {
-                            animation.start()
+                    lollipop {
+                        (binding.animationNowPlaying.drawable as AnimatedVectorDrawable).apply {
+                            if (paused) {
+                                stop()
+                            }  else {
+                                start()
+                            }
                         }
                     }
                 } else {

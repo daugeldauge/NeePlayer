@@ -78,6 +78,7 @@ fun View.onFirstLayout(block: () -> Unit) {
             targetApi(Build.VERSION_CODES.JELLY_BEAN, {
                 viewTreeObserver.removeOnGlobalLayoutListener(this)
             }, {
+                @Suppress("DEPRECATION")
                 viewTreeObserver.removeGlobalOnLayoutListener(this)
             })
         }

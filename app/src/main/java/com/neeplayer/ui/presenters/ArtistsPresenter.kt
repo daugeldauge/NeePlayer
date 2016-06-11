@@ -43,7 +43,7 @@ class ArtistsPresenter
     }
 
     fun onArtistClicked(artist: Artist) {
-
+        artist.toString()
     }
 
     private fun getArtistImageUrl(artistJsonInfo: JSONObject): String {

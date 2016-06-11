@@ -9,16 +9,12 @@ import android.support.v7.app.ActionBar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
 import com.neeplayer.NeePlayerApp
 import com.neeplayer.R
 import com.neeplayer.databinding.FragmentNowPlayingBinding
 import com.neeplayer.model.Song
-import com.neeplayer.ui.actionBar
-import com.neeplayer.ui.onUserSeek
+import com.neeplayer.ui.*
 import com.neeplayer.ui.presenters.NowPlayingPresenter
-import com.neeplayer.ui.setCallback
-import com.neeplayer.ui.uiThread
 import com.neeplayer.ui.views.NowPlayingView
 import org.jetbrains.anko.onClick
 import javax.inject.Inject
@@ -60,13 +56,9 @@ class NowPlayingFragment : Fragment(), NowPlayingView {
         binding = DataBindingUtil.bind<FragmentNowPlayingBinding>(view)
         bottomSheet = BottomSheetBehavior.from(binding.npContainer)
 
-        view.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                binding.npSeekBar.translationY = binding.npAlbumArt.measuredHeight - binding.npSeekBar.measuredHeight / 2f
-                view.viewTreeObserver.removeGlobalOnLayoutListener(this)
-            }
-
-        })
+        view.onFirstLayout {
+            binding.npSeekBar.translationY = binding.npAlbumArt.measuredHeight - binding.npSeekBar.measuredHeight / 2f
+        }
 
         bottomSheet.setCallback(onSlide = {
             binding.npCollapsed.alpha = it

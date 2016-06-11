@@ -1,5 +1,6 @@
 package com.neeplayer.ui
 
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.support.design.widget.BottomSheetBehavior
@@ -8,7 +9,9 @@ import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
+import android.view.ViewTreeObserver
 import android.widget.SeekBar
+import com.neeplayer.targetApi
 
 fun SeekBar.onUserSeek(
         onProgress: ((progress: Int) -> Unit)? = null,
@@ -67,3 +70,16 @@ fun Fragment.uiThread(action: () -> Unit) {
 
 val Fragment.actionBar: ActionBar?
     get() = (activity as AppCompatActivity).supportActionBar
+
+fun View.onFirstLayout(block: () -> Unit) {
+    viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+        override fun onGlobalLayout() {
+            block()
+            targetApi(Build.VERSION_CODES.JELLY_BEAN, {
+                viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }, {
+                viewTreeObserver.removeGlobalOnLayoutListener(this)
+            })
+        }
+    })
+}

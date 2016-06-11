@@ -1,19 +1,24 @@
 package com.neeplayer.ui.views.impl
 
-import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
 import android.content.*
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
 import android.media.AudioManager
-import android.media.MediaMetadata
 import android.media.MediaPlayer
-import android.media.session.MediaSession
-import android.media.session.PlaybackState
+import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
 import android.provider.MediaStore
+import android.support.annotation.DrawableRes
 import android.support.annotation.IdRes
+import android.support.graphics.drawable.VectorDrawableCompat
+import android.support.v4.media.MediaMetadataCompat
+import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.PlaybackStateCompat
+import android.support.v4.app.NotificationCompat
 import android.widget.RemoteViews
 import com.neeplayer.BuildConfig
 import com.neeplayer.NeePlayerApp
@@ -46,7 +51,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     @Inject
     lateinit var presenter: NowPlayingPresenter
 
-    private val mediaSession by lazy { MediaSession(this, BuildConfig.APPLICATION_ID) }
+    private val mediaSession by lazy { MediaSessionCompat(this, BuildConfig.APPLICATION_ID, ComponentName(this, MediaButtonEventsReceiver::class.java), null) }
 
     override fun onCreate() {
         super.onCreate()
@@ -54,7 +59,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         presenter.bind(this)
         initMediaPLayer()
         mediaSession.setCallback(mediaSessionCallback)
-        mediaSession.setFlags(MediaSession.FLAG_HANDLES_MEDIA_BUTTONS or MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS)
+        mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
         mediaSession.isActive = true
 
         registerReceiver(headsetPlugReceiver, IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY))
@@ -158,18 +163,18 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
 
     private fun updateInfo(song: Song) {
         mediaSession.setMetadata(
-                MediaMetadata.Builder()
-                        .putString(MediaMetadata.METADATA_KEY_ARTIST, song.album.artist.name)
-                        .putString(MediaMetadata.METADATA_KEY_ALBUM, song.album.title)
-                        .putString(MediaMetadata.METADATA_KEY_TITLE, song.title)
-                        .putBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART, BitmapFactory.decodeFile(song.album.art))
+                MediaMetadataCompat.Builder()
+                        .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, song.album.artist.name)
+                        .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, song.album.title)
+                        .putString(MediaMetadataCompat.METADATA_KEY_TITLE, song.title)
+                        .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, BitmapFactory.decodeFile(song.album.art))
                         .build()
         )
 
         mediaSession.setPlaybackState(
-                PlaybackState.Builder()
-                        .setState(if (paused) PlaybackState.STATE_PAUSED else PlaybackState.STATE_PLAYING, PlaybackState.PLAYBACK_POSITION_UNKNOWN, 1f)
-                        .setActions(PlaybackState.ACTION_PLAY or PlaybackState.ACTION_PAUSE or PlaybackState.ACTION_PLAY_PAUSE or PlaybackState.ACTION_SKIP_TO_NEXT or PlaybackState.ACTION_SKIP_TO_PREVIOUS)
+                PlaybackStateCompat.Builder()
+                        .setState(if (paused) PlaybackStateCompat.STATE_PAUSED else PlaybackStateCompat.STATE_PLAYING, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 1f)
+                        .setActions(PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PAUSE or PlaybackStateCompat.ACTION_PLAY_PAUSE or PlaybackStateCompat.ACTION_SKIP_TO_NEXT or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
                         .build()
         )
 
@@ -184,16 +189,22 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         fillNotificationContent(bigContent, song);
         fillNotificationContent(smallContent, song);
 
-        val notification = Notification.Builder(this)
-                .setPriority(Notification.PRIORITY_MAX)
-                .setCategory(Notification.CATEGORY_STATUS)
-                .setVisibility(Notification.VISIBILITY_PUBLIC)
+        val notification = NotificationCompat.Builder(this)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setCategory(NotificationCompat.CATEGORY_STATUS)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setTicker(song.title)
-                .setSmallIcon(R.drawable.ic_play_arrow_white)
+                .setSmallIcon(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    R.drawable.ic_play_arrow_white
+                } else {
+                    R.mipmap.ic_launcher
+                })
                 .setContent(smallContent)
                 .build()
 
-        notification.bigContentView = bigContent
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            notification.bigContentView = bigContent
+        }
 
         startForeground(NOTIFY_ID, notification)
     }
@@ -204,12 +215,28 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         content.setImageViewBitmap(R.id.notification_album_art, albumArt);
         content.setTextViewText(R.id.notification_song_title, song.title)
         content.setTextViewText(R.id.notification_artist, song.album.artist.name)
-        content.setImageViewResource(R.id.notification_play_pause_button, if (paused) R.drawable.ic_play_arrow_black_medium else R.drawable.ic_pause_black_medium)
+        content.setImageViewVectorResource(R.id.notification_play_pause_button, if (paused) R.drawable.ic_play_arrow_black_medium else R.drawable.ic_pause_black_medium)
+        content.setImageViewVectorResource(R.id.notification_fast_forward_button, R.drawable.ic_fast_forward_black_medium)
+        content.setImageViewVectorResource(R.id.notification_fast_rewind_button, R.drawable.ic_fast_rewind_black_medium)
 
         setupPendingIntent(content, R.id.notification_fast_rewind_button, PLAY_PREVIOUS_ACTION)
         setupPendingIntent(content, R.id.notification_play_pause_button, PLAY_OR_PAUSE_ACTION)
         setupPendingIntent(content, R.id.notification_fast_forward_button, PLAY_NEXT_ACTION)
     }
+
+    private fun RemoteViews.setImageViewVectorResource(@IdRes viewId: Int, @DrawableRes vectorId: Int) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setImageViewResource(viewId, vectorId);
+        } else {
+            val drawable = VectorDrawableCompat.create(resources, vectorId, theme) ?: return;
+            val bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(bitmap)
+            drawable.setBounds(0, 0, canvas.width, canvas.height)
+            drawable.draw(canvas)
+            setImageViewBitmap(viewId, bitmap)
+        }
+    }
+
     private fun setupPendingIntent(content: RemoteViews, @IdRes viewId: Int, action: String) {
         val intent = Intent(this, MusicService::class.java).setAction(action)
         val pendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
@@ -258,7 +285,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         lastKnownAudioFocusState = it
     }
 
-    private val mediaSessionCallback = object : MediaSession.Callback() {
+    private val mediaSessionCallback = object : MediaSessionCompat.Callback() {
         //TODO implement methods
     }
 
@@ -268,5 +295,12 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
                 presenter.onPlayPauseClicked()
             }
         }
+    }
+
+    class MediaButtonEventsReceiver : BroadcastReceiver () {
+        override fun onReceive(context: Context, intent: Intent) {
+            //ignore
+        }
+
     }
 }

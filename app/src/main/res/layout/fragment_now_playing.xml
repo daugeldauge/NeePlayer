@@ -115,26 +115,26 @@
                         android:gravity="center">
 
                         <ImageButton
+                            style="?android:attr/borderlessButtonStyle"
                             android:id="@+id/np_fast_rewind"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            style="?android:attr/borderlessButtonStyle"
-                            android:src="@drawable/ic_fast_rewind_black_48dp" />
+                            app:srcCompat="@drawable/ic_fast_rewind_black_48dp" />
 
                         <ImageButton
+                            style="?android:attr/borderlessButtonStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            style="?android:attr/borderlessButtonStyle"
                             app:drawable="@{paused ? @drawable/ic_play_arrow_black_48dp : @drawable/ic_pause_black_48dp}"
                             tools:src="@drawable/ic_pause_black_48dp"
                             android:id="@+id/np_play_pause" />
 
                         <ImageButton
+                            style="?android:attr/borderlessButtonStyle"
                             android:id="@+id/np_fast_forward"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            style="?android:attr/borderlessButtonStyle"
-                            android:src="@drawable/ic_fast_forward_black_48dp" />
+                            app:srcCompat="@drawable/ic_fast_forward_black_48dp" />
 
                     </LinearLayout>
 
@@ -158,25 +158,31 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/now_playing_peek_height"
                 android:padding="4dp"
-                android:paddingEnd="0dp"
                 android:gravity="center_vertical"
-                android:background="@color/background">
+                android:background="@color/background"
+                android:paddingEnd="0dp"
+                android:paddingRight="0dp">
 
                 <ImageView
                     android:id="@+id/np_collapsed_album_art"
-                    android:layout_alignParentStart="true"
                     android:layout_width="64dp"
                     android:layout_height="64dp"
                     android:background="@color/image_alt"
-                    app:imagePath="@{song.album.art}" />
+                    app:imagePath="@{song.album.art}"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true" />
 
                 <LinearLayout
-                    android:layout_toEndOf="@id/np_collapsed_album_art"
-                    android:layout_toStartOf="@+id/np_collapsed_play_pause"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="12dp">
+                    android:paddingLeft="12dp"
+                    android:paddingStart="12dp"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@id/np_collapsed_album_art"
+                    android:layout_toRightOf="@id/np_collapsed_album_art"
+                    android:layout_toStartOf="@+id/np_collapsed_play_pause"
+                    android:layout_toLeftOf="@+id/np_collapsed_play_pause">
 
                     <TextView
                         style="@style/Text.Title"
@@ -193,15 +199,16 @@
                 </LinearLayout>
 
                 <ImageButton
+                    style="?android:attr/borderlessButtonStyle"
+                    android:id="@+id/np_collapsed_play_pause"
+                    android:minWidth="@null"
+                    tools:src="@drawable/ic_pause_black_48dp"
+                    app:drawable="@{paused ? @drawable/ic_play_arrow_black_48dp : @drawable/ic_pause_black_48dp}"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_alignParentEnd="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minWidth="@null"
-                    style="?android:attr/borderlessButtonStyle"
-                    app:drawable="@{paused ? @drawable/ic_play_arrow_black_48dp : @drawable/ic_pause_black_48dp}"
-                    tools:src="@drawable/ic_pause_black_48dp"
-                    android:id="@+id/np_collapsed_play_pause" />
+                    android:layout_alignParentRight="true" />
 
             </RelativeLayout>
 

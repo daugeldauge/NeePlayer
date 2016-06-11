@@ -3,6 +3,9 @@ package com.neeplayer.ui.adapters
 import android.content.Context
 import android.databinding.DataBindingUtil
 import android.graphics.drawable.AnimatedVectorDrawable
+import android.graphics.drawable.Drawable
+import android.os.Build
+import android.support.graphics.drawable.AnimatedVectorDrawableCompat
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +15,7 @@ import com.neeplayer.databinding.SongBinding
 import com.neeplayer.model.*
 import org.jetbrains.anko.onClick
 
+import com.neeplayer.R
 
 class AlbumSongAdapter(private val context: Context, private val albums: List<AlbumWithSongs>, private val onSongClicked: (Song) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val ALBUM_ITEM = 0
@@ -53,7 +57,17 @@ class AlbumSongAdapter(private val context: Context, private val albums: List<Al
         val inflater = LayoutInflater.from(context)
         return when(viewType) {
             ALBUM_ITEM -> AlbumViewHolder(AlbumBinding.inflate(inflater, parent, false).root)
-            SONG_ITEM -> SongViewHolder(SongBinding.inflate(inflater, parent, false).root)
+            SONG_ITEM -> {
+                val binding = SongBinding.inflate(inflater, parent, false)
+                binding.animationNowPlaying.setImageResource(
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            R.drawable.now_playing
+                        } else {
+                            R.drawable.ic_equalizer_black_24dp
+                        }
+                )
+                SongViewHolder(binding.root)
+            }
             else -> null
         }
     }
@@ -77,11 +91,13 @@ class AlbumSongAdapter(private val context: Context, private val albums: List<Al
                 if (song == nowPlaying) {
                     binding.songTrack.visibility = View.GONE
                     binding.animationNowPlaying.visibility = View.VISIBLE
-                    val animation = binding.animationNowPlaying.drawable as AnimatedVectorDrawable
-                    if (paused) {
-                        animation.stop()
-                    }  else {
-                        animation.start()
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        val animation = binding.animationNowPlaying.drawable as AnimatedVectorDrawable
+                        if (paused) {
+                            animation.stop()
+                        }  else {
+                            animation.start()
+                        }
                     }
                 } else {
                     binding.songTrack.visibility = View.VISIBLE

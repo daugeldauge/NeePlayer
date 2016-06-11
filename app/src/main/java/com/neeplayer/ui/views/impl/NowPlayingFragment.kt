@@ -73,7 +73,7 @@ class NowPlayingFragment : Fragment(), NowPlayingView {
                 actionBar.title = context.getString(R.string.now_playing)
             } else if (it >= ACTION_BAR_THRESHOLD && actionBarConfigured) {
                 actionBarConfigured = false
-                actionBar.displayOptions = oldActionBarDisplayOptions ?: 0
+                actionBar.displayOptions = oldActionBarDisplayOptions
                 actionBar.title = oldActionBarTitle
                 actionBar.setHomeAsUpIndicator(null)
             }

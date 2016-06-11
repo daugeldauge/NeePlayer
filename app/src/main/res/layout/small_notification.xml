@@ -5,7 +5,7 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="64dp"
-    tools:background="#eee"
+    android:background="@color/background"
     >
 
     <ImageView
@@ -29,25 +29,20 @@
             android:orientation="vertical"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/notification_controls"
+            android:layout_toStartOf="@+id/notification_controls"
             >
 
             <TextView
+                style="@style/Text.Title"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:id="@+id/notification_song_title"
-                android:maxLines="1"
-                android:ellipsize="end"
-                style="@android:style/TextAppearance.Material.Notification.Title"
                 tools:text="Cemetery Gates (And other cool stuff)"
                 />
 
             <TextView
+                style="@style/Text.Regular"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:id="@+id/notification_artist"
-                android:maxLines="1"
-                android:ellipsize="end"
-                style="@android:style/TextAppearance.Material.Notification"
                 tools:text="The Smiths"
                 />
 
@@ -60,25 +55,23 @@
             android:gravity="center_vertical"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             >
 
             <ImageButton
                 style="@style/NotificationButton.Small"
-                android:src="@drawable/ic_fast_rewind_black_medium"
                 android:id="@+id/notification_fast_rewind_button"
                 />
 
 
             <ImageButton
                 style="@style/NotificationButton.Small"
-                android:src="@drawable/ic_pause_black_medium"
                 android:id="@+id/notification_play_pause_button"
                 />
 
 
             <ImageButton
                 style="@style/NotificationButton.Small"
-                android:src="@drawable/ic_fast_forward_black_medium"
                 android:id="@+id/notification_fast_forward_button"
                 />
 

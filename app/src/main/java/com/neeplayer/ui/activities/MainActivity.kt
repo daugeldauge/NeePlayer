@@ -5,19 +5,18 @@ import android.app.FragmentTransaction
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.app.AppCompatDelegate
 import android.view.Menu
 import android.view.MenuItem
+import com.neeplayer.*
 
-import com.neeplayer.LastFmService
-import com.neeplayer.NeePlayerApp
-import com.neeplayer.Preferences
 import com.neeplayer.Preferences.Item.BooleanItem.SCROBBLING
 import com.neeplayer.Preferences.Item.StringItem.SESSION_KEY
-import com.neeplayer.R
 import com.neeplayer.ui.fragments.ArtistsFragment
 import com.neeplayer.model.Artist
 import com.neeplayer.model.NowPlayingModel
@@ -32,6 +31,11 @@ import javax.inject.Inject
 
 // TODO: refactor to MVP
 class MainActivity : AppCompatActivity() {
+
+    companion object { init {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }}
+
 
     private var token: String? = null
 

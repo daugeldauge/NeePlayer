@@ -18,7 +18,9 @@
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:paddingStart="20dp"
+        android:paddingLeft="20dp"
         android:paddingEnd="25dp"
+        android:paddingRight="25dp"
         android:clickable="true"
         android:focusable="true"
         android:background="?android:attr/selectableItemBackground">
@@ -29,7 +31,8 @@
             android:layout_width="35dp"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_alignParentStart="true">
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true">
 
             <TextView
                 android:id="@+id/song_track"
@@ -43,8 +46,7 @@
                 android:id="@+id/animation_now_playing"
                 android:layout_gravity="center_vertical"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/now_playing" />
+                android:layout_height="wrap_content" />
 
         </FrameLayout>
 
@@ -54,18 +56,22 @@
             android:id="@+id/song_title"
             android:layout_centerVertical="true"
             android:layout_toEndOf="@id/song_track_container"
+            android:layout_toRightOf="@id/song_track_container"
             android:layout_toStartOf="@+id/song_duration"
+            android:layout_toLeftOf="@+id/song_duration"
             android:text="@{song.title}"
-            tools:text="Everlasting Love and the end of somet"/>
+            tools:text="Everlasting Love and the end of something" />
 
         <TextView
             style="@style/Text.Regular"
             android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
             android:paddingStart="4dp"
+            android:paddingLeft="4dp"
             android:id="@+id/song_duration"
             app:duration="@{song.duration}"
-            tools:text="3:22"/>
+            tools:text="3:22" />
 
     </RelativeLayout>
 

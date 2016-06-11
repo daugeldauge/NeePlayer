@@ -5,8 +5,8 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="128dp"
+    android:background="@color/background"
     tools:layout_width="350dp"
-    tools:background="#eee"
     >
 
     <ImageView
@@ -31,22 +31,14 @@
             >
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:ellipsize="end"
+                style="@style/Text.Title"
                 android:id="@+id/notification_song_title"
-                style="@android:style/TextAppearance.Material.Notification.Title"
                 tools:text="Cemetery Gates"
                 />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:ellipsize="end"
+                style="@style/Text.Regular"
                 android:id="@+id/notification_artist"
-                style="@android:style/TextAppearance.Material.Notification"
                 tools:text="The Smiths"
                 />
 
@@ -62,21 +54,18 @@
 
             <ImageButton
                 style="@style/NotificationButton.Big"
-                android:src="@drawable/ic_fast_rewind_black_medium"
                 android:id="@+id/notification_fast_rewind_button"
                 />
 
 
             <ImageButton
                 style="@style/NotificationButton.Big"
-                android:src="@drawable/ic_pause_black_medium"
                 android:id="@+id/notification_play_pause_button"
                 />
 
 
             <ImageButton
                 style="@style/NotificationButton.Big"
-                android:src="@drawable/ic_fast_forward_black_medium"
                 android:id="@+id/notification_fast_forward_button"
                 />
 

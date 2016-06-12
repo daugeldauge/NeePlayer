@@ -15,6 +15,8 @@ import android.view.Menu
 import android.view.MenuItem
 import com.neeplayer.NeePlayerApp
 import com.neeplayer.R
+import com.neeplayer.di.ActivityComponent
+import com.neeplayer.di.ActivityModule
 import com.neeplayer.model.Artist
 import com.neeplayer.model.NowPlayingModel
 import com.neeplayer.ui.albums.AlbumsFragmentBuilder
@@ -32,11 +34,16 @@ class MainActivity : AppCompatActivity(), AuthView {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
     }}
 
+    lateinit var component: ActivityComponent
+
     @Inject
     lateinit internal var presenter: AuthPresenter
 
     @Inject
     lateinit internal var nowPlayingModel: NowPlayingModel;
+
+    @Inject
+    internal lateinit var router: Router
 
     private val READ_EXTERNAL_STORAGE_REQUEST_CODE = 42;
 
@@ -49,7 +56,9 @@ class MainActivity : AppCompatActivity(), AuthView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        NeePlayerApp.component.inject(this)
+        component = NeePlayerApp.component.plus(ActivityModule(this))
+        component.inject(this)
+
         setContentView(R.layout.activity_main)
         presenter.bind(this)
         presenter.onRestoreInstanceState(savedInstanceState)

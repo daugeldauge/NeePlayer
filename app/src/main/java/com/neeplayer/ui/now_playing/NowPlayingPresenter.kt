@@ -1,22 +1,19 @@
 package com.neeplayer.ui.now_playing
 
+import com.neeplayer.minutes
 import com.neeplayer.model.NowPlayingModel
 import com.neeplayer.model.Song
+import com.neeplayer.plusAssign
+import com.neeplayer.seconds
 import com.neeplayer.ui.BasePresenter
-import com.neeplayer.ui.now_playing.NowPlayingView
-import rx.subscriptions.CompositeSubscription
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-
-class NowPlayingPresenter @Inject constructor(val model: NowPlayingModel) : BasePresenter<NowPlayingView>() {
+class NowPlayingPresenter @Inject constructor(private val model: NowPlayingModel) : BasePresenter<NowPlayingView>() {
 
     private var lastSong: Song? = null
 
-    private val subscription = CompositeSubscription()
-
     override fun bind(view: NowPlayingView) {
-        subscription.add(model.nowPlayingObservable.subscribe {
+        subscriptions += model.nowPlayingObservable.subscribe {
             val song = it.currentSong
 
             if (song != lastSong) {
@@ -30,11 +27,11 @@ class NowPlayingPresenter @Inject constructor(val model: NowPlayingModel) : Base
             } else {
                 view.play()
             }
-        })
+        }
 
-        subscription.add(model.progressObservable.subscribe {
+        subscriptions += model.progressObservable.subscribe {
             view.seek(model.progress)
-        })
+        }
     }
 
     fun onPreviousClicked() {
@@ -53,9 +50,9 @@ class NowPlayingPresenter @Inject constructor(val model: NowPlayingModel) : Base
         model.progress = progress
     }
 
-    private val minSongLengthToScrobble = TimeUnit.SECONDS.toMillis(30)
+    private val minSongLengthToScrobble = 30.seconds
     private val scrobbleFractionThreshold = 0.5
-    private val scrobbleThreshold = TimeUnit.MINUTES.toMillis(4)
+    private val scrobbleThreshold = 4.minutes
 
     private var isCurrentSongScrobbled = false
 
@@ -73,7 +70,6 @@ class NowPlayingPresenter @Inject constructor(val model: NowPlayingModel) : Base
 
     override fun unbind() {
         model.save()
-        subscription.clear()
         super.unbind()
     }
 }

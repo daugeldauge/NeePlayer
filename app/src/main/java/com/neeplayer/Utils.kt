@@ -1,10 +1,12 @@
 package com.neeplayer
 
-import android.annotation.TargetApi
 import android.os.Build
+import rx.Subscription
+import rx.subscriptions.CompositeSubscription
 import java.math.BigInteger
 import java.security.MessageDigest
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 fun String.md5(): String {
@@ -39,3 +41,11 @@ inline fun <R> lollipop(success: () -> R, failure: () -> R) =
 
 inline fun lollipop(block: () -> Unit) =
         lollipop(block) {}
+
+operator fun CompositeSubscription.plusAssign(subscription: Subscription) = add(subscription)
+
+val Int.minutes: Long
+    get() = TimeUnit.MINUTES.toMillis(toLong())
+
+val Int.seconds: Long
+    get() = TimeUnit.SECONDS.toMillis(toLong())

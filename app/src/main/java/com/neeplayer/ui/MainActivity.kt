@@ -13,45 +13,35 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.app.AppCompatDelegate
 import android.view.Menu
 import android.view.MenuItem
-import com.neeplayer.*
-import com.neeplayer.di.LastFmModule
-
-import com.neeplayer.model.Preferences.Item.BooleanItem.SCROBBLING
-import com.neeplayer.model.Preferences.Item.StringItem.SESSION_KEY
-import com.neeplayer.ui.artists.ArtistsFragment
+import com.neeplayer.NeePlayerApp
+import com.neeplayer.R
 import com.neeplayer.model.Artist
-import com.neeplayer.model.LastFmService
 import com.neeplayer.model.NowPlayingModel
-import com.neeplayer.model.Preferences
 import com.neeplayer.ui.albums.AlbumsFragmentBuilder
+import com.neeplayer.ui.artists.ArtistsFragment
+import com.neeplayer.ui.auth.AuthPresenter
+import com.neeplayer.ui.auth.AuthView
 import com.neeplayer.ui.now_playing.MusicService
 import com.neeplayer.ui.now_playing.NowPlayingFragment
-
 import org.jetbrains.anko.toast
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
 import javax.inject.Inject
 
-// TODO: refactor to MVP
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), AuthView {
 
     companion object { init {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
     }}
 
-
-    private var token: String? = null
-
     @Inject
-    lateinit internal var lastFm: LastFmService
-
-    @Inject
-    lateinit internal var preferences: Preferences
+    lateinit internal var presenter: AuthPresenter
 
     @Inject
     lateinit internal var nowPlayingModel: NowPlayingModel;
 
     private val READ_EXTERNAL_STORAGE_REQUEST_CODE = 42;
+
+    private var menuElements = emptySet<AuthView.MenuElement>()
+    private var scrobblingToggleChecked = true
 
     private val nowPlayingFragment by lazy {
         supportFragmentManager.findFragmentById(R.id.now_playing_fragment) as NowPlayingFragment
@@ -61,12 +51,19 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         NeePlayerApp.component.inject(this)
         setContentView(R.layout.activity_main)
+        presenter.bind(this)
+        presenter.onRestoreInstanceState(savedInstanceState)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), READ_EXTERNAL_STORAGE_REQUEST_CODE);
         } else {
             onReadStoragePermissionGranted()
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        presenter.onSaveInstanceState(outState)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -95,64 +92,27 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        lastFm.getSession(token ?: return)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    preferences.put(SESSION_KEY, it.getJSONObject("session").getString("key"))
-                    invalidateOptionsMenu()
-                    toast(R.string.last_fm_auth_success)
-                    token = null
-                }, {
-                    toast(R.string.last_fm_auth_error)
-                })
-    }
-
-    fun navigateToArtistFragment(artist: Artist) {
-        supportFragmentManager.beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .replace(R.id.fragment_container, AlbumsFragmentBuilder(artist).build())
-                .addToBackStack(null)
-                .commit()
+        presenter.onResume()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
-        menu.findItem(R.id.scrobbling).isChecked = preferences.getOrDefault(SCROBBLING)
         return true
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        val isSignedIn = preferences.get(SESSION_KEY) != null
-
-        menu.findItem(R.id.sign_in).isVisible = !isSignedIn
-        menu.findItem(R.id.scrobbling).isVisible = isSignedIn
-        menu.findItem(R.id.sign_out).isVisible = isSignedIn
+        menu.findItem(R.id.sign_in).isVisible = menuElements.contains(AuthView.MenuElement.SIGN_IN)
+        menu.findItem(R.id.scrobbling).isVisible = menuElements.contains(AuthView.MenuElement.SCROBBLING)
+        menu.findItem(R.id.sign_out).isVisible = menuElements.contains(AuthView.MenuElement.SIGN_OUT)
+        menu.findItem(R.id.scrobbling).isChecked = scrobblingToggleChecked
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.sign_in -> {
-                lastFm.getToken().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                        .subscribe({
-                            token = it.getString("token")
-
-                            val intent = Intent(Intent.ACTION_VIEW)
-                            intent.data = Uri.parse("http://www.last.fm/api/auth/?api_key=${LastFmModule.apiKey}&token=$token")
-                            startActivity(intent)
-                        }, {
-                            toast(R.string.last_fm_auth_error)
-                        })
-            }
-            R.id.sign_out -> {
-                preferences.remove(SESSION_KEY)
-                invalidateOptionsMenu()
-            }
-            R.id.scrobbling -> {
-                item.isChecked = !item.isChecked
-                preferences.put(SCROBBLING, item.isChecked)
-            }
+            R.id.sign_in -> presenter.onSignInClicked()
+            R.id.sign_out -> presenter.onSignOutClicked()
+            R.id.scrobbling -> presenter.onScrobblingToggled()
             else -> return false
         }
         return true
@@ -167,5 +127,31 @@ class MainActivity : AppCompatActivity() {
         if (!nowPlayingFragment.tryCollapse()) {
             super.onBackPressed()
         }
+    }
+
+    //region AuthView
+    override fun showAuthSuccess() = toast(R.string.last_fm_auth_success)
+
+    override fun showAuthError() = toast(R.string.last_fm_auth_error)
+
+    override fun showMenuElements(items: Set<AuthView.MenuElement>) {
+        menuElements = items
+        invalidateOptionsMenu()
+    }
+
+    override fun setScrobblingChecked(checked: Boolean) {
+        scrobblingToggleChecked = checked
+        invalidateOptionsMenu()
+    }
+
+    override fun showAuthView(uri: Uri) = startActivity(Intent(Intent.ACTION_VIEW, uri))
+    //endregion
+
+    fun navigateToArtistFragment(artist: Artist) {
+        supportFragmentManager.beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .replace(R.id.fragment_container, AlbumsFragmentBuilder(artist).build())
+                .addToBackStack(null)
+                .commit()
     }
 }

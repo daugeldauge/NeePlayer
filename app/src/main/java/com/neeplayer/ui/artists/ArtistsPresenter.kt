@@ -4,6 +4,7 @@ import com.neeplayer.model.LastFmService
 import com.neeplayer.model.Artist
 import com.neeplayer.model.ArtistImagesStorage
 import com.neeplayer.model.Database
+import com.neeplayer.plusAssign
 import com.neeplayer.ui.artists.ArtistsView
 import com.neeplayer.ui.BasePresenter
 import org.jetbrains.anko.AnkoLogger
@@ -14,33 +15,24 @@ import rx.subscriptions.CompositeSubscription
 import javax.inject.Inject
 
 class ArtistsPresenter
-    @Inject constructor(private val database: Database, private val lastFm: LastFmService, private val artistImagesStorage: ArtistImagesStorage)
+@Inject constructor(private val database: Database, private val lastFm: LastFmService, private val artistImagesStorage: ArtistImagesStorage)
 : BasePresenter<ArtistsView>(), AnkoLogger {
-
-    private val subscription = CompositeSubscription()
 
     override fun bind(view: ArtistsView) {
         super.bind(view)
         val artists = database.getArtists()
         view.showArtists(artists)
         artists.filter { it.imageUrl == null }.forEach { artist ->
-            subscription.add(
-                    lastFm.getArtistInfo(artist.name)
-                            .subscribeOn(Schedulers.io())
-                            .map { getArtistImageUrl(it) }
-                            .subscribe({
-                                artistImagesStorage.put(artist.name, it)
-                                view.updateArtist(artist.withImage(it))
-                            }, {
-                                warn("Couldn't retrieve artist image url", it)
-                            })
-            )
+            subscriptions += lastFm.getArtistInfo(artist.name)
+                    .subscribeOn(Schedulers.io())
+                    .map { getArtistImageUrl(it) }
+                    .subscribe({
+                        artistImagesStorage.put(artist.name, it)
+                        view.updateArtist(artist.withImage(it))
+                    }, {
+                        warn("Couldn't retrieve artist image url", it)
+                    })
         }
-    }
-
-    override fun unbind() {
-        subscription.clear()
-        super.unbind()
     }
 
     fun onArtistClicked(artist: Artist) {

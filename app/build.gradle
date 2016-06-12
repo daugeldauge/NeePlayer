@@ -25,6 +25,11 @@ android {
     }
 }
 
+repositories {
+    jcenter()
+    maven { url 'https://clojars.org/repo/' }
+}
+
 dependencies {
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -56,6 +61,10 @@ dependencies {
     compile "com.google.dagger:dagger:$daggerVersion"
 
     kapt 'com.android.databinding:compiler:2.1.2'
+
+    def icepickVersion = "3.2.0"
+    provided "frankiesardo:icepick-processor:$icepickVersion"
+    compile "frankiesardo:icepick:$icepickVersion"
 
 }
 

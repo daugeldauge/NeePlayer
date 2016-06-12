@@ -1,4 +1,4 @@
-package com.neeplayer.ui.presenters
+package com.neeplayer.ui
 
 import android.os.Bundle
 

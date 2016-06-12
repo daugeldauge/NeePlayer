@@ -1,4 +1,4 @@
-package com.neeplayer.ui
+package com.neeplayer.ui.common
 
 import android.os.Build
 import android.os.Handler

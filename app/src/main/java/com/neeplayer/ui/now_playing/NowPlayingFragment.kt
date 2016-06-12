@@ -1,4 +1,4 @@
-package com.neeplayer.ui.views.impl
+package com.neeplayer.ui.now_playing
 
 import android.databinding.DataBindingUtil
 import android.os.Bundle
@@ -14,8 +14,9 @@ import com.neeplayer.R
 import com.neeplayer.databinding.FragmentNowPlayingBinding
 import com.neeplayer.model.Song
 import com.neeplayer.ui.*
-import com.neeplayer.ui.presenters.NowPlayingPresenter
-import com.neeplayer.ui.views.NowPlayingView
+import com.neeplayer.ui.common.*
+import com.neeplayer.ui.now_playing.NowPlayingPresenter
+import com.neeplayer.ui.now_playing.NowPlayingView
 import org.jetbrains.anko.onClick
 import javax.inject.Inject
 

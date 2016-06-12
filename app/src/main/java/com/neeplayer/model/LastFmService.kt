@@ -1,4 +1,4 @@
-package com.neeplayer
+package com.neeplayer.model
 
 import org.json.JSONObject
 import retrofit2.http.GET

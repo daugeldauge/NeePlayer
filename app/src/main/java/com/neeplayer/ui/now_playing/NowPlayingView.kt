@@ -1,4 +1,4 @@
-package com.neeplayer.ui.views
+package com.neeplayer.ui.now_playing
 
 import com.neeplayer.model.Song
 

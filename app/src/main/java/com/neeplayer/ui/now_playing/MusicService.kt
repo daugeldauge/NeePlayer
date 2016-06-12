@@ -1,4 +1,4 @@
-package com.neeplayer.ui.views.impl
+package com.neeplayer.ui.now_playing
 
 import android.app.PendingIntent
 import android.app.Service
@@ -22,8 +22,8 @@ import android.support.v4.app.NotificationCompat
 import android.widget.RemoteViews
 import com.neeplayer.*
 import com.neeplayer.model.Song
-import com.neeplayer.ui.presenters.NowPlayingPresenter
-import com.neeplayer.ui.views.NowPlayingView
+import com.neeplayer.ui.now_playing.NowPlayingPresenter
+import com.neeplayer.ui.now_playing.NowPlayingView
 import org.jetbrains.anko.toast
 import javax.inject.Inject
 

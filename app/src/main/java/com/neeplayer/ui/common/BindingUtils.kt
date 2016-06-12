@@ -1,4 +1,4 @@
-package com.neeplayer.ui.custom
+package com.neeplayer.ui.common
 
 import android.databinding.BindingAdapter
 import android.graphics.drawable.Drawable

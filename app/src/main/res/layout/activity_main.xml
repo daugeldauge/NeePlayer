@@ -11,7 +11,7 @@
 
     <fragment
         android:id="@+id/now_playing_fragment"
-        android:name="com.neeplayer.ui.views.impl.NowPlayingFragment"
+        android:name="com.neeplayer.ui.now_playing.NowPlayingFragment"
         android:layout_gravity="bottom"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

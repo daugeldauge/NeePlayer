@@ -1,4 +1,4 @@
-package com.neeplayer.ui.fragments
+package com.neeplayer.ui.albums
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -12,8 +12,7 @@ import com.hannesdorfmann.fragmentargs.annotation.FragmentWithArgs
 import com.neeplayer.NeePlayerApp
 import com.neeplayer.R
 import com.neeplayer.model.*
-import com.neeplayer.ui.actionBar
-import com.neeplayer.ui.adapters.AlbumSongAdapter
+import com.neeplayer.ui.common.actionBar
 import rx.Subscription
 import javax.inject.Inject
 

@@ -1,11 +1,11 @@
-package com.neeplayer
+package com.neeplayer.di
 
-import com.neeplayer.ui.activities.MainActivity
-import com.neeplayer.ui.fragments.AlbumsFragment
-import com.neeplayer.ui.fragments.ArtistsFragment
-import com.neeplayer.ui.presenters.NowPlayingPresenter
-import com.neeplayer.ui.views.impl.MusicService
-import com.neeplayer.ui.views.impl.NowPlayingFragment
+import com.neeplayer.ui.MainActivity
+import com.neeplayer.ui.albums.AlbumsFragment
+import com.neeplayer.ui.artists.ArtistsFragment
+import com.neeplayer.ui.now_playing.NowPlayingPresenter
+import com.neeplayer.ui.now_playing.MusicService
+import com.neeplayer.ui.now_playing.NowPlayingFragment
 import dagger.Component
 import javax.inject.Singleton
 

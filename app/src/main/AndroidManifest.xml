@@ -15,11 +15,11 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <meta-data
-            android:name="com.neeplayer.CustomGlideModule"
+            android:name="com.neeplayer.AppGlideModule"
             android:value="GlideModule" />
 
         <activity
-            android:name=".ui.activities.MainActivity"
+            android:name=".ui.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -29,7 +29,7 @@
         </activity>
 
         <service
-            android:name=".ui.views.impl.MusicService" />
+            android:name=".ui.now_playing.MusicService" />
     </application>
 
 </manifest>

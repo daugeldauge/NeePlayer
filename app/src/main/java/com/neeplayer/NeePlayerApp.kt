@@ -1,6 +1,9 @@
 package com.neeplayer
 
 import android.app.Application
+import com.neeplayer.di.AppComponent
+import com.neeplayer.di.AppModule
+import com.neeplayer.di.DaggerAppComponent
 
 class NeePlayerApp : Application() {
     companion object {

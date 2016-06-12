@@ -1,4 +1,4 @@
-package com.neeplayer.ui.adapters
+package com.neeplayer.ui.albums
 
 import android.content.Context
 import android.databinding.DataBindingUtil
@@ -62,7 +62,7 @@ class AlbumSongAdapter(private val context: Context, private val albums: List<Al
             SONG_ITEM -> {
                 val binding = SongBinding.inflate(inflater, parent, false)
                 binding.animationNowPlaying.setImageResource(
-                        lollipop({ R.drawable.now_playing },{ R.drawable.ic_equalizer_black_24dp })
+                        lollipop({ R.drawable.now_playing }, { R.drawable.ic_equalizer_black_24dp })
                 )
                 SongViewHolder(binding.root)
             }
@@ -93,7 +93,7 @@ class AlbumSongAdapter(private val context: Context, private val albums: List<Al
                         (binding.animationNowPlaying.drawable as AnimatedVectorDrawable).apply {
                             if (paused) {
                                 stop()
-                            }  else {
+                            } else {
                                 start()
                             }
                         }

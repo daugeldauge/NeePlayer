@@ -1,4 +1,4 @@
-package com.neeplayer.ui.activities
+package com.neeplayer.ui
 
 import android.Manifest
 import android.app.FragmentTransaction
@@ -15,14 +15,16 @@ import android.view.Menu
 import android.view.MenuItem
 import com.neeplayer.*
 
-import com.neeplayer.Preferences.Item.BooleanItem.SCROBBLING
-import com.neeplayer.Preferences.Item.StringItem.SESSION_KEY
-import com.neeplayer.ui.fragments.ArtistsFragment
+import com.neeplayer.model.Preferences.Item.BooleanItem.SCROBBLING
+import com.neeplayer.model.Preferences.Item.StringItem.SESSION_KEY
+import com.neeplayer.ui.artists.ArtistsFragment
 import com.neeplayer.model.Artist
+import com.neeplayer.model.LastFmService
 import com.neeplayer.model.NowPlayingModel
-import com.neeplayer.ui.fragments.AlbumsFragmentBuilder
-import com.neeplayer.ui.views.impl.MusicService
-import com.neeplayer.ui.views.impl.NowPlayingFragment
+import com.neeplayer.model.Preferences
+import com.neeplayer.ui.albums.AlbumsFragmentBuilder
+import com.neeplayer.ui.now_playing.MusicService
+import com.neeplayer.ui.now_playing.NowPlayingFragment
 
 import org.jetbrains.anko.toast
 import rx.android.schedulers.AndroidSchedulers

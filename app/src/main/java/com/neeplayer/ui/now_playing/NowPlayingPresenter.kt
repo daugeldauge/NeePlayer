@@ -1,8 +1,9 @@
-package com.neeplayer.ui.presenters
+package com.neeplayer.ui.now_playing
 
 import com.neeplayer.model.NowPlayingModel
 import com.neeplayer.model.Song
-import com.neeplayer.ui.views.NowPlayingView
+import com.neeplayer.ui.BasePresenter
+import com.neeplayer.ui.now_playing.NowPlayingView
 import rx.subscriptions.CompositeSubscription
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject

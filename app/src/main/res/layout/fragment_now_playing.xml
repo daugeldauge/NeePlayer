@@ -28,7 +28,7 @@
             android:elevation="12dp"
             android:layout_gravity="bottom"
             app:behavior_peekHeight="@dimen/now_playing_peek_height"
-            app:layout_behavior="com.neeplayer.ui.custom.SlidingPanelBehavior">
+            app:layout_behavior="com.neeplayer.ui.common.SlidingPanelBehavior">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -36,7 +36,7 @@
                 android:orientation="vertical"
                 android:id="@+id/np_layout">
 
-                <com.neeplayer.ui.custom.SquareImageView
+                <com.neeplayer.ui.common.SquareImageView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:scaleType="fitCenter"

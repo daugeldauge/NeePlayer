@@ -1,4 +1,4 @@
-package com.neeplayer
+package com.neeplayer.model
 
 import android.content.Context
 import android.content.SharedPreferences

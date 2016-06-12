@@ -1,10 +1,11 @@
-package com.neeplayer.ui.presenters
+package com.neeplayer.ui.artists
 
-import com.neeplayer.LastFmService
+import com.neeplayer.model.LastFmService
 import com.neeplayer.model.Artist
 import com.neeplayer.model.ArtistImagesStorage
 import com.neeplayer.model.Database
-import com.neeplayer.ui.views.ArtistsView
+import com.neeplayer.ui.artists.ArtistsView
+import com.neeplayer.ui.BasePresenter
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.warn
 import org.json.JSONObject

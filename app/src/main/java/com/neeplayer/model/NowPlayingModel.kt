@@ -2,9 +2,9 @@ package com.neeplayer.model
 
 import android.content.Context
 import com.neeplayer.*
-import com.neeplayer.Preferences.Item.LongItem.*
-import com.neeplayer.Preferences.Item.StringItem.*
-import com.neeplayer.Preferences.Item.BooleanItem.*
+import com.neeplayer.model.Preferences.Item.LongItem.*
+import com.neeplayer.model.Preferences.Item.StringItem.*
+import com.neeplayer.model.Preferences.Item.BooleanItem.*
 import org.jetbrains.anko.toast
 import rx.Observable
 import rx.Single

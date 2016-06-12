@@ -1,4 +1,4 @@
-package com.neeplayer.ui.fragments
+package com.neeplayer.ui.artists
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -10,12 +10,12 @@ import android.view.ViewGroup
 import com.neeplayer.NeePlayerApp
 import com.neeplayer.R
 import com.neeplayer.model.Artist
-import com.neeplayer.ui.actionBar
-import com.neeplayer.ui.activities.MainActivity
-import com.neeplayer.ui.adapters.ArtistAdapter
-import com.neeplayer.ui.presenters.ArtistsPresenter
-import com.neeplayer.ui.uiThread
-import com.neeplayer.ui.views.ArtistsView
+import com.neeplayer.ui.common.actionBar
+import com.neeplayer.ui.MainActivity
+import com.neeplayer.ui.artists.ArtistAdapter
+import com.neeplayer.ui.artists.ArtistsPresenter
+import com.neeplayer.ui.common.uiThread
+import com.neeplayer.ui.artists.ArtistsView
 import javax.inject.Inject
 
 class ArtistsFragment : Fragment(), ArtistsView {

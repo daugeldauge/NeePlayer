@@ -1,5 +1,10 @@
-package com.neeplayer
+package com.neeplayer.di
 
+import com.neeplayer.fold
+import com.neeplayer.indexRange
+import com.neeplayer.md5
+import com.neeplayer.model.LastFmService
+import com.neeplayer.toSortedMap
 import dagger.Module
 import dagger.Provides
 import okhttp3.HttpUrl

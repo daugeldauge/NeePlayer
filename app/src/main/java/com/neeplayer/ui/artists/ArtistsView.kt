@@ -1,4 +1,4 @@
-package com.neeplayer.ui.views
+package com.neeplayer.ui.artists
 
 import com.neeplayer.model.Artist
 

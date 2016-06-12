@@ -59,16 +59,6 @@ dependencies {
 
 }
 
-buildscript {
-    ext.kotlin_version = '1.0.2'
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
-
 kapt {
     generateStubs = true
     arguments {

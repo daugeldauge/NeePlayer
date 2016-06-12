@@ -2,8 +2,11 @@ package com.neeplayer.model
 
 import android.content.Context
 import android.content.SharedPreferences
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class Preferences(context: Context) {
+@Singleton class Preferences
+@Inject constructor (context: Context) {
 
     private val preferences = context.getSharedPreferences("main", Context.MODE_PRIVATE)
 

@@ -11,8 +11,11 @@ import rx.Single
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import rx.subjects.BehaviorSubject
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class NowPlayingModel(
+@Singleton class NowPlayingModel
+@Inject constructor(
         private val context: Context,
         private val lastFm: LastFmService,
         private val preferences: Preferences,

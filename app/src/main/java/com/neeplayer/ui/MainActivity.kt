@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatDelegate
 import android.view.Menu
 import android.view.MenuItem
 import com.neeplayer.*
+import com.neeplayer.di.LastFmModule
 
 import com.neeplayer.model.Preferences.Item.BooleanItem.SCROBBLING
 import com.neeplayer.model.Preferences.Item.StringItem.SESSION_KEY
@@ -138,7 +139,7 @@ class MainActivity : AppCompatActivity() {
                             token = it.getString("token")
 
                             val intent = Intent(Intent.ACTION_VIEW)
-                            intent.data = Uri.parse("http://www.last.fm/api/auth/?api_key=${LastFmService.apiKey}&token=$token")
+                            intent.data = Uri.parse("http://www.last.fm/api/auth/?api_key=${LastFmModule.apiKey}&token=$token")
                             startActivity(intent)
                         }, {
                             toast(R.string.last_fm_auth_error)

@@ -8,11 +8,6 @@ import rx.Single
 
 interface LastFmService {
 
-    companion object {
-        const val apiKey = "76b52a83c8c82ae436524353bcea2da0"
-        const val secret = "4ce7ed189d2c08ae5091003a8e81f6d5"
-    }
-
     @GET("?method=auth.getToken")
     fun getToken(): Single<JSONObject>
 

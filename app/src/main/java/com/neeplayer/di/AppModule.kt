@@ -16,15 +16,7 @@ class AppModule(private val context: Context) {
 
     @Provides
     @Singleton
-    fun providePreferences(): Preferences = Preferences(context)
-
-    @Provides
-    @Singleton
     fun provideContext(): Context = context
-
-    @Provides
-    @Singleton
-    fun provideNowPlayingModel(lastFmService: LastFmService, preferences: Preferences, database: Database) = NowPlayingModel(context, lastFmService, preferences, database)
 
     @Provides
     @Singleton

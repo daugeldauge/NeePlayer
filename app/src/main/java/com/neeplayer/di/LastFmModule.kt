@@ -22,6 +22,11 @@ import javax.inject.Singleton
 @Module
 class LastFmModule {
 
+    companion object {
+        const val apiKey = "76b52a83c8c82ae436524353bcea2da0"
+        const val secret = "4ce7ed189d2c08ae5091003a8e81f6d5"
+    }
+
     @Provides
     @Singleton
     fun provideLastFmService(): LastFmService {
@@ -29,7 +34,7 @@ class LastFmModule {
             val url = chain.request()
                     .url()
                     .newBuilder()
-                    .addQueryParameter("api_key", LastFmService.apiKey)
+                    .addQueryParameter("api_key", apiKey)
                     .build()
 
             val signedUrl = url.newBuilder()
@@ -64,7 +69,7 @@ class LastFmModule {
                     .toSortedMap { url.queryParameterName(it) to url.queryParameterValue(it) }
                     .filter { !it.key.isNullOrBlank() && !it.value.isNullOrBlank() }
                     .fold(StringBuilder()) { accumulator, key, value -> accumulator.append(key).append(value) }
-                    .append(LastFmService.secret)
+                    .append(secret)
                     .toString()
                     .md5()
 }

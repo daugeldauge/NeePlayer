@@ -10,8 +10,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 
-@Singleton
-class Database @Inject constructor (private val storIOContentResolver: StorIOContentResolver, private val artistResolver: ArtistResolver) {
+@Singleton class Database
+@Inject constructor (private val storIOContentResolver: StorIOContentResolver, private val artistResolver: ArtistResolver) {
 
     fun getArtists(): List<Artist> {
         return storIOContentResolver

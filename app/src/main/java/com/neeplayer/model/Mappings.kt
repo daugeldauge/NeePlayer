@@ -28,10 +28,9 @@ class ArtistResolver @Inject constructor (private val artistImagesStorage: Artis
 
 class AlbumResolver(val artist: Artist) : DefaultGetResolver<Album>() {
     override fun mapFromCursor(cursor: Cursor): Album {
-        val id = cursor.getLong(BaseColumns._ID)!!
         return Album(
                 artist = artist,
-                id     = id,
+                id     = cursor.getLong(BaseColumns._ID)!!,
                 title  = cursor.getString( Albums.ALBUM),
                 year   = cursor.getInt(    Albums.FIRST_YEAR),
                 art    = cursor.getString( Albums.ALBUM_ART)

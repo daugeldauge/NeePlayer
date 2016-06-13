@@ -1,5 +1,6 @@
 package com.neeplayer.ui.now_playing
 
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.*
@@ -32,7 +33,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         IDLE, INITIALIZED, PREPARING, PREPARED, STARTED, PAUSED
     }
 
-    private val NOTIFY_ID = 1
+    private val NOTIFICATION_ID = 42
 
     private val PLAY_PREVIOUS_ACTION = "PLAY_PREVIOUS"
     private val PLAY_OR_PAUSE_ACTION = "PLAY_OR_PAUSE"
@@ -47,6 +48,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     private var song: Song? = null
     private var state = State.IDLE
     private var lastKnownAudioFocusState: Int? = null
+    private var foreground = false
 
     @Inject
     lateinit var presenter: NowPlayingPresenter
@@ -148,6 +150,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         player.release()
         mediaSession.release()
         unregisterReceiver(headsetPlugReceiver)
+        foreground = false
         stopForeground(true)
         presenter.unbind()
     }
@@ -211,7 +214,13 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
             notification.bigContentView = bigContent
         }
 
-        startForeground(NOTIFY_ID, notification)
+        if (!paused) {
+            foreground = true
+            startForeground(NOTIFICATION_ID, notification)
+        } else if (foreground) {
+            stopForeground(false)
+            (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).notify(NOTIFICATION_ID, notification)
+        }
     }
 
     private fun fillNotificationContent(content: RemoteViews, song: Song) {

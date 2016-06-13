@@ -30,14 +30,9 @@ class AlbumSongAdapter(private val context: Context, private val albums: List<Al
 
     private val items = albums.flatMap { listOf(Item.AlbumItem(it)).plus(it.songs.map { Item.SongItem(it) }) }
 
-    var nowPlaying: Song? = null
-        set(value) {
-            notifySongChanged(field)
-            notifySongChanged(value)
-            field = value
-        }
+    private var nowPlaying: Song? = null
 
-    var paused = false
+    private var paused = false
 
     override fun getItemCount(): Int = items.size
 
@@ -104,6 +99,14 @@ class AlbumSongAdapter(private val context: Context, private val albums: List<Al
                 }
             }
         }
+    }
+
+    fun updateNowPlaying(nowPlaying: Song, paused: Boolean) {
+        val previous = this.nowPlaying
+        this.paused = paused
+        this.nowPlaying = nowPlaying
+        notifySongChanged(previous)
+        notifySongChanged(nowPlaying)
     }
 
     private fun notifySongChanged(song: Song?) {

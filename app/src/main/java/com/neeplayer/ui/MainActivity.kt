@@ -20,7 +20,6 @@ import com.neeplayer.di.ActivityModule
 import com.neeplayer.model.Artist
 import com.neeplayer.model.NowPlayingModel
 import com.neeplayer.ui.albums.AlbumsFragmentBuilder
-import com.neeplayer.ui.artists.ArtistsFragment
 import com.neeplayer.ui.auth.AuthPresenter
 import com.neeplayer.ui.auth.AuthView
 import com.neeplayer.ui.now_playing.MusicService
@@ -89,8 +88,8 @@ class MainActivity : AppCompatActivity(), AuthView {
 
     fun onReadStoragePermissionGranted() {
         nowPlayingModel.tryRestoreNowPlaying()
-        if (supportFragmentManager.findFragmentByTag(ArtistsFragment.TAG) == null) {
-            supportFragmentManager.beginTransaction().add(R.id.fragment_container, ArtistsFragment(), ArtistsFragment.TAG).commitAllowingStateLoss()
+        if (!router.areArtistsShown()) {
+            router.goToArtists()
         }
     }
 

@@ -17,18 +17,21 @@ import rx.Subscription
 import javax.inject.Inject
 
 @FragmentWithArgs
-class AlbumsFragment : Fragment() {
+class AlbumsFragment : Fragment(), AlbumsView {
 
     @Arg
     internal lateinit var artist: Artist
 
     @Inject
-    internal lateinit var database: Database
+    internal lateinit var presenter: AlbumsPresenter
 
-    @Inject
-    internal lateinit var model: NowPlayingModel
+    private val listView by lazy {
+        view as RecyclerView
+    }
 
-    private var subscription: Subscription? = null
+    private val adapter by lazy {
+        listView.adapter as AlbumSongAdapter
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,35 +46,27 @@ class AlbumsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val albums = database.getAlbums(artist)
+        listView.layoutManager = LinearLayoutManager(context)
 
-        val albumsWithSongs = albums.map {
-            AlbumWithSongs(it, database.getSongs(it))
-        }
-
-        val songs = albumsWithSongs.flatMap { it.songs }
-
-        val albumListView = view as RecyclerView
-        val adapter = AlbumSongAdapter(activity, albumsWithSongs) {
-            model.nowPlaying = Playlist(songs, songs.indexOf(it), false)
-        }
-
-        albumListView.adapter = adapter
-        albumListView.layoutManager = LinearLayoutManager(activity)
-
-        subscription = model.nowPlayingObservable.subscribe {
-            adapter.paused = it.paused
-            adapter.nowPlaying = it.currentSong
-        }
+        presenter.bind(this, artist)
 
         actionBar?.title = artist.name
         actionBar?.setDisplayShowHomeEnabled(true)
         actionBar?.setDisplayHomeAsUpEnabled(true)
-        actionBar?.displayOptions
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        subscription?.unsubscribe()
+        presenter.unbind()
+    }
+
+    override fun showAlbums(albumsWithSongs: List<AlbumWithSongs>) {
+        listView.adapter = AlbumSongAdapter(activity, albumsWithSongs) {
+            presenter.onSongClicked(it)
+        }
+    }
+
+    override fun showNowPlaying(song: Song, paused: Boolean) {
+        adapter.updateNowPlaying(song, paused)
     }
 }

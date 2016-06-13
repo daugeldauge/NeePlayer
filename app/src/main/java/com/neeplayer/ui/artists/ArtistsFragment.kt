@@ -28,14 +28,13 @@ class ArtistsFragment : Fragment(), ArtistsView {
 
     private val adapter by lazy {
         ArtistAdapter(activity) {
-            (activity as MainActivity).navigateToArtistFragment(it)
             presenter.onArtistClicked(it)
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        NeePlayerApp.component.inject(this)
+        (activity as MainActivity).component.inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {

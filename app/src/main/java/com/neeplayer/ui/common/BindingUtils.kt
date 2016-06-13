@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit
 fun loadImageFile(view: ImageView, path: String?) = loadImage(view, "file://" + path)
 
 @BindingAdapter("imageURL")
-fun loadImage(view: ImageView, url: String?) = Glide.with(view.context).load(url).dontAnimate().into(view)
+fun loadImage(view: ImageView, url: String?) = Glide.with(view.context).load(url).into(view)
 
 @BindingAdapter("drawable")
 fun setDrawable(view: ImageView, drawable: Drawable) = view.setImageDrawable(drawable)

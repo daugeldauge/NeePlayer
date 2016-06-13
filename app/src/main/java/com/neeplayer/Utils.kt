@@ -1,12 +1,16 @@
 package com.neeplayer
 
 import android.os.Build
+import rx.Observable
+import rx.Observer
 import rx.Subscription
 import rx.subscriptions.CompositeSubscription
 import java.math.BigInteger
 import java.security.MessageDigest
-import java.util.*
+import java.util.SortedMap
 import java.util.concurrent.TimeUnit
+import kotlin.properties.ObservableProperty
+import kotlin.reflect.KProperty
 
 
 fun String.md5(): String {
@@ -49,3 +53,19 @@ val Int.minutes: Long
 
 val Int.seconds: Long
     get() = TimeUnit.SECONDS.toMillis(toLong())
+
+class RxProperty<T>(initial: T, private val observer: Observer<T>) : ObservableProperty<T>(initial) {
+    override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) {
+        observer.onNext(newValue)
+    }
+}
+
+inline fun <reified T: Any> Observable<T?>.filterNotNull(): Observable<T> {
+    return filter { it != null }.cast(T::class.java)
+}
+
+inline fun <T> T?.ifPresent(block: (T) -> Unit) {
+    if (this != null) {
+        block(this)
+    }
+}

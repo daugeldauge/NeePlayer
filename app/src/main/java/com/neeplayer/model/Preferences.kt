@@ -2,11 +2,12 @@ package com.neeplayer.model
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.neeplayer.model.Preferences.Item.StringItem.SESSION_KEY
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton class Preferences
-@Inject constructor (context: Context) {
+@Singleton
+class Preferences @Inject constructor (context: Context) {
 
     private val preferences = context.getSharedPreferences("main", Context.MODE_PRIVATE)
 
@@ -43,6 +44,7 @@ import javax.inject.Singleton
         val default: T
     }
 
+    fun isSignedIn() = get(SESSION_KEY) != null
 
     fun <T> put(item: Item<T>, value: T) {
         val editor = preferences.edit()

@@ -1,24 +1,27 @@
 package com.neeplayer.ui.now_playing
 
 import com.neeplayer.minutes
-import com.neeplayer.model.NowPlayingModel
+import com.neeplayer.model.NowPlayingService
 import com.neeplayer.model.Song
 import com.neeplayer.plusAssign
 import com.neeplayer.seconds
 import com.neeplayer.ui.BasePresenter
 import javax.inject.Inject
 
-class NowPlayingPresenter @Inject constructor(private val model: NowPlayingModel) : BasePresenter<NowPlayingView>() {
+class NowPlayingPresenter @Inject constructor(private val service: NowPlayingService) : BasePresenter<NowPlayingView>() {
 
     private var lastSong: Song? = null
+    private var lastSetProgress: Int? = null
 
     override fun bind(view: NowPlayingView) {
-        subscriptions += model.nowPlayingObservable.subscribe {
+        super.bind(view)
+        subscriptions += service.nowPlayingObservable.subscribe {
+            it ?: return@subscribe
+
             val song = it.currentSong
 
             if (song != lastSong) {
                 lastSong = song
-                isCurrentSongScrobbled = false
                 view.setSong(song)
             }
 
@@ -29,47 +32,32 @@ class NowPlayingPresenter @Inject constructor(private val model: NowPlayingModel
             }
         }
 
-        subscriptions += model.progressObservable.subscribe {
-            view.seek(model.progress)
+        subscriptions += service.progressObservable.subscribe {
+            if (it != lastSetProgress) {
+                view.seek(it)
+            }
         }
     }
 
     fun onPreviousClicked() {
-        model.nowPlaying = model.nowPlaying?.previous()
+        service.nowPlaying = service.nowPlaying?.previous()
     }
 
     fun onNextClicked() {
-        model.nowPlaying = model.nowPlaying?.next()
+        service.nowPlaying = service.nowPlaying?.next()
     }
 
     fun onPlayPauseClicked() {
-        model.nowPlaying = model.nowPlaying?.togglePaused()
+        service.nowPlaying = service.nowPlaying?.togglePaused()
     }
 
     fun onSeek(progress: Int) {
-        model.progress = progress
-    }
-
-    private val minSongLengthToScrobble = 30.seconds
-    private val scrobbleFractionThreshold = 0.5
-    private val scrobbleThreshold = 4.minutes
-
-    private var isCurrentSongScrobbled = false
-
-    fun onTick(ticking: Int) {
-        val song = lastSong
-        if (song == null || isCurrentSongScrobbled) {
-            return
-        }
-
-        if (song.duration > minSongLengthToScrobble && (ticking >= song.duration * scrobbleFractionThreshold || ticking >= scrobbleThreshold )) {
-            isCurrentSongScrobbled = true
-            model.scrobble(song)
-        }
+        lastSetProgress = progress
+        service.progress = progress
     }
 
     override fun unbind() {
-        model.save()
+        service.save()
         super.unbind()
     }
 }

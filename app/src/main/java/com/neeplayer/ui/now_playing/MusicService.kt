@@ -9,21 +9,20 @@ import android.graphics.Canvas
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
 import android.os.PowerManager
 import android.provider.MediaStore
 import android.support.annotation.DrawableRes
 import android.support.annotation.IdRes
 import android.support.graphics.drawable.VectorDrawableCompat
+import android.support.v4.app.NotificationCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import android.support.v4.app.NotificationCompat
 import android.widget.RemoteViews
 import com.neeplayer.*
 import com.neeplayer.model.Song
-import com.neeplayer.ui.now_playing.NowPlayingPresenter
-import com.neeplayer.ui.now_playing.NowPlayingView
 import org.jetbrains.anko.toast
 import javax.inject.Inject
 
@@ -38,6 +37,9 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     private val PLAY_PREVIOUS_ACTION = "PLAY_PREVIOUS"
     private val PLAY_OR_PAUSE_ACTION = "PLAY_OR_PAUSE"
     private val PLAY_NEXT_ACTION = "PLAY_NEXT"
+
+    private val handler = Handler()
+    private val TICK_PERIOD = 100L
 
     private val player: MediaPlayer = MediaPlayer()
 
@@ -103,9 +105,11 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         if (state == State.STARTED) {
             player.pause()
             state = State.PAUSED
+            stopTicking()
             updateInfo(song!!)
         }
     }
+
     override fun seek(progress: Int) {
         if (state == State.STARTED || state == State.PAUSED) {
             player.seekTo(progress)
@@ -125,11 +129,13 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     override fun onCompletion(mp: MediaPlayer) {
         mp.reset()
         state = State.IDLE
+        stopTicking()
         presenter.onNextClicked()
     }
     override fun onError(mp: MediaPlayer, what: Int, extra: Int): Boolean {
         mp.reset()
         state = State.IDLE
+        stopTicking()
         applicationContext.toast(R.string.media_player_error)
         return true
     }
@@ -137,6 +143,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     //endregion
 
     override fun onDestroy() {
+        stopTicking()
         player.stop()
         player.release()
         mediaSession.release()
@@ -247,14 +254,23 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         when((getSystemService(AUDIO_SERVICE) as AudioManager).requestAudioFocus(audioFocusListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)) {
             AudioManager.AUDIOFOCUS_REQUEST_GRANTED -> {
                 player.start()
+                tick()
                 state = State.STARTED
-                presenter.onSeek(player.currentPosition)
             }
             AudioManager.AUDIOFOCUS_REQUEST_FAILED -> {
                 toast(R.string.audio_focus_request_error)
                 presenter.onPlayPauseClicked()
             }
         }
+    }
+
+    private fun tick() {
+        presenter.onSeek(player.currentPosition)
+        handler.postDelayed({ tick() }, TICK_PERIOD)
+    }
+
+    private fun stopTicking() {
+        handler.removeCallbacksAndMessages(null)
     }
 
     private val audioFocusListener = AudioManager.OnAudioFocusChangeListener {
@@ -297,7 +313,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
 
     class MediaButtonEventsReceiver : BroadcastReceiver () {
         override fun onReceive(context: Context, intent: Intent) {
-            //ignore
+            //TODO handle events
         }
 
     }

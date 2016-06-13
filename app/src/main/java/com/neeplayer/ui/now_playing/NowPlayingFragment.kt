@@ -22,12 +22,6 @@ import javax.inject.Inject
 
 class NowPlayingFragment : Fragment(), NowPlayingView {
 
-    private val handler = Handler()
-    private var needToStopTicking = false
-    private val TICK_PERIOD = 1000
-    private var overallTicking = 0
-
-
     @ActionBar.DisplayOptions
     private var oldActionBarDisplayOptions: Int = 0
     private var oldActionBarTitle: CharSequence? = null
@@ -42,6 +36,8 @@ class NowPlayingFragment : Fragment(), NowPlayingView {
 
     @Inject
     lateinit var presenter: NowPlayingPresenter
+
+    private var freezeProgress = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,37 +87,38 @@ class NowPlayingFragment : Fragment(), NowPlayingView {
         binding.npCollapsedPlayPause.onClick { presenter.onPlayPauseClicked() }
 
         binding.npSeekBar.onUserSeek(
-                onProgress = { binding.progress = it },
-                onTouchStopped = { presenter.onSeek(binding.progress) }
+                onProgress = {
+                    freezeProgress = true
+                    binding.progress = it
+                },
+                onTouchStopped = {
+                    freezeProgress = false
+                    presenter.onSeek(binding.progress)
+                }
         )
         presenter.bind(this)
     }
 
     override fun onDestroyView() {
-        handler.removeCallbacks(tock)
         presenter.unbind()
         super.onDestroyView()
     }
 
     override fun setSong(song: Song) = uiThread {
         binding.song = song
-        overallTicking = 0
     }
 
     override fun play() = uiThread {
         binding.paused = false
-        tick()
     }
 
     override fun pause() = uiThread {
         binding.paused = true
-        needToStopTicking = true
     }
 
     override fun seek(progress: Int) = uiThread {
-        binding.progress = progress
-        if (binding.song != null) {
-            tick()
+        if (!freezeProgress) {
+            binding.progress = progress
         }
     }
 
@@ -131,26 +128,6 @@ class NowPlayingFragment : Fragment(), NowPlayingView {
         } else {
             bottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
             return true
-        }
-    }
-
-    private fun tick() {
-        if (binding.paused) {
-            return
-        }
-
-        needToStopTicking = false
-        val delay = TICK_PERIOD - (binding.progress % TICK_PERIOD)
-        handler.removeCallbacks(tock)
-        handler.postDelayed(tock, delay.toLong())
-    }
-
-    private val tock = Runnable {
-        if (!needToStopTicking) {
-            overallTicking += TICK_PERIOD
-            presenter.onTick(overallTicking)
-            binding.progress = Math.min(binding.song.duration, TICK_PERIOD * (binding.progress / TICK_PERIOD).inc())
-            tick()
         }
     }
 

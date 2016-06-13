@@ -11,5 +11,4 @@ interface NowPlayingView {
     fun pause()
 
     fun seek(progress: Int)
-
 }

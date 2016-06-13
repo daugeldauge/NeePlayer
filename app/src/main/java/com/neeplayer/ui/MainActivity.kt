@@ -18,7 +18,7 @@ import com.neeplayer.R
 import com.neeplayer.di.ActivityComponent
 import com.neeplayer.di.ActivityModule
 import com.neeplayer.model.Artist
-import com.neeplayer.model.NowPlayingModel
+import com.neeplayer.model.NowPlayingService
 import com.neeplayer.ui.albums.AlbumsFragmentBuilder
 import com.neeplayer.ui.auth.AuthPresenter
 import com.neeplayer.ui.auth.AuthView
@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity(), AuthView {
     lateinit internal var presenter: AuthPresenter
 
     @Inject
-    lateinit internal var nowPlayingModel: NowPlayingModel;
+    lateinit internal var nowPlayingModel: NowPlayingService;
 
     @Inject
     internal lateinit var router: Router

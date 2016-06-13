@@ -6,7 +6,7 @@ import com.neeplayer.ui.BasePresenter
 import javax.inject.Inject
 
 class AlbumsPresenter @Inject constructor(
-        private val database: Database, private val model: NowPlayingModel
+        private val database: Database, private val service: NowPlayingService
 ) : BasePresenter<AlbumsView>() {
 
     var songs = emptyList<Song>()
@@ -28,13 +28,13 @@ class AlbumsPresenter @Inject constructor(
 
         view.showAlbums(albumsWithSongs)
 
-        subscriptions += model.nowPlayingObservable.subscribe {
+        subscriptions += service.nowPlayingObservable.subscribe {
             view.showNowPlaying(it.currentSong, it.paused)
         }
 
     }
 
     fun onSongClicked(song: Song) {
-        model.nowPlaying = Playlist(songs, songs.indexOf(song), false)
+        service.nowPlaying = Playlist(songs, songs.indexOf(song), false)
     }
 }

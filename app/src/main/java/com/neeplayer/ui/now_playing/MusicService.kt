@@ -24,6 +24,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 import android.widget.RemoteViews
 import com.neeplayer.*
 import com.neeplayer.model.Song
+import com.neeplayer.ui.MainActivity
 import org.jetbrains.anko.toast
 import javax.inject.Inject
 
@@ -197,11 +198,18 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         fillNotificationContent(bigContent, song);
         fillNotificationContent(smallContent, song);
 
+        val intent = Intent(this, MainActivity::class.java)
+                .setAction(MainActivity.OPEN_NOW_PLAYING_ACTION)
+                .setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+
+        val contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
         val notification = NotificationCompat.Builder(this)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setCategory(NotificationCompat.CATEGORY_STATUS)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setTicker(song.title)
+                .setContentIntent(contentIntent)
                 .setSmallIcon(lollipop({
                     R.drawable.ic_play_arrow_white
                 }, {

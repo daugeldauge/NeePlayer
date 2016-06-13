@@ -127,4 +127,8 @@ class NowPlayingFragment : Fragment(), NowPlayingView {
         }
     }
 
+    fun expand() {
+        bottomSheet.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
 }

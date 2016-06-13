@@ -1,7 +1,6 @@
 package com.neeplayer.ui
 
 import android.Manifest
-import android.app.FragmentTransaction
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -17,9 +16,7 @@ import com.neeplayer.NeePlayerApp
 import com.neeplayer.R
 import com.neeplayer.di.ActivityComponent
 import com.neeplayer.di.ActivityModule
-import com.neeplayer.model.Artist
 import com.neeplayer.model.NowPlayingService
-import com.neeplayer.ui.albums.AlbumsFragmentBuilder
 import com.neeplayer.ui.auth.AuthPresenter
 import com.neeplayer.ui.auth.AuthView
 import com.neeplayer.ui.now_playing.MusicService
@@ -29,9 +26,13 @@ import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), AuthView {
 
-    companion object { init {
-        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
-    }}
+    companion object {
+        val OPEN_NOW_PLAYING_ACTION = "open_now_playing"
+
+        init {
+            AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+        }
+    }
 
     lateinit var component: ActivityComponent
 
@@ -66,6 +67,13 @@ class MainActivity : AppCompatActivity(), AuthView {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), READ_EXTERNAL_STORAGE_REQUEST_CODE);
         } else {
             onReadStoragePermissionGranted()
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        if (intent.action == OPEN_NOW_PLAYING_ACTION) {
+            nowPlayingFragment.expand()
         }
     }
 
@@ -154,12 +162,4 @@ class MainActivity : AppCompatActivity(), AuthView {
 
     override fun showAuthView(uri: Uri) = startActivity(Intent(Intent.ACTION_VIEW, uri))
     //endregion
-
-    fun navigateToArtistFragment(artist: Artist) {
-        supportFragmentManager.beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .replace(R.id.fragment_container, AlbumsFragmentBuilder(artist).build())
-                .addToBackStack(null)
-                .commit()
-    }
 }

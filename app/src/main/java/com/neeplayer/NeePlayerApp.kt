@@ -4,7 +4,7 @@ import android.app.Application
 import com.neeplayer.di.AppComponent
 import com.neeplayer.di.AppModule
 import com.neeplayer.di.DaggerAppComponent
-import com.neeplayer.di.Scrobbler
+import com.neeplayer.model.Scrobbler
 import javax.inject.Inject
 
 class NeePlayerApp : Application() {

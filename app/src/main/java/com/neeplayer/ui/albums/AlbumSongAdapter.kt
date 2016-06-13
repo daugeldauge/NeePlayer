@@ -3,21 +3,17 @@ package com.neeplayer.ui.albums
 import android.content.Context
 import android.databinding.DataBindingUtil
 import android.graphics.drawable.AnimatedVectorDrawable
-import android.graphics.drawable.Drawable
-import android.os.Build
-import android.support.graphics.drawable.AnimatedVectorDrawableCompat
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.neeplayer.R
 import com.neeplayer.databinding.AlbumBinding
 import com.neeplayer.databinding.SongBinding
-import com.neeplayer.model.*
-import org.jetbrains.anko.onClick
-
-import com.neeplayer.R
 import com.neeplayer.lollipop
-import com.neeplayer.targetApi
+import com.neeplayer.model.AlbumWithSongs
+import com.neeplayer.model.Song
+import org.jetbrains.anko.onClick
 
 class AlbumSongAdapter(private val context: Context, private val albums: List<AlbumWithSongs>, private val onSongClicked: (Song) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val ALBUM_ITEM = 0

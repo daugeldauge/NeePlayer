@@ -7,15 +7,11 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.neeplayer.NeePlayerApp
 import com.neeplayer.R
 import com.neeplayer.model.Artist
-import com.neeplayer.ui.common.actionBar
 import com.neeplayer.ui.MainActivity
-import com.neeplayer.ui.artists.ArtistAdapter
-import com.neeplayer.ui.artists.ArtistsPresenter
+import com.neeplayer.ui.common.actionBar
 import com.neeplayer.ui.common.uiThread
-import com.neeplayer.ui.artists.ArtistsView
 import javax.inject.Inject
 
 class ArtistsFragment : Fragment(), ArtistsView {

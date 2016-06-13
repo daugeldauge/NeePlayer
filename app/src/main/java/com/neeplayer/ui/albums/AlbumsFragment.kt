@@ -13,7 +13,6 @@ import com.neeplayer.NeePlayerApp
 import com.neeplayer.R
 import com.neeplayer.model.*
 import com.neeplayer.ui.common.actionBar
-import rx.Subscription
 import javax.inject.Inject
 
 @FragmentWithArgs

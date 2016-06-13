@@ -1,13 +1,9 @@
-package com.neeplayer.di
+package com.neeplayer.model
 
 import android.content.Context
 import com.neeplayer.R
 import com.neeplayer.minutes
-import com.neeplayer.model.LastFmService
-import com.neeplayer.model.NowPlayingService
-import com.neeplayer.model.Preferences
 import com.neeplayer.model.Preferences.Item.BooleanItem.SCROBBLING
-import com.neeplayer.model.Song
 import com.neeplayer.seconds
 import org.jetbrains.anko.toast
 import rx.android.schedulers.AndroidSchedulers

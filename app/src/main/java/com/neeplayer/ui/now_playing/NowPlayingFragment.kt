@@ -2,7 +2,6 @@ package com.neeplayer.ui.now_playing
 
 import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.os.Handler
 import android.support.design.widget.BottomSheetBehavior
 import android.support.v4.app.Fragment
 import android.support.v7.app.ActionBar
@@ -13,10 +12,7 @@ import com.neeplayer.NeePlayerApp
 import com.neeplayer.R
 import com.neeplayer.databinding.FragmentNowPlayingBinding
 import com.neeplayer.model.Song
-import com.neeplayer.ui.*
 import com.neeplayer.ui.common.*
-import com.neeplayer.ui.now_playing.NowPlayingPresenter
-import com.neeplayer.ui.now_playing.NowPlayingView
 import org.jetbrains.anko.onClick
 import javax.inject.Inject
 

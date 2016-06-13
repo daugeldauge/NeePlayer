@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.neeplayer.databinding.ArtistBinding
-import com.neeplayer.indexRange
 import com.neeplayer.model.Artist
 
 

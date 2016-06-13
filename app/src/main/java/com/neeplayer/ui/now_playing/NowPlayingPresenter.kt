@@ -1,10 +1,8 @@
 package com.neeplayer.ui.now_playing
 
-import com.neeplayer.minutes
 import com.neeplayer.model.NowPlayingService
 import com.neeplayer.model.Song
 import com.neeplayer.plusAssign
-import com.neeplayer.seconds
 import com.neeplayer.ui.BasePresenter
 import javax.inject.Inject
 

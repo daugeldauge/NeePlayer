@@ -2,11 +2,9 @@ package com.neeplayer.ui.common
 
 import android.databinding.BindingAdapter
 import android.graphics.drawable.Drawable
-import android.support.graphics.drawable.AnimatedVectorDrawableCompat
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
-import com.neeplayer.R
 import java.util.concurrent.TimeUnit
 
 @BindingAdapter("imagePath")

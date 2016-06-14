@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.neeplayer.R
+import com.neeplayer.di.component
 import com.neeplayer.model.Artist
 import com.neeplayer.ui.MainActivity
 import com.neeplayer.ui.common.actionBar
@@ -30,7 +31,7 @@ class ArtistsFragment : Fragment(), ArtistsView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        (activity as MainActivity).component.inject(this)
+        component.inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {

@@ -12,10 +12,9 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.app.AppCompatDelegate
 import android.view.Menu
 import android.view.MenuItem
-import com.neeplayer.NeePlayerApp
 import com.neeplayer.R
-import com.neeplayer.di.ActivityComponent
 import com.neeplayer.di.ActivityModule
+import com.neeplayer.di.component
 import com.neeplayer.model.NowPlayingService
 import com.neeplayer.ui.auth.AuthPresenter
 import com.neeplayer.ui.auth.AuthView
@@ -34,7 +33,7 @@ class MainActivity : AppCompatActivity(), AuthView {
         }
     }
 
-    lateinit var component: ActivityComponent
+    val activityComponent by lazy { component.plus(ActivityModule(this)) }
 
     @Inject
     lateinit internal var presenter: AuthPresenter
@@ -56,8 +55,7 @@ class MainActivity : AppCompatActivity(), AuthView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        component = NeePlayerApp.component.plus(ActivityModule(this))
-        component.inject(this)
+        activityComponent.inject(this)
 
         setContentView(R.layout.activity_main)
         presenter.bind(this)

@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import com.neeplayer.NeePlayerApp
 import com.neeplayer.R
 import com.neeplayer.databinding.FragmentNowPlayingBinding
+import com.neeplayer.di.component
 import com.neeplayer.model.Song
 import com.neeplayer.ui.common.*
 import org.jetbrains.anko.onClick
@@ -37,7 +38,7 @@ class NowPlayingFragment : Fragment(), NowPlayingView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        NeePlayerApp.component.inject(this)
+        context.component.inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

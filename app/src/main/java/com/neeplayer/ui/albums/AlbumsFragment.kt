@@ -11,6 +11,7 @@ import com.hannesdorfmann.fragmentargs.annotation.Arg
 import com.hannesdorfmann.fragmentargs.annotation.FragmentWithArgs
 import com.neeplayer.NeePlayerApp
 import com.neeplayer.R
+import com.neeplayer.di.component
 import com.neeplayer.model.*
 import com.neeplayer.ui.common.actionBar
 import javax.inject.Inject
@@ -35,7 +36,7 @@ class AlbumsFragment : Fragment(), AlbumsView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AlbumsFragmentBuilder.injectArguments(this)
-        NeePlayerApp.component.inject(this)
+        context.component.inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

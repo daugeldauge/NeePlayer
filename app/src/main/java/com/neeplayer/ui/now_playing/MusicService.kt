@@ -23,6 +23,7 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.widget.RemoteViews
 import com.neeplayer.*
+import com.neeplayer.di.component
 import com.neeplayer.model.Song
 import com.neeplayer.ui.MainActivity
 import org.jetbrains.anko.toast
@@ -58,7 +59,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
 
     override fun onCreate() {
         super.onCreate()
-        NeePlayerApp.component.inject(this)
+        component.inject(this)
         presenter.bind(this)
         initMediaPLayer()
         mediaSession.setCallback(mediaSessionCallback)

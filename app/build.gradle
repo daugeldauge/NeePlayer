@@ -1,9 +1,11 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '23.0.3'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.2'
 
     defaultConfig {
         applicationId "com.neeplayer"
@@ -37,7 +39,7 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile 'org.jetbrains.anko:anko-sdk23:0.8.2'
 
-    def supportLibVersion = "23.4.0"
+    def supportLibVersion = "26.1.0"
     compile "com.android.support:support-v4:$supportLibVersion"
     compile "com.android.support:recyclerview-v7:$supportLibVersion"
     compile "com.android.support:design:$supportLibVersion"
@@ -63,7 +65,7 @@ dependencies {
     kapt 'com.android.databinding:compiler:2.1.2'
 
     def icepickVersion = "3.2.0"
-    provided "frankiesardo:icepick-processor:$icepickVersion"
+    annotationProcessor "frankiesardo:icepick-processor:$icepickVersion"
     compile "frankiesardo:icepick:$icepickVersion"
 
     compile 'com.jakewharton.timber:timber:4.1.2'
@@ -73,6 +75,5 @@ kapt {
     generateStubs = true
     arguments {
         arg("fragmentArgsLib", true)
-
     }
 }

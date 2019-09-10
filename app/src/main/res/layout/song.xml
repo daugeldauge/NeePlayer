@@ -39,7 +39,7 @@
                 style="@style/Text.Regular"
                 android:layout_gravity="end|center_vertical"
                 android:layout_width="30dp"
-                android:text="@{(song.track % 1000).toString()}"
+                android:text="@{Integer.toString(song.track % 1000)}"
                 tools:text="3" />
 
             <ImageView

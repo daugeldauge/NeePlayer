@@ -39,11 +39,11 @@ class AlbumSongAdapter(private val context: Context, private val albums: List<Al
 
 
     class SongViewHolder(view: View): RecyclerView.ViewHolder(view) {
-        val binding = DataBindingUtil.bind<SongBinding>(view)
+        val binding = DataBindingUtil.bind<SongBinding>(view)!!
     }
 
     class AlbumViewHolder(view: View): RecyclerView.ViewHolder(view) {
-        val binding = DataBindingUtil.bind<AlbumBinding>(view)
+        val binding = DataBindingUtil.bind<AlbumBinding>(view)!!
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder? {

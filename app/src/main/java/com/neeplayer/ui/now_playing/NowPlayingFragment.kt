@@ -8,7 +8,6 @@ import android.support.v7.app.ActionBar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.neeplayer.NeePlayerApp
 import com.neeplayer.R
 import com.neeplayer.databinding.FragmentNowPlayingBinding
 import com.neeplayer.di.component
@@ -47,7 +46,7 @@ class NowPlayingFragment : Fragment(), NowPlayingView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding = DataBindingUtil.bind<FragmentNowPlayingBinding>(view)
+        binding = DataBindingUtil.bind<FragmentNowPlayingBinding>(view)!!
         bottomSheet = BottomSheetBehavior.from(binding.npContainer)
 
         view.onFirstLayout {

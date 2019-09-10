@@ -19,6 +19,7 @@ class AuthPresenter @Inject constructor(
 ): BasePresenter<AuthView>() {
 
     @State
+    @JvmField
     internal var token: String? = null
 
     override fun bind(view: AuthView) {

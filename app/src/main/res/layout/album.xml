@@ -53,7 +53,7 @@
             <TextView
                 style="@style/Text.Regular"
                 android:id="@+id/album_year"
-                android:text="@{album.year > 0 ? album.year.toString() : ``}"
+                android:text="@{album.year > 0 ? Integer.toString(album.year) : ``}"
                 tools:text="1975"/>
 
         </LinearLayout>

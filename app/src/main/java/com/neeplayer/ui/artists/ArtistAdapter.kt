@@ -23,7 +23,7 @@ class ArtistAdapter(
     override fun getItemCount(): Int = artists.size
 
     class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
-        val binding = DataBindingUtil.bind<ArtistBinding>(view)
+        val binding = DataBindingUtil.bind<ArtistBinding>(view)!!
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder?  {

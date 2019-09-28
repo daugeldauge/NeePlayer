@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
 
 
 android {
@@ -53,10 +54,6 @@ dependencies {
     compile 'com.squareup.okhttp3:logging-interceptor:3.0.1'
     compile 'com.pushtorefresh.storio:content-resolver:1.8.0'
 
-    def fragmentArgsVersion = "3.0.1"
-    kapt "com.hannesdorfmann.fragmentargs:processor:$fragmentArgsVersion"
-    compile "com.hannesdorfmann.fragmentargs:annotation:$fragmentArgsVersion"
-
     def daggerVersion = "2.2"
     kapt 'com.google.guava:guava:19.0' //fixes dagger dependencies bug
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
@@ -71,9 +68,7 @@ dependencies {
     compile 'com.jakewharton.timber:timber:4.1.2'
 }
 
-kapt {
-    generateStubs = true
-    arguments {
-        arg("fragmentArgsLib", true)
-    }
+androidExtensions {
+    experimental = true
 }
+

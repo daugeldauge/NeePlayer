@@ -1,9 +1,13 @@
 package com.neeplayer.model
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 import java.io.Serializable
 import java.util.concurrent.TimeUnit
 
-open class Entity(val id: Long) : Serializable {
+abstract class Entity : Serializable {
+    abstract val id: Long
+
     override fun equals(other: Any?): Boolean =
             if (javaClass.isInstance(other)) id == (other as Entity).id
             else false
@@ -11,16 +15,17 @@ open class Entity(val id: Long) : Serializable {
     override fun hashCode(): Int = id.hashCode()
 }
 
-class Artist(id: Long, val name: String, val numberOfSongs: Int, val numberOfAlbums: Int, val imageUrl: String? = null) : Entity(id), Serializable {
+@Parcelize
+class Artist(override val id: Long, val name: String, val numberOfSongs: Int, val numberOfAlbums: Int, val imageUrl: String? = null) : Entity(), Parcelable {
     val description: String
     get() = "%d albums, %d songs".format(numberOfAlbums, numberOfSongs)
 
     fun withImage(imageUrl: String) = Artist(id, name, numberOfSongs, numberOfAlbums, imageUrl)
 }
 
-class Album(id: Long, val artist: Artist, val title: String?, val year: Int?, val art: String?) : Entity(id)
+class Album(override val id: Long, val artist: Artist, val title: String?, val year: Int?, val art: String?) : Entity()
 
-class Song(id: Long, val album: Album, val title: String?, val duration: Int, val track: Int?) : Entity(id)
+class Song(override val id: Long, val album: Album, val title: String?, val duration: Int, val track: Int?) : Entity()
 
 class AlbumWithSongs(val album: Album, val songs: List<Song>) {
         val info: String

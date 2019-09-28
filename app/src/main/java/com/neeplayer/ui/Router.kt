@@ -5,18 +5,18 @@ import android.support.v4.app.FragmentTransaction
 import android.support.v7.app.AppCompatActivity
 import com.neeplayer.R
 import com.neeplayer.model.Artist
-import com.neeplayer.ui.albums.AlbumsFragmentBuilder
+import com.neeplayer.ui.albums.AlbumsFragment
 import com.neeplayer.ui.artists.ArtistsFragment
 
 class Router(activity: AppCompatActivity) {
 
-    val fragmentManager = activity.supportFragmentManager
+    private val fragmentManager = activity.supportFragmentManager
 
     fun goToArtists() = showFragment(ArtistsFragment(), false, ArtistsFragment.TAG)
 
     fun areArtistsShown() = (fragmentManager.findFragmentByTag(ArtistsFragment.TAG) != null)
 
-    fun gotToAlbums(artist: Artist) = showFragment(AlbumsFragmentBuilder(artist).build())
+    fun gotToAlbums(artist: Artist) = showFragment(AlbumsFragment(artist))
 
     private fun showFragment(fragment: Fragment, addToBackStack: Boolean = true, tag: String? = null) {
         fragmentManager.beginTransaction()

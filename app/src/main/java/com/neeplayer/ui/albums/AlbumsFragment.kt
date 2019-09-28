@@ -1,5 +1,6 @@
 package com.neeplayer.ui.albums
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -7,20 +8,24 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.hannesdorfmann.fragmentargs.annotation.Arg
-import com.hannesdorfmann.fragmentargs.annotation.FragmentWithArgs
-import com.neeplayer.NeePlayerApp
 import com.neeplayer.R
 import com.neeplayer.di.component
-import com.neeplayer.model.*
+import com.neeplayer.model.AlbumWithSongs
+import com.neeplayer.model.Artist
+import com.neeplayer.model.Song
 import com.neeplayer.ui.common.actionBar
+import com.neeplayer.ui.getValue
+import com.neeplayer.ui.setValue
 import javax.inject.Inject
 
-@FragmentWithArgs
-class AlbumsFragment : Fragment(), AlbumsView {
+class AlbumsFragment() : Fragment(), AlbumsView {
 
-    @Arg
-    internal lateinit var artist: Artist
+    @SuppressLint("ValidFragment")
+    constructor(artist: Artist): this() {
+        this.artist = artist
+    }
+
+    private var artist: Artist by arguments
 
     @Inject
     internal lateinit var presenter: AlbumsPresenter
@@ -35,7 +40,6 @@ class AlbumsFragment : Fragment(), AlbumsView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        AlbumsFragmentBuilder.injectArguments(this)
         context.component.inject(this)
     }
 

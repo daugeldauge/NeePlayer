@@ -1,22 +1,22 @@
 package com.neeplayer.ui.artists
 
+
 import android.content.Context
-import android.databinding.DataBindingUtil
-import android.support.v7.widget.RecyclerView
+import androidx.databinding.DataBindingUtil
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.neeplayer.databinding.ArtistBinding
 import com.neeplayer.model.Artist
-
-
 import org.jetbrains.anko.onClick
 
 
 class ArtistAdapter(
         private val context: Context,
         private val onClickListener: (Artist) -> Unit
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+) : RecyclerView.Adapter<ViewHolder>() {
 
     private var artists: MutableList<Artist> = mutableListOf()
 

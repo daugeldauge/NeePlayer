@@ -1,12 +1,12 @@
 package com.neeplayer.ui.albums
 
 import android.content.Context
-import android.databinding.DataBindingUtil
+import androidx.databinding.DataBindingUtil
 import android.graphics.drawable.AnimatedVectorDrawable
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.neeplayer.R
 import com.neeplayer.databinding.AlbumBinding
 import com.neeplayer.databinding.SongBinding

@@ -1,12 +1,10 @@
 package com.neeplayer.ui.artists
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.neeplayer.R
 import com.neeplayer.di.component
 import com.neeplayer.model.Artist
@@ -39,13 +37,13 @@ class ArtistsFragment : Fragment(), ArtistsView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val recyclerView = view as RecyclerView
+        val recyclerView = view as androidx.recyclerview.widget.RecyclerView
 
         recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(activity)
+        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity)
         presenter.bind(this)
 
-        actionBar?.title = view.context.getString(R.string.app_name);
+        actionBar?.title = view.context.getString(R.string.app_name)
         actionBar?.setDisplayShowHomeEnabled(false)
         actionBar?.setDisplayHomeAsUpEnabled(false)
     }

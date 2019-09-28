@@ -1,8 +1,8 @@
 package com.neeplayer.ui
 
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentTransaction
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN
 import com.neeplayer.R
 import com.neeplayer.model.Artist
 import com.neeplayer.ui.albums.AlbumsFragment
@@ -20,7 +20,7 @@ class Router(activity: AppCompatActivity) {
 
     private fun showFragment(fragment: Fragment, addToBackStack: Boolean = true, tag: String? = null) {
         fragmentManager.beginTransaction()
-            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+            .setTransition(TRANSIT_FRAGMENT_OPEN)
             .replace(R.id.fragment_container, fragment, tag)
             .apply {
                 if (addToBackStack) {

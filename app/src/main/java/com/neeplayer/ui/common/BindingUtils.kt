@@ -1,9 +1,9 @@
 package com.neeplayer.ui.common
 
-import android.databinding.BindingAdapter
 import android.graphics.drawable.Drawable
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import java.util.concurrent.TimeUnit
 

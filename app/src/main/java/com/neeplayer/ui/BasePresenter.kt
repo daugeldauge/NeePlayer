@@ -1,6 +1,6 @@
 package com.neeplayer.ui
 
-import android.support.annotation.CallSuper
+import androidx.annotation.CallSuper
 import rx.subscriptions.CompositeSubscription
 
 abstract class BasePresenter<V: Any> {

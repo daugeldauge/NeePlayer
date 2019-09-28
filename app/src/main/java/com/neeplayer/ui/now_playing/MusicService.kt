@@ -14,13 +14,13 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.PowerManager
 import android.provider.MediaStore
-import android.support.annotation.DrawableRes
-import android.support.annotation.IdRes
-import android.support.graphics.drawable.VectorDrawableCompat
-import android.support.v4.app.NotificationCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import androidx.annotation.DrawableRes
+import androidx.annotation.IdRes
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
+import androidx.core.app.NotificationCompat
 import android.widget.RemoteViews
 import com.neeplayer.*
 import com.neeplayer.di.component

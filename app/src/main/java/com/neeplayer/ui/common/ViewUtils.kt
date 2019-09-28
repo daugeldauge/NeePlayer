@@ -3,13 +3,13 @@ package com.neeplayer.ui.common
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.support.design.widget.BottomSheetBehavior
-import android.support.v4.app.Fragment
-import android.support.v7.app.ActionBar
-import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.SeekBar
+import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.neeplayer.targetApi
 
 fun SeekBar.onUserSeek(

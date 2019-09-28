@@ -1,6 +1,6 @@
 package com.neeplayer.di
 
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.neeplayer.ui.Router
 import dagger.Module
 import dagger.Provides

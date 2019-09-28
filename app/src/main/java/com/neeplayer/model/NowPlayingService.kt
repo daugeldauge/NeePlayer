@@ -2,7 +2,7 @@ package com.neeplayer.model
 
 import com.neeplayer.RxProperty
 import com.neeplayer.filterNotNull
-import com.neeplayer.model.Preferences.Item.LongItem.NOW_PLAYING_SONG_ID
+import com.neeplayer.model.Preferences.Item.LongItem.NowPlayingSongId
 import rx.Observable
 import rx.Single
 import rx.schedulers.Schedulers
@@ -36,13 +36,13 @@ class NowPlayingService
             return
         }
 
-        Single.create<Playlist?> { it.onSuccess(database.restorePlaylist(preferences.get(NOW_PLAYING_SONG_ID))) }
+        Single.create<Playlist?> { it.onSuccess(database.restorePlaylist(preferences.get(NowPlayingSongId))) }
             .subscribeOn(Schedulers.io())
             .subscribe { nowPlaying = it }
     }
 
     fun save() {
         val nowPlaying = nowPlaying ?: return
-        preferences.put(NOW_PLAYING_SONG_ID, nowPlaying.currentSong.id)
+        preferences.put(NowPlayingSongId, nowPlaying.currentSong.id)
     }
 }

@@ -26,25 +26,26 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity(), AuthView {
 
     companion object {
-        val OPEN_NOW_PLAYING_ACTION = "open_now_playing"
+        const val OPEN_NOW_PLAYING_ACTION = "open_now_playing"
+        private const val READ_EXTERNAL_STORAGE_REQUEST_CODE = 42
+
 
         init {
-            AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+            AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         }
     }
 
     val activityComponent by lazy { component.plus(ActivityModule(this)) }
 
     @Inject
-    lateinit internal var presenter: AuthPresenter
+    internal lateinit var presenter: AuthPresenter
 
     @Inject
-    lateinit internal var nowPlayingModel: NowPlayingService;
+    internal lateinit var nowPlayingModel: NowPlayingService
 
     @Inject
     internal lateinit var router: Router
 
-    private val READ_EXTERNAL_STORAGE_REQUEST_CODE = 42;
 
     private var menuElements = emptySet<AuthView.MenuElement>()
     private var scrobblingToggleChecked = true
@@ -59,10 +60,9 @@ class MainActivity : AppCompatActivity(), AuthView {
 
         setContentView(R.layout.activity_main)
         presenter.bind(this)
-        presenter.onRestoreInstanceState(savedInstanceState)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), READ_EXTERNAL_STORAGE_REQUEST_CODE);
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), READ_EXTERNAL_STORAGE_REQUEST_CODE)
         } else {
             onReadStoragePermissionGranted()
         }
@@ -73,11 +73,6 @@ class MainActivity : AppCompatActivity(), AuthView {
         if (intent.action == OPEN_NOW_PLAYING_ACTION) {
             nowPlayingFragment.expand()
         }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        presenter.onSaveInstanceState(outState)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -92,7 +87,7 @@ class MainActivity : AppCompatActivity(), AuthView {
         }
     }
 
-    fun onReadStoragePermissionGranted() {
+    private fun onReadStoragePermissionGranted() {
         nowPlayingModel.tryRestoreNowPlaying()
         if (!router.areArtistsShown()) {
             router.goToArtists()
@@ -133,8 +128,8 @@ class MainActivity : AppCompatActivity(), AuthView {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        onBackPressed();
-        return true;
+        onBackPressed()
+        return true
     }
 
     override fun onBackPressed() {

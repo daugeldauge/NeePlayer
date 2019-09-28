@@ -61,10 +61,6 @@ dependencies {
 
     kapt 'com.android.databinding:compiler:2.1.2'
 
-    def icepickVersion = "3.2.0"
-    annotationProcessor "frankiesardo:icepick-processor:$icepickVersion"
-    compile "frankiesardo:icepick:$icepickVersion"
-
     compile 'com.jakewharton.timber:timber:4.1.2'
 }
 

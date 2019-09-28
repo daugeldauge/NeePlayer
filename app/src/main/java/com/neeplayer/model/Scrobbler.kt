@@ -3,7 +3,7 @@ package com.neeplayer.model
 import android.content.Context
 import com.neeplayer.R
 import com.neeplayer.minutes
-import com.neeplayer.model.Preferences.Item.BooleanItem.SCROBBLING
+import com.neeplayer.model.Preferences.Item.BooleanItem.ScrobblingEnabled
 import com.neeplayer.seconds
 import org.jetbrains.anko.toast
 import rx.android.schedulers.AndroidSchedulers
@@ -52,7 +52,7 @@ class Scrobbler @Inject constructor(
                 val currentOverall = currentOverallPlaying() ?: return@subscribe
 
                 if (preferences.isSignedIn() &&
-                        preferences.getOrDefault(SCROBBLING) &&
+                        preferences.getOrDefault(ScrobblingEnabled) &&
                         !isCurrentSongScrobbled &&
                         song.duration > MIN_SONG_LENGTH_TO_SCROBBLE && (currentOverall >= song.duration * SCROBBLE_FRACTION_THRESHOLD || currentOverall >= SCROBBLE_THRESHOLD )
                 ) {
@@ -77,7 +77,7 @@ class Scrobbler @Inject constructor(
                 album = song.album.title,
                 artist = song.album.artist.name,
                 timestamp = System.currentTimeMillis() / 1000,
-                sessionKey = preferences.get(Preferences.Item.StringItem.SESSION_KEY) ?: return
+                sessionKey = preferences.get(Preferences.Item.StringItem.SessionKey) ?: return
         )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -26,6 +26,7 @@ import javax.inject.Singleton
     }
 
     fun getAlbums(artist: Artist): List<Album> {
+        @Suppress("DEPRECATION") // Suggested replacement far less convenient :(
         return storIOContentResolver
                 .get()
                 .listOfObjects(Album::class.java)

@@ -18,13 +18,15 @@ import android.provider.MediaStore
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import android.widget.RemoteViews
 import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
-import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import androidx.core.app.NotificationCompat
-import android.widget.RemoteViews
-import com.neeplayer.*
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
+import com.neeplayer.BuildConfig
+import com.neeplayer.R
 import com.neeplayer.di.component
+import com.neeplayer.lollipop
 import com.neeplayer.model.Song
 import com.neeplayer.ui.MainActivity
 import org.jetbrains.anko.toast
@@ -66,7 +68,6 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         presenter.bind(this)
         initMediaPLayer()
         mediaSession.setCallback(mediaSessionCallback)
-        mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
         mediaSession.isActive = true
 
         registerReceiver(headsetPlugReceiver, IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY))
@@ -226,11 +227,8 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
                     R.mipmap.ic_launcher
                 }))
                 .setContent(smallContent)
+                .setCustomBigContentView(bigContent)
                 .build()
-
-        targetApi(Build.VERSION_CODES.JELLY_BEAN) {
-            notification.bigContentView = bigContent
-        }
 
         if (!paused) {
             foreground = true

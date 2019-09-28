@@ -28,6 +28,7 @@ class ArtistResolver @Inject constructor (private val artistImagesStorage: Artis
 
 class AlbumResolver(val artist: Artist) : DefaultGetResolver<Album>() {
     override fun mapFromCursor(cursor: Cursor): Album {
+        @Suppress("DEPRECATION") // Suggested replacement far less convenient :(
         return Album(
                 artist = artist,
                 id     = cursor.getLong(BaseColumns._ID)!!,

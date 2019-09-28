@@ -1,5 +1,6 @@
 package com.neeplayer.ui.now_playing
 
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
@@ -44,6 +45,8 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     private val handler = Handler()
     private val TICK_PERIOD = 100L
 
+    private val CHANNEL_ID = "music_controls"
+
     private val player: MediaPlayer = MediaPlayer()
 
     private var paused = true
@@ -70,10 +73,10 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        when(intent?.action) {
+        when (intent?.action) {
             PLAY_PREVIOUS_ACTION -> presenter.onPreviousClicked()
             PLAY_OR_PAUSE_ACTION -> presenter.onPlayPauseClicked()
-            PLAY_NEXT_ACTION     -> presenter.onNextClicked()
+            PLAY_NEXT_ACTION -> presenter.onNextClicked()
         }
         return super.onStartCommand(intent, flags, startId)
     }
@@ -98,7 +101,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
 
     override fun play() {
         paused = false
-        if (state == State.PREPARED || state == State.PAUSED)  {
+        if (state == State.PREPARED || state == State.PAUSED) {
             startPlaying()
             updateInfo(song!!)
         }
@@ -136,6 +139,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         stopTicking()
         presenter.onNextClicked()
     }
+
     override fun onError(mp: MediaPlayer, what: Int, extra: Int): Boolean {
         mp.reset()
         state = State.IDLE
@@ -205,7 +209,12 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
 
         val contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val notification = NotificationCompat.Builder(this)
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationManager.createNotificationChannel(NotificationChannel(CHANNEL_ID, getString(R.string.music_notification_channel_description), NotificationManager.IMPORTANCE_HIGH))
+        }
+
+        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setCategory(NotificationCompat.CATEGORY_STATUS)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -228,7 +237,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
             startForeground(NOTIFICATION_ID, notification)
         } else if (foreground) {
             stopForeground(false)
-            (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).notify(NOTIFICATION_ID, notification)
+            notificationManager.notify(NOTIFICATION_ID, notification)
         }
     }
 
@@ -269,7 +278,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     //endregion
 
     private fun startPlaying() {
-        when((getSystemService(AUDIO_SERVICE) as AudioManager).requestAudioFocus(audioFocusListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)) {
+        when ((getSystemService(AUDIO_SERVICE) as AudioManager).requestAudioFocus(audioFocusListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)) {
             AudioManager.AUDIOFOCUS_REQUEST_GRANTED -> {
                 player.start()
                 tick()
@@ -329,7 +338,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         }
     }
 
-    class MediaButtonEventsReceiver : BroadcastReceiver () {
+    class MediaButtonEventsReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             //TODO handle events
         }

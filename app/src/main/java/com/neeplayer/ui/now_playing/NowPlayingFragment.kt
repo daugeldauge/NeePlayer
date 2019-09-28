@@ -24,11 +24,8 @@ class NowPlayingFragment : Fragment(), NowPlayingView {
     private val ACTION_BAR_THRESHOLD = 0.2
     private var actionBarConfigured = false
 
-    lateinit
-    private var binding: FragmentNowPlayingBinding
-
-    lateinit
-    private var bottomSheet: BottomSheetBehavior<View>
+    private lateinit var binding: FragmentNowPlayingBinding
+    private lateinit var bottomSheet: BottomSheetBehavior<View>
 
     @Inject
     lateinit var presenter: NowPlayingPresenter
@@ -37,7 +34,7 @@ class NowPlayingFragment : Fragment(), NowPlayingView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        context.component.inject(this)
+        requireContext().component.inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -46,7 +43,7 @@ class NowPlayingFragment : Fragment(), NowPlayingView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding = DataBindingUtil.bind<FragmentNowPlayingBinding>(view)!!
+        binding = DataBindingUtil.bind(view)!!
         bottomSheet = BottomSheetBehavior.from(binding.npContainer)
 
         view.onFirstLayout {
@@ -64,7 +61,7 @@ class NowPlayingFragment : Fragment(), NowPlayingView {
                 actionBar.setDisplayShowHomeEnabled(true)
                 actionBar.setDisplayHomeAsUpEnabled(true)
                 actionBar.setHomeAsUpIndicator(R.drawable.ic_close_white_24dp)
-                actionBar.title = context.getString(R.string.now_playing)
+                actionBar.title = view.context.getString(R.string.now_playing)
             } else if (it >= ACTION_BAR_THRESHOLD && actionBarConfigured) {
                 actionBarConfigured = false
                 actionBar.displayOptions = oldActionBarDisplayOptions
@@ -119,11 +116,11 @@ class NowPlayingFragment : Fragment(), NowPlayingView {
     }
 
     fun tryCollapse(): Boolean {
-        if (bottomSheet.state == BottomSheetBehavior.STATE_COLLAPSED) {
-            return false
+        return if (bottomSheet.state == BottomSheetBehavior.STATE_COLLAPSED) {
+            false
         } else {
             bottomSheet.state = BottomSheetBehavior.STATE_COLLAPSED
-            return true
+            true
         }
     }
 

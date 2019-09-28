@@ -14,6 +14,7 @@ import com.neeplayer.lollipop
 import com.neeplayer.model.AlbumWithSongs
 import com.neeplayer.model.Song
 import org.jetbrains.anko.onClick
+import java.lang.IllegalStateException
 
 class AlbumSongAdapter(private val context: Context, private val albums: List<AlbumWithSongs>, private val onSongClicked: (Song) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val ALBUM_ITEM = 0
@@ -46,7 +47,7 @@ class AlbumSongAdapter(private val context: Context, private val albums: List<Al
         val binding = DataBindingUtil.bind<AlbumBinding>(view)!!
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder? {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(context)
         return when(viewType) {
             ALBUM_ITEM -> AlbumViewHolder(AlbumBinding.inflate(inflater, parent, false).root)
@@ -57,13 +58,12 @@ class AlbumSongAdapter(private val context: Context, private val albums: List<Al
                 )
                 SongViewHolder(binding.root)
             }
-            else -> null
+            else -> throw IllegalStateException()
         }
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
-        val item = items[position]
-        when(item) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when(val item = items[position]) {
             is Item.AlbumItem -> {
                 val binding = (holder as AlbumViewHolder).binding
                 binding.album = item.albumWithSongs.album

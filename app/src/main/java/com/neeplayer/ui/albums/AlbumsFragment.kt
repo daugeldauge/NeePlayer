@@ -20,12 +20,16 @@ import javax.inject.Inject
 
 class AlbumsFragment() : Fragment(), AlbumsView {
 
+    init {
+        arguments = Bundle()
+    }
+
     @SuppressLint("ValidFragment")
     constructor(artist: Artist): this() {
         this.artist = artist
     }
 
-    private var artist: Artist by arguments
+    private var artist: Artist by arguments!!
 
     @Inject
     internal lateinit var presenter: AlbumsPresenter
@@ -40,7 +44,7 @@ class AlbumsFragment() : Fragment(), AlbumsView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        context.component.inject(this)
+        requireContext().component.inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -65,7 +69,7 @@ class AlbumsFragment() : Fragment(), AlbumsView {
     }
 
     override fun showAlbums(albumsWithSongs: List<AlbumWithSongs>) {
-        listView.adapter = AlbumSongAdapter(activity, albumsWithSongs) {
+        listView.adapter = AlbumSongAdapter(requireActivity(), albumsWithSongs) {
             presenter.onSongClicked(it)
         }
     }

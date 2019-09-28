@@ -10,21 +10,20 @@ import android.view.ViewGroup
 import com.neeplayer.R
 import com.neeplayer.di.component
 import com.neeplayer.model.Artist
-import com.neeplayer.ui.MainActivity
 import com.neeplayer.ui.common.actionBar
 import com.neeplayer.ui.common.uiThread
 import javax.inject.Inject
 
 class ArtistsFragment : Fragment(), ArtistsView {
     companion object {
-        val TAG = ArtistsFragment::class.java.name;
+        val TAG: String = ArtistsFragment::class.java.name
     }
 
     @Inject
-    lateinit internal var presenter: ArtistsPresenter
+    internal lateinit var presenter: ArtistsPresenter
 
     private val adapter by lazy {
-        ArtistAdapter(activity) {
+        ArtistAdapter(requireContext()) {
             presenter.onArtistClicked(it)
         }
     }
@@ -34,11 +33,11 @@ class ArtistsFragment : Fragment(), ArtistsView {
         component.inject(this)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.fragment_main, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val recyclerView = view as RecyclerView
 
@@ -46,7 +45,7 @@ class ArtistsFragment : Fragment(), ArtistsView {
         recyclerView.layoutManager = LinearLayoutManager(activity)
         presenter.bind(this)
 
-        actionBar?.title = context.getString(R.string.app_name);
+        actionBar?.title = view.context.getString(R.string.app_name);
         actionBar?.setDisplayShowHomeEnabled(false)
         actionBar?.setDisplayHomeAsUpEnabled(false)
     }

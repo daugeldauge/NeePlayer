@@ -26,11 +26,11 @@ class ArtistAdapter(
         val binding = DataBindingUtil.bind<ArtistBinding>(view)!!
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder?  {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder  {
         return ViewHolder(ArtistBinding.inflate(LayoutInflater.from(context), parent, false).root)
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val binding = (holder as ViewHolder).binding
         val artist = artists[position]
         binding.artist = artist

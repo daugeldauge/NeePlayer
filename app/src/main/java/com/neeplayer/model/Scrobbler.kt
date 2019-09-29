@@ -3,6 +3,7 @@ package com.neeplayer.model
 import android.content.Context
 import com.neeplayer.R
 import com.neeplayer.api.lastfm.LastFmApi
+import com.neeplayer.api.Response
 import com.neeplayer.minutes
 import com.neeplayer.model.Preferences.Item.BooleanItem.ScrobblingEnabled
 import com.neeplayer.seconds
@@ -87,8 +88,8 @@ class Scrobbler @Inject constructor(
             )
 
             when (response) {
-                is LastFmApi.Result.Success<*> -> context.toast(context.getString(R.string.scrobble_success, song.title))
-                is LastFmApi.Result.Error -> context.toast(R.string.scrobble_error)
+                is Response.Success<*> -> context.toast(context.getString(R.string.scrobble_success, song.title))
+                is Response.Error -> context.toast(R.string.scrobble_error)
             }
         }
 

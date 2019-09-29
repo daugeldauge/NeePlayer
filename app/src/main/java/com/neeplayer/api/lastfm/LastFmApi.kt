@@ -1,8 +1,9 @@
 package com.neeplayer.api.lastfm
 
 import com.neeplayer.BuildConfig
-import com.neeplayer.api.lastfm.LastFmApi.GetTokenResponse
-import com.neeplayer.api.lastfm.LastFmApi.Result.Success
+import com.neeplayer.api.Response
+import com.neeplayer.api.Response.Success
+import com.neeplayer.api.lastfm.LastFmApi.GetTokenBody
 import com.neeplayer.fold
 import com.neeplayer.md5
 import io.ktor.client.HttpClient
@@ -35,23 +36,18 @@ interface LastFmApi {
         const val secret = "4ce7ed189d2c08ae5091003a8e81f6d5"
     }
 
-    sealed class Result<out T> {
-        class Success<T>(val data: T) : Result<T>()
-        object Error : Result<Nothing>()
-    }
+    @Serializable
+    class GetTokenBody(val token: String)
 
     @Serializable
-    class GetTokenResponse(val token: String)
-
-    @Serializable
-    class GetSessionResponse(val session: Session) {
+    class GetSessionBody(val session: Session) {
         @Serializable
         class Session(val key: String)
     }
 
-    suspend fun getToken(): Result<GetTokenResponse>
+    suspend fun getToken(): Response<GetTokenBody>
 
-    suspend fun getSession(token: String): Result<GetSessionResponse>
+    suspend fun getSession(token: String): Response<GetSessionBody>
 
     suspend fun scrobble(
             sessionKey: String,
@@ -59,7 +55,7 @@ interface LastFmApi {
             track: String,
             timestamp: Long,
             album: String? = null
-    ): Result<*>
+    ): Response<*>
 }
 
 class LastFmKtorApi @Inject constructor() : LastFmApi {
@@ -84,9 +80,9 @@ class LastFmKtorApi @Inject constructor() : LastFmApi {
         }
     }
 
-    override suspend fun getToken() = lastFmRequest<GetTokenResponse>("auth.getToken")
+    override suspend fun getToken() = lastFmRequest<GetTokenBody>("auth.getToken")
 
-    override suspend fun getSession(token: String) = lastFmRequest<LastFmApi.GetSessionResponse>("auth.getSession") {
+    override suspend fun getSession(token: String) = lastFmRequest<LastFmApi.GetSessionBody>("auth.getSession") {
         append("token", token)
     }
 
@@ -104,7 +100,7 @@ class LastFmKtorApi @Inject constructor() : LastFmApi {
             method: String,
             httpMethod: HttpMethod = HttpMethod.Get,
             parametersConfiguration: ParametersBuilder.() -> Unit = {}
-    ): LastFmApi.Result<T> {
+    ): Response<T> {
         return try {
             httpClient.request<T> {
                 this.method = httpMethod
@@ -118,11 +114,11 @@ class LastFmKtorApi @Inject constructor() : LastFmApi {
                 }
             }.let(::Success)
         } catch (e: IOException) {
-            LastFmApi.Result.Error
+            Response.Error
         } catch (e: SerializationException) {
-            LastFmApi.Result.Error
+            Response.Error
         } catch (e: ResponseException) {
-            LastFmApi.Result.Error
+            Response.Error
         }
     }
 

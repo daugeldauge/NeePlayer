@@ -1,8 +1,8 @@
 package com.neeplayer.ui.auth
 
 import android.net.Uri
+import com.neeplayer.api.Response
 import com.neeplayer.api.lastfm.LastFmApi
-import com.neeplayer.di.LastFmModule
 import com.neeplayer.model.Preferences
 import com.neeplayer.model.Preferences.Item.BooleanItem.ScrobblingEnabled
 import com.neeplayer.model.Preferences.Item.StringItem.LastFmAuthToken
@@ -29,13 +29,13 @@ class AuthPresenter @Inject constructor(
         val token = preferences.get(LastFmAuthToken) ?: return
         mainScope.launch {
             when (val result = lastFm.getSession(token)) {
-                is LastFmApi.Result.Success<LastFmApi.GetSessionResponse> -> {
-                    preferences.put(SessionKey, result.data.session.key)
+                is Response.Success<LastFmApi.GetSessionBody> -> {
+                    preferences.put(SessionKey, result.body.session.key)
                     updateMenuItems()
                     view.showAuthSuccess()
                     preferences.remove(LastFmAuthToken)
                 }
-                is LastFmApi.Result.Error -> view.showAuthError()
+                is Response.Error -> view.showAuthError()
             }
         }
     }
@@ -43,12 +43,12 @@ class AuthPresenter @Inject constructor(
     fun onSignInClicked() {
         mainScope.launch {
             when (val result = lastFm.getToken()) {
-                is LastFmApi.Result.Success<LastFmApi.GetTokenResponse> -> {
-                    val token = result.data.token
+                is Response.Success<LastFmApi.GetTokenBody> -> {
+                    val token = result.body.token
                     preferences.put(LastFmAuthToken, token)
                     view.showAuthView(Uri.parse("http://www.last.fm/api/auth/?api_key=${LastFmApi.apiKey}&token=$token"))
                 }
-                is LastFmApi.Result.Error -> view.showAuthError()
+                is Response.Error -> view.showAuthError()
             }
         }
     }

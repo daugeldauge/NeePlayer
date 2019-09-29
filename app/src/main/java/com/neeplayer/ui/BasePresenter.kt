@@ -1,12 +1,15 @@
 package com.neeplayer.ui
 
 import androidx.annotation.CallSuper
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 import rx.subscriptions.CompositeSubscription
 
 abstract class BasePresenter<V: Any> {
 
     protected lateinit var view: V
 
+    protected val mainScope = MainScope()
     protected val subscriptions = CompositeSubscription()
 
     @CallSuper
@@ -16,6 +19,7 @@ abstract class BasePresenter<V: Any> {
 
     @CallSuper
     open fun unbind() {
+        mainScope.cancel()
         subscriptions.clear()
     }
 }

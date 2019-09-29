@@ -8,7 +8,6 @@ import com.neeplayer.model.Preferences.Item.BooleanItem.ScrobblingEnabled
 import com.neeplayer.model.Preferences.Item.StringItem.LastFmAuthToken
 import com.neeplayer.model.Preferences.Item.StringItem.SessionKey
 import com.neeplayer.ui.BasePresenter
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,8 +16,6 @@ class AuthPresenter @Inject constructor(
         private val lastFm: LastFmApi,
         private val preferences: Preferences
 ): BasePresenter<AuthView>() {
-
-    private val mainScope = MainScope()
 
     override fun bind(view: AuthView) {
         super.bind(view)

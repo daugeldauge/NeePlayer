@@ -7,7 +7,7 @@ import com.neeplayer.ui.now_playing.NowPlayingFragment
 import dagger.Component
 import javax.inject.Singleton
 
-@Component(modules = [LastFmModule::class, AppModule::class])
+@Component(modules = [NetworkModule::class, AppModule::class])
 @Singleton
 interface AppComponent {
     fun plus(activityModule: ActivityModule): ActivityComponent

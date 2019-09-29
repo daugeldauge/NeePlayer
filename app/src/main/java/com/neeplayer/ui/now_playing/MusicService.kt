@@ -5,9 +5,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.*
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Canvas
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Build
@@ -19,14 +17,11 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.widget.RemoteViews
-import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
 import androidx.core.app.NotificationCompat
-import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import com.neeplayer.BuildConfig
 import com.neeplayer.R
 import com.neeplayer.di.component
-import com.neeplayer.lollipop
 import com.neeplayer.model.Song
 import com.neeplayer.ui.MainActivity
 import org.jetbrains.anko.toast
@@ -198,11 +193,11 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
 
     //region Notifications
     private fun updateNotification(song: Song) {
-        val bigContent = RemoteViews(packageName, R.layout.big_notification);
-        val smallContent = RemoteViews(packageName, R.layout.small_notification);
+        val bigContent = RemoteViews(packageName, R.layout.big_notification)
+        val smallContent = RemoteViews(packageName, R.layout.small_notification)
 
-        fillNotificationContent(bigContent, song);
-        fillNotificationContent(smallContent, song);
+        fillNotificationContent(bigContent, song)
+        fillNotificationContent(smallContent, song)
 
         val intent = Intent(this, MainActivity::class.java)
                 .setAction(MainActivity.OPEN_NOW_PLAYING_ACTION)
@@ -221,11 +216,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setTicker(song.title)
                 .setContentIntent(contentIntent)
-                .setSmallIcon(lollipop({
-                    R.drawable.ic_play_arrow_white
-                }, {
-                    R.mipmap.ic_launcher
-                }))
+                .setSmallIcon(R.drawable.ic_play_arrow_white)
                 .setContent(smallContent)
                 .setCustomBigContentView(bigContent)
                 .build()
@@ -241,30 +232,17 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
 
     private fun fillNotificationContent(content: RemoteViews, song: Song) {
 
-        val albumArt = BitmapFactory.decodeFile(song.album.art);
-        content.setImageViewBitmap(R.id.notification_album_art, albumArt);
+        val albumArt = BitmapFactory.decodeFile(song.album.art)
+        content.setImageViewBitmap(R.id.notification_album_art, albumArt)
         content.setTextViewText(R.id.notification_song_title, song.title)
         content.setTextViewText(R.id.notification_artist, song.album.artist.name)
-        content.setImageViewVectorResource(R.id.notification_play_pause_button, if (paused) R.drawable.ic_play_arrow_black_medium else R.drawable.ic_pause_black_medium)
-        content.setImageViewVectorResource(R.id.notification_fast_forward_button, R.drawable.ic_fast_forward_black_medium)
-        content.setImageViewVectorResource(R.id.notification_fast_rewind_button, R.drawable.ic_fast_rewind_black_medium)
+        content.setImageViewResource(R.id.notification_play_pause_button, if (paused) R.drawable.ic_play_arrow_black_medium else R.drawable.ic_pause_black_medium)
+        content.setImageViewResource(R.id.notification_fast_forward_button, R.drawable.ic_fast_forward_black_medium)
+        content.setImageViewResource(R.id.notification_fast_rewind_button, R.drawable.ic_fast_rewind_black_medium)
 
         setupPendingIntent(content, R.id.notification_fast_rewind_button, PLAY_PREVIOUS_ACTION)
         setupPendingIntent(content, R.id.notification_play_pause_button, PLAY_OR_PAUSE_ACTION)
         setupPendingIntent(content, R.id.notification_fast_forward_button, PLAY_NEXT_ACTION)
-    }
-
-    private fun RemoteViews.setImageViewVectorResource(@IdRes viewId: Int, @DrawableRes vectorId: Int) {
-        lollipop({ setImageViewResource(viewId, vectorId) }) {
-
-            val drawable = VectorDrawableCompat.create(resources, vectorId, theme) ?: return
-            val bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
-            val canvas = Canvas(bitmap)
-            drawable.setBounds(0, 0, canvas.width, canvas.height)
-            drawable.draw(canvas)
-            setImageViewBitmap(viewId, bitmap)
-
-        }
     }
 
     private fun setupPendingIntent(content: RemoteViews, @IdRes viewId: Int, action: String) {

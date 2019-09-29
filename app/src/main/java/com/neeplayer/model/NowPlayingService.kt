@@ -11,8 +11,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class NowPlayingService
-@Inject constructor(
+class NowPlayingService @Inject constructor(
         private val preferences: Preferences,
         private val database: Database
 ) {

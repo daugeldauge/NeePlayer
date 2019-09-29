@@ -1,6 +1,5 @@
 package com.neeplayer.ui.common
 
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.view.View
@@ -10,7 +9,7 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.neeplayer.targetApi
+import kotlin.math.abs
 
 fun SeekBar.onUserSeek(
         onProgress: ((progress: Int) -> Unit)? = null,
@@ -42,7 +41,11 @@ fun BottomSheetBehavior<out View>.setCallback(
                 return
             }
 
-            onSlide(if (slideOffset > 0) { 1 - slideOffset } else { Math.abs(slideOffset) })
+            onSlide(if (slideOffset > 0) {
+                1 - slideOffset
+            } else {
+                abs(slideOffset)
+            })
         }
 
         override fun onStateChanged(bottomSheet: View, @BottomSheetBehavior.State state: Int) {
@@ -74,12 +77,7 @@ fun View.onFirstLayout(block: () -> Unit) {
     viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
         override fun onGlobalLayout() {
             block()
-            targetApi(Build.VERSION_CODES.JELLY_BEAN, {
-                viewTreeObserver.removeOnGlobalLayoutListener(this)
-            }, {
-                @Suppress("DEPRECATION")
-                viewTreeObserver.removeGlobalOnLayoutListener(this)
-            })
+            viewTreeObserver.removeOnGlobalLayoutListener(this)
         }
     })
 }

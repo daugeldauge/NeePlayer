@@ -8,12 +8,6 @@ import rx.Single
 
 interface LastFmService {
 
-    @GET("?method=auth.getToken")
-    fun getToken(): Single<JSONObject>
-
-    @GET("?method=auth.getSession")
-    fun getSession(@Query("token") token: String): Single<JSONObject>
-
     @GET("?method=artist.getInfo")
     fun getArtistInfo(@Query("artist") artist: String): Single<JSONObject>
 

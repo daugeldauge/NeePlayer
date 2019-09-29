@@ -8,9 +8,9 @@ import com.neeplayer.plusAssign
 import com.neeplayer.ui.BasePresenter
 import com.neeplayer.ui.Router
 import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.warn
 import org.json.JSONObject
 import rx.schedulers.Schedulers
+import timber.log.Timber
 import javax.inject.Inject
 
 class ArtistsPresenter @Inject constructor(
@@ -32,7 +32,7 @@ class ArtistsPresenter @Inject constructor(
                         artistImagesStorage.put(artist.name, it)
                         view.updateArtist(artist.withImage(it))
                     }, {
-                        warn("Couldn't retrieve artist image url", it)
+                        Timber.w(it, "Couldn't retrieve artist image url")
                     })
         }
     }

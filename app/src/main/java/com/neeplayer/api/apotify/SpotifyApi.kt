@@ -39,7 +39,7 @@ class SpotifyKtorApi @Inject constructor(private val httpClient: HttpClient) : S
 
     private val baseUrlBuilder = URLBuilder("https://api.spotify.com/v1")
 
-    override suspend fun searchArtist(artistName: String) = deezerRequest<SpotifyApi.SearchBody> {
+    override suspend fun searchArtist(artistName: String) = spotifyRequest<SpotifyApi.SearchBody> {
         url {
             encodedPath += "/search"
             parameters.append("q", artistName)
@@ -48,7 +48,7 @@ class SpotifyKtorApi @Inject constructor(private val httpClient: HttpClient) : S
         }
     }
 
-    private suspend inline fun <reified T> deezerRequest(
+    private suspend inline fun <reified T> spotifyRequest(
             block: HttpRequestBuilder.() -> Unit
     ): Response<T> {
         return try {

@@ -2,20 +2,21 @@ package com.neeplayer.model
 
 import android.content.Context
 import com.neeplayer.R
+import com.neeplayer.api.lastfm.LastFmApi
 import com.neeplayer.minutes
 import com.neeplayer.model.Preferences.Item.BooleanItem.ScrobblingEnabled
 import com.neeplayer.seconds
-import org.jetbrains.anko.toast
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
+import com.neeplayer.toast
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class Scrobbler @Inject constructor(
         private val context: Context,
-        private val service: NowPlayingService,
-        private val lastFm: LastFmService,
+        service: NowPlayingService,
+        private val lastFm: LastFmApi,
         private val preferences: Preferences
 ) {
 
@@ -28,6 +29,8 @@ class Scrobbler @Inject constructor(
     private var overallPlaying = 0L
 
     private var lastSong: Song? = null
+
+    private val mainScope = MainScope()
 
     init {
         service.nowPlayingObservable.subscribe {
@@ -71,20 +74,23 @@ class Scrobbler @Inject constructor(
     private fun scrobble(song: Song) {
 
         isCurrentSongScrobbled = true
+        val songTitle = song.title ?: return
+        val sessionKey = preferences.get(Preferences.Item.StringItem.SessionKey) ?: return
 
-        lastFm.scrobble(
-                track = song.title ?: return,
-                album = song.album.title,
-                artist = song.album.artist.name,
-                timestamp = System.currentTimeMillis() / 1000,
-                sessionKey = preferences.get(Preferences.Item.StringItem.SessionKey) ?: return
-        )
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    context.toast(context.getString(R.string.scrobble_success, song.title))
-                }, {
-                    context.toast(R.string.scrobble_error)
-                })
+        mainScope.launch {
+            val response = lastFm.scrobble(
+                    track = songTitle,
+                    album = song.album.title,
+                    artist = song.album.artist.name,
+                    timestamp = System.currentTimeMillis() / 1000,
+                    sessionKey = sessionKey
+            )
+
+            when (response) {
+                is LastFmApi.Result.Success<*> -> context.toast(context.getString(R.string.scrobble_success, song.title))
+                is LastFmApi.Result.Error -> context.toast(R.string.scrobble_error)
+            }
+        }
+
     }
 }

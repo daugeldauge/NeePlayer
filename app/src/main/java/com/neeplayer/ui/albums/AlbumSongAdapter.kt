@@ -12,7 +12,6 @@ import com.neeplayer.databinding.AlbumBinding
 import com.neeplayer.databinding.SongBinding
 import com.neeplayer.model.AlbumWithSongs
 import com.neeplayer.model.Song
-import org.jetbrains.anko.onClick
 
 class AlbumSongAdapter(private val context: Context, albums: List<AlbumWithSongs>, private val onSongClicked: (Song) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val ALBUM_ITEM = 0
@@ -69,7 +68,7 @@ class AlbumSongAdapter(private val context: Context, albums: List<AlbumWithSongs
                 val binding = (holder as SongViewHolder).binding
                 val song = item.song
                 binding.song = song
-                binding.root.onClick {
+                binding.root.setOnClickListener {
                     onSongClicked(song)
                 }
 

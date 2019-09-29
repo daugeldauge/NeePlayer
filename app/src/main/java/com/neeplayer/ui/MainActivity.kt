@@ -15,11 +15,11 @@ import com.neeplayer.R
 import com.neeplayer.di.ActivityModule
 import com.neeplayer.di.component
 import com.neeplayer.model.NowPlayingService
+import com.neeplayer.toast
 import com.neeplayer.ui.auth.AuthPresenter
 import com.neeplayer.ui.auth.AuthView
 import com.neeplayer.ui.now_playing.MusicService
 import com.neeplayer.ui.now_playing.NowPlayingFragment
-import org.jetbrains.anko.toast
 import timber.log.Timber
 import javax.inject.Inject
 

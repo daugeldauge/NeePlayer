@@ -3,7 +3,6 @@ package com.neeplayer.api.lastfm
 import com.neeplayer.BuildConfig
 import com.neeplayer.api.lastfm.LastFmApi.GetTokenResponse
 import com.neeplayer.api.lastfm.LastFmApi.Result.Success
-import com.neeplayer.di.LastFmModule
 import com.neeplayer.fold
 import com.neeplayer.md5
 import io.ktor.client.HttpClient
@@ -30,6 +29,11 @@ import javax.inject.Inject
 
 
 interface LastFmApi {
+
+    companion object {
+        const val apiKey = "76b52a83c8c82ae436524353bcea2da0"
+        const val secret = "4ce7ed189d2c08ae5091003a8e81f6d5"
+    }
 
     sealed class Result<out T> {
         class Success<T>(val data: T) : Result<T>()
@@ -75,7 +79,7 @@ class LastFmKtorApi @Inject constructor() : LastFmApi {
                         Timber.tag("ktor").i(message)
                     }
                 }
-                level = LogLevel.ALL
+                level = LogLevel.BODY
             }
         }
     }
@@ -106,7 +110,7 @@ class LastFmKtorApi @Inject constructor() : LastFmApi {
                 this.method = httpMethod
                 url.takeFrom(baseUrlBuilder)
                 url.parameters.apply {
-                    append("api_key", LastFmModule.apiKey)
+                    append("api_key", LastFmApi.apiKey)
                     append("method", method)
                     parametersConfiguration()
                     append("api_sig", calculateSign())
@@ -125,14 +129,10 @@ class LastFmKtorApi @Inject constructor() : LastFmApi {
     private fun ParametersBuilder.calculateSign(): String {
         return entries()
                 .associate { (key, value) -> key to value.firstOrNull() }
-                .calculateSign()
-    }
-
-    private fun Map<String, String?>.calculateSign(): String {
-        return toSortedMap()
+                .toSortedMap()
                 .filter { !it.key.isNullOrBlank() && !it.value.isNullOrBlank() }
                 .fold(StringBuilder()) { accumulator, key, value -> accumulator.append(key).append(value) }
-                .append(LastFmModule.secret)
+                .append(LastFmApi.secret)
                 .toString()
                 .md5()
     }

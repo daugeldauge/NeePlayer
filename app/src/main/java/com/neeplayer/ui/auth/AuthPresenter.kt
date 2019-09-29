@@ -46,7 +46,7 @@ class AuthPresenter @Inject constructor(
                 is LastFmApi.Result.Success<LastFmApi.GetTokenResponse> -> {
                     val token = result.data.token
                     preferences.put(LastFmAuthToken, token)
-                    view.showAuthView(Uri.parse("http://www.last.fm/api/auth/?api_key=${LastFmModule.apiKey}&token=$token"))
+                    view.showAuthView(Uri.parse("http://www.last.fm/api/auth/?api_key=${LastFmApi.apiKey}&token=$token"))
                 }
                 is LastFmApi.Result.Error -> view.showAuthError()
             }

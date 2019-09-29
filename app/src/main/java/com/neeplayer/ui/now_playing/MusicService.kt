@@ -23,8 +23,8 @@ import com.neeplayer.BuildConfig
 import com.neeplayer.R
 import com.neeplayer.di.component
 import com.neeplayer.model.Song
+import com.neeplayer.toast
 import com.neeplayer.ui.MainActivity
-import org.jetbrains.anko.toast
 import javax.inject.Inject
 
 class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener, NowPlayingView {

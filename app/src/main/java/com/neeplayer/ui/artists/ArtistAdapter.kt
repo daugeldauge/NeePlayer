@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.neeplayer.databinding.ArtistBinding
 import com.neeplayer.model.Artist
-import org.jetbrains.anko.onClick
 
 
 class ArtistAdapter(
@@ -34,7 +33,7 @@ class ArtistAdapter(
         val binding = (holder as ViewHolder).binding
         val artist = artists[position]
         binding.artist = artist
-        binding.root.onClick { onClickListener(artist) }
+        binding.root.setOnClickListener { onClickListener(artist) }
     }
 
     fun setArtists(artists: List<Artist>) {

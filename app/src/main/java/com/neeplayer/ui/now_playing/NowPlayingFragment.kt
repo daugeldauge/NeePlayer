@@ -13,7 +13,6 @@ import com.neeplayer.databinding.FragmentNowPlayingBinding
 import com.neeplayer.di.component
 import com.neeplayer.model.Song
 import com.neeplayer.ui.common.*
-import org.jetbrains.anko.onClick
 import javax.inject.Inject
 
 class NowPlayingFragment : Fragment(), NowPlayingView {
@@ -70,14 +69,14 @@ class NowPlayingFragment : Fragment(), NowPlayingView {
             }
         })
 
-        binding.npCollapsed.onClick {
+        binding.npCollapsed.setOnClickListener {
             bottomSheet.state = BottomSheetBehavior.STATE_EXPANDED
         }
 
-        binding.npFastRewind.onClick         { presenter.onPreviousClicked() }
-        binding.npFastForward.onClick        { presenter.onNextClicked() }
-        binding.npPlayPause.onClick          { presenter.onPlayPauseClicked() }
-        binding.npCollapsedPlayPause.onClick { presenter.onPlayPauseClicked() }
+        binding.npFastRewind.setOnClickListener { presenter.onPreviousClicked() }
+        binding.npFastForward.setOnClickListener { presenter.onNextClicked() }
+        binding.npPlayPause.setOnClickListener { presenter.onPlayPauseClicked() }
+        binding.npCollapsedPlayPause.setOnClickListener { presenter.onPlayPauseClicked() }
 
         binding.npSeekBar.onUserSeek(
                 onProgress = {

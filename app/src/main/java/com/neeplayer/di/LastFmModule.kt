@@ -48,7 +48,7 @@ class LastFmModule {
         val httpClient = OkHttpClient.Builder()
                 .addInterceptor(lastFmInterceptor)
                 .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
-                .build();
+                .build()
 
         return Retrofit.Builder()
                 .baseUrl("http://ws.audioscrobbler.com/2.0/")

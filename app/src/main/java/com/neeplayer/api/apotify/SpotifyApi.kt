@@ -16,7 +16,6 @@ import javax.inject.Inject
 
 
 interface SpotifyApi {
-
     companion object {
         const val token = "BQCWhkZIULuYO_kovCbqUEM5RIuMWIH-K84h3Ez4XLtwp1ZPHH9cygP2uFEDcUVill5yl8eIWPcdM41g0bBxEsJ9qqRU7mZc02EFS5drID2vRf0C2W6AN8IIBox-OedA-6FADAdJvQKS2AmKjTBnN7WjO6TUQ9c46w"
     }

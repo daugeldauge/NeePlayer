@@ -52,7 +52,7 @@ class ArtistsPresenter @Inject constructor(
                 .items
                 .firstOrNull()
                 ?.images
-                ?.run { getOrNull(1) ?: first() } // Second-quality image, if present
+                ?.run { getOrNull(1) ?: firstOrNull() } // Second-quality image, if present
                 ?.url
     }
 

@@ -8,9 +8,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
-import com.neeplayer.BuildConfig
 import com.neeplayer.R
 import com.neeplayer.di.ActivityModule
 import com.neeplayer.di.component
@@ -20,7 +18,6 @@ import com.neeplayer.ui.auth.AuthPresenter
 import com.neeplayer.ui.auth.AuthView
 import com.neeplayer.ui.now_playing.MusicService
 import com.neeplayer.ui.now_playing.NowPlayingFragment
-import timber.log.Timber
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), AuthView {
@@ -28,18 +25,6 @@ class MainActivity : AppCompatActivity(), AuthView {
     companion object {
         const val OPEN_NOW_PLAYING_ACTION = "open_now_playing"
         private const val READ_EXTERNAL_STORAGE_REQUEST_CODE = 42
-
-
-        init {
-            AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
-            initLogger()
-        }
-
-        private fun initLogger() {
-            if (BuildConfig.DEBUG) {
-                Timber.plant(Timber.DebugTree())
-            }
-        }
     }
 
     val activityComponent by lazy { component.plus(ActivityModule(this)) }
@@ -63,7 +48,6 @@ class MainActivity : AppCompatActivity(), AuthView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initLogger()
         activityComponent.inject(this)
 
         setContentView(R.layout.activity_main)

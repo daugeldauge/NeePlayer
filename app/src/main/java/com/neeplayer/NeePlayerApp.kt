@@ -4,6 +4,7 @@ import android.app.Application
 import com.neeplayer.di.AppModule
 import com.neeplayer.di.DaggerAppComponent
 import com.neeplayer.model.Scrobbler
+import timber.log.Timber
 import javax.inject.Inject
 
 class NeePlayerApp : Application() {
@@ -17,7 +18,14 @@ class NeePlayerApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        initLogger()
         appComponent.inject(this)
+    }
+
+    private fun initLogger() {
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        }
     }
 
 }

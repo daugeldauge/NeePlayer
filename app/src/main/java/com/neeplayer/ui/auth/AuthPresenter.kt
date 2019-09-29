@@ -1,22 +1,24 @@
 package com.neeplayer.ui.auth
 
 import android.net.Uri
-import com.neeplayer.RxSchedulers
+import com.neeplayer.api.lastfm.LastFmApi
 import com.neeplayer.di.LastFmModule
-import com.neeplayer.model.LastFmService
 import com.neeplayer.model.Preferences
 import com.neeplayer.model.Preferences.Item.BooleanItem.ScrobblingEnabled
 import com.neeplayer.model.Preferences.Item.StringItem.LastFmAuthToken
 import com.neeplayer.model.Preferences.Item.StringItem.SessionKey
-import com.neeplayer.plusAssign
 import com.neeplayer.ui.BasePresenter
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class AuthPresenter @Inject constructor(
-        private val lastFm: LastFmService,
-        private val preferences: Preferences,
-        private val schedulers: RxSchedulers
+        private val lastFm: LastFmApi,
+        private val preferences: Preferences
 ): BasePresenter<AuthView>() {
+
+    private val mainScope = MainScope()
 
     override fun bind(view: AuthView) {
         super.bind(view)
@@ -24,30 +26,31 @@ class AuthPresenter @Inject constructor(
     }
 
     fun onResume() {
-        subscriptions += lastFm.getSession(preferences.get(LastFmAuthToken) ?: return)
-                .subscribeOn(schedulers.io())
-                .observeOn(schedulers.mainThread())
-                .subscribe({
-                    preferences.put(SessionKey, it.getJSONObject("session").getString("key"))
+        val token = preferences.get(LastFmAuthToken) ?: return
+        mainScope.launch {
+            when (val result = lastFm.getSession(token)) {
+                is LastFmApi.Result.Success<LastFmApi.GetSessionResponse> -> {
+                    preferences.put(SessionKey, result.data.session.key)
                     updateMenuItems()
                     view.showAuthSuccess()
                     preferences.remove(LastFmAuthToken)
-                }, {
-                    view.showAuthError()
-                })
+                }
+                is LastFmApi.Result.Error -> view.showAuthError()
+            }
+        }
     }
 
     fun onSignInClicked() {
-        subscriptions += lastFm.getToken()
-                .subscribeOn(schedulers.io())
-                .observeOn(schedulers.mainThread())
-                .subscribe({
-                    val token = it.getString("token")
+        mainScope.launch {
+            when (val result = lastFm.getToken()) {
+                is LastFmApi.Result.Success<LastFmApi.GetTokenResponse> -> {
+                    val token = result.data.token
                     preferences.put(LastFmAuthToken, token)
                     view.showAuthView(Uri.parse("http://www.last.fm/api/auth/?api_key=${LastFmModule.apiKey}&token=$token"))
-                }, {
-                    view.showAuthError()
-                })
+                }
+                is LastFmApi.Result.Error -> view.showAuthError()
+            }
+        }
     }
 
     fun onSignOutClicked() {
@@ -59,6 +62,11 @@ class AuthPresenter @Inject constructor(
         val scrobbling = !preferences.getOrDefault(ScrobblingEnabled)
         preferences.put(ScrobblingEnabled, scrobbling)
         view.setScrobblingChecked(scrobbling)
+    }
+
+    override fun unbind() {
+        super.unbind()
+        mainScope.cancel()
     }
 
     private fun updateMenuItems() {

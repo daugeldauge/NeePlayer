@@ -1,6 +1,8 @@
 package com.neeplayer.di
 
 import com.neeplayer.BuildConfig
+import com.neeplayer.api.apotify.SpotifyApi
+import com.neeplayer.api.apotify.SpotifyKtorApi
 import com.neeplayer.api.deezer.DeezerApi
 import com.neeplayer.api.deezer.DeezerKtorApi
 import com.neeplayer.api.lastfm.LastFmApi
@@ -51,5 +53,9 @@ object NetworkModule {
         @Binds
         @Singleton
         abstract fun bindDeezer(ktorApi: DeezerKtorApi): DeezerApi
+
+        @Binds
+        @Singleton
+        abstract fun bindSpotify(ktorApi: SpotifyKtorApi): SpotifyApi
     }
 }

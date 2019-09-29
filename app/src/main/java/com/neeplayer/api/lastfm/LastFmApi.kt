@@ -93,7 +93,13 @@ class LastFmKtorApi @Inject constructor() : LastFmApi {
             timestamp: Long,
             album: String?
     ) = lastFmRequest<HttpResponse>("track.scrobble", HttpMethod.Post) {
-
+        append("sk", sessionKey)
+        append("artist", artist)
+        append("track", track)
+        append("timestamp", timestamp.toString())
+        if (album != null) {
+            append("album", album)
+        }
     }
 
     private suspend inline fun <reified T> lastFmRequest(

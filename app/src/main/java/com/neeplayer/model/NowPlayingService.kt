@@ -1,6 +1,7 @@
 package com.neeplayer.model
 
 import com.neeplayer.model.Preferences.Item.LongItem.NowPlayingSongId
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.asFlow
@@ -39,7 +40,7 @@ class NowPlayingService @Inject constructor(
             return
         }
 
-        GlobalScope.launch {
+        GlobalScope.launch(Dispatchers.IO) {
             val restoredPlaylist = database.restorePlaylist(preferences.get(NowPlayingSongId))
             alter { restoredPlaylist }
         }

@@ -2,10 +2,7 @@ package com.neeplayer.ui.albums
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.neeplayer.R
@@ -13,12 +10,13 @@ import com.neeplayer.di.component
 import com.neeplayer.model.AlbumWithSongs
 import com.neeplayer.model.Artist
 import com.neeplayer.model.Song
+import com.neeplayer.ui.CoroFragment
 import com.neeplayer.ui.common.actionBar
 import com.neeplayer.ui.getValue
 import com.neeplayer.ui.setValue
 import javax.inject.Inject
 
-class AlbumsFragment() : Fragment(), AlbumsView {
+class AlbumsFragment() : CoroFragment(R.layout.fragment_albums), AlbumsView {
 
     init {
         arguments = Bundle()
@@ -47,25 +45,16 @@ class AlbumsFragment() : Fragment(), AlbumsView {
         requireContext().component.inject(this)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        return inflater.inflate(R.layout.fragment_artist, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         listView.layoutManager = LinearLayoutManager(context)
 
-        presenter.bind(this, artist)
+        presenter.bind(viewScope, this, artist)
 
         actionBar?.title = artist.name
         actionBar?.setDisplayShowHomeEnabled(true)
         actionBar?.setDisplayHomeAsUpEnabled(true)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        presenter.unbind()
     }
 
     override fun showAlbums(albumsWithSongs: List<AlbumWithSongs>) {

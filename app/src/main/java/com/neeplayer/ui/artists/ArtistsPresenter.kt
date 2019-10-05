@@ -5,8 +5,8 @@ import com.neeplayer.model.ArtistImagesStorage
 import com.neeplayer.model.Database
 import com.neeplayer.network.deezer.DeezerApi
 import com.neeplayer.network.spotify.SpotifyApi
-import com.neeplayer.ui.BasePresenter
 import com.neeplayer.ui.Router
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -17,29 +17,28 @@ class ArtistsPresenter @Inject constructor(
         private val deezer: DeezerApi,
         private val spotify: SpotifyApi,
         private val router: Router
-) : BasePresenter<ArtistsView>() {
+) {
 
-    override fun bind(view: ArtistsView) {
-        super.bind(view)
+    fun bind(scope: CoroutineScope, view: ArtistsView) {
         val artists = database.getArtists()
         view.showArtists(artists)
-        fetchUnknownArtistImages(artists, view)
+        scope.launch {
+            fetchUnknownArtistImages(artists, view)
+        }
     }
 
     fun onArtistClicked(artist: Artist) {
         router.gotToAlbums(artist)
     }
 
-    private fun fetchUnknownArtistImages(artists: List<Artist>, view: ArtistsView) {
-        mainScope.launch {
-            artists.filter { it.imageUrl == null }.forEach { artist ->
-                val image = fetchImageFromSpotify(artist) ?: fetchImageFromDeezer(artist)
-                if (image != null) {
-                    artistImagesStorage.put(artist.name, image)
-                    view.updateArtist(artist.withImage(image))
-                } else {
-                    Timber.w("Couldn't fetch artist image url")
-                }
+    private suspend fun fetchUnknownArtistImages(artists: List<Artist>, view: ArtistsView) {
+        artists.filter { it.imageUrl == null }.forEach { artist ->
+            val image = fetchImageFromSpotify(artist) ?: fetchImageFromDeezer(artist)
+            if (image != null) {
+                artistImagesStorage.put(artist.name, image)
+                view.updateArtist(artist.withImage(image))
+            } else {
+                Timber.w("Couldn't fetch artist image url")
             }
         }
     }

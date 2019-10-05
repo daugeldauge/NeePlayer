@@ -12,10 +12,11 @@ import com.neeplayer.R
 import com.neeplayer.databinding.FragmentNowPlayingBinding
 import com.neeplayer.di.component
 import com.neeplayer.model.Song
+import com.neeplayer.ui.CoroFragment
 import com.neeplayer.ui.common.*
 import javax.inject.Inject
 
-class NowPlayingFragment : Fragment(), NowPlayingView {
+class NowPlayingFragment : CoroFragment(R.layout.fragment_now_playing), NowPlayingView {
 
     @ActionBar.DisplayOptions
     private var oldActionBarDisplayOptions: Int = 0
@@ -88,11 +89,11 @@ class NowPlayingFragment : Fragment(), NowPlayingView {
                     presenter.onSeek(binding.progress)
                 }
         )
-        presenter.bind(this)
+        presenter.bind(viewScope, this)
     }
 
     override fun onDestroyView() {
-        presenter.unbind()
+        presenter.onDestroy()
         super.onDestroyView()
     }
 

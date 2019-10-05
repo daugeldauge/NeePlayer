@@ -2,20 +2,18 @@ package com.neeplayer.ui.now_playing
 
 import com.neeplayer.model.NowPlayingService
 import com.neeplayer.model.Song
-import com.neeplayer.ui.BasePresenter
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class NowPlayingPresenter @Inject constructor(private val service: NowPlayingService) : BasePresenter<NowPlayingView>() {
+class NowPlayingPresenter @Inject constructor(private val service: NowPlayingService) {
 
     private var lastSong: Song? = null
     private var lastSetProgress: Int? = null
 
-    override fun bind(view: NowPlayingView) {
-        super.bind(view)
-
-        mainScope.launch {
+    fun bind(scope: CoroutineScope, view: NowPlayingView) {
+        scope.launch {
             service.nowPlayingFlow.collect {
                 val song = it.currentSong
 
@@ -32,7 +30,7 @@ class NowPlayingPresenter @Inject constructor(private val service: NowPlayingSer
             }
         }
 
-        mainScope.launch {
+        scope.launch {
             service.progressFlow.collect {
                 if (it != lastSetProgress) {
                     view.seek(it)
@@ -58,8 +56,7 @@ class NowPlayingPresenter @Inject constructor(private val service: NowPlayingSer
         service.offerProgress(progress)
     }
 
-    override fun unbind() {
+    fun onDestroy() {
         service.save()
-        super.unbind()
     }
 }

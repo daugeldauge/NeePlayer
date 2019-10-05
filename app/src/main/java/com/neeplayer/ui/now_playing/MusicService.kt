@@ -25,6 +25,7 @@ import com.neeplayer.di.component
 import com.neeplayer.model.Song
 import com.neeplayer.toast
 import com.neeplayer.ui.MainActivity
+import kotlinx.coroutines.MainScope
 import javax.inject.Inject
 
 class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener, NowPlayingView {
@@ -57,10 +58,12 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
 
     private val mediaSession by lazy { MediaSessionCompat(this, BuildConfig.APPLICATION_ID, ComponentName(this, MediaButtonEventsReceiver::class.java), null) }
 
+    private val mainScope = MainScope()
+
     override fun onCreate() {
         super.onCreate()
         component.inject(this)
-        presenter.bind(this)
+        presenter.bind(mainScope, this)
         initMediaPLayer()
         mediaSession.setCallback(mediaSessionCallback)
         mediaSession.isActive = true
@@ -154,7 +157,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         unregisterReceiver(headsetPlugReceiver)
         foreground = false
         stopForeground(true)
-        presenter.unbind()
+        presenter.onDestroy()
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {

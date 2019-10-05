@@ -18,6 +18,11 @@ import com.neeplayer.ui.auth.AuthPresenter
 import com.neeplayer.ui.auth.AuthView
 import com.neeplayer.ui.now_playing.MusicService
 import com.neeplayer.ui.now_playing.NowPlayingFragment
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.filter
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), AuthView {
@@ -42,6 +47,10 @@ class MainActivity : AppCompatActivity(), AuthView {
     private var menuElements = emptySet<AuthView.MenuElement>()
     private var scrobblingToggleChecked = true
 
+    private val scope = MainScope()
+    private val resumesChannel = Channel<Unit>()
+    private val optionsItemSelectionsChannel = Channel<Int>()
+
     private val nowPlayingFragment by lazy {
         supportFragmentManager.findFragmentById(R.id.now_playing_fragment) as NowPlayingFragment
     }
@@ -51,7 +60,7 @@ class MainActivity : AppCompatActivity(), AuthView {
         activityComponent.inject(this)
 
         setContentView(R.layout.activity_main)
-        presenter.bind(this)
+        presenter.bind(scope, this)
 
         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), READ_EXTERNAL_STORAGE_REQUEST_CODE)
     }
@@ -90,7 +99,7 @@ class MainActivity : AppCompatActivity(), AuthView {
 
     override fun onResume() {
         super.onResume()
-        presenter.onResume()
+        resumesChannel.offer(Unit)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -107,12 +116,7 @@ class MainActivity : AppCompatActivity(), AuthView {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.sign_in -> presenter.onSignInClicked()
-            R.id.sign_out -> presenter.onSignOutClicked()
-            R.id.scrobbling -> presenter.onScrobblingToggled()
-            else -> return false
-        }
+        optionsItemSelectionsChannel.offer(item.itemId)
         return true
     }
 
@@ -127,7 +131,16 @@ class MainActivity : AppCompatActivity(), AuthView {
         }
     }
 
-    //region AuthView
+    override fun onDestroy() {
+        scope.cancel()
+        super.onDestroy()
+    }
+
+    override val resumes get() = resumesChannel.consumeAsFlow()
+    override val signInClicks get() = optionsItemSelectionsChannel.consumeAsFlow().filter { it == R.id.sign_in }
+    override val signOutClicks get() = optionsItemSelectionsChannel.consumeAsFlow().filter { it == R.id.sign_out }
+    override val scrobbleToggles get() = optionsItemSelectionsChannel.consumeAsFlow().filter { it == R.id.scrobbling }
+
     override fun showAuthSuccess() = toast(R.string.last_fm_auth_success)
 
     override fun showAuthError() = toast(R.string.last_fm_auth_error)

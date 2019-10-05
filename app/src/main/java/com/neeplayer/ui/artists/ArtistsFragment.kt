@@ -1,18 +1,18 @@
 package com.neeplayer.ui.artists
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.neeplayer.R
 import com.neeplayer.di.component
 import com.neeplayer.model.Artist
+import com.neeplayer.ui.CoroFragment
 import com.neeplayer.ui.common.actionBar
 import com.neeplayer.ui.common.uiThread
 import javax.inject.Inject
 
-class ArtistsFragment : Fragment(), ArtistsView {
+class ArtistsFragment : CoroFragment(R.layout.fragment_artists), ArtistsView {
     companion object {
         val TAG: String = ArtistsFragment::class.java.name
     }
@@ -31,26 +31,17 @@ class ArtistsFragment : Fragment(), ArtistsView {
         component.inject(this)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_main, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val recyclerView = view as androidx.recyclerview.widget.RecyclerView
+        val recyclerView = view as RecyclerView
 
         recyclerView.adapter = adapter
-        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity)
-        presenter.bind(this)
+        recyclerView.layoutManager = LinearLayoutManager(activity)
+        presenter.bind(viewScope, this)
 
         actionBar?.title = view.context.getString(R.string.app_name)
         actionBar?.setDisplayShowHomeEnabled(false)
         actionBar?.setDisplayHomeAsUpEnabled(false)
-    }
-
-    override fun onDestroyView() {
-        presenter.unbind()
-        super.onDestroyView()
     }
 
     override fun showArtists(artists: List<Artist>) = uiThread {

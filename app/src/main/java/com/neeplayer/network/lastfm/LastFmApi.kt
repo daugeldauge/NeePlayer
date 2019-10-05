@@ -1,21 +1,17 @@
-package com.neeplayer.api.lastfm
+package com.neeplayer.network.lastfm
 
-import com.neeplayer.api.Response
-import com.neeplayer.api.Response.Success
-import com.neeplayer.api.lastfm.LastFmApi.GetTokenBody
 import com.neeplayer.fold
 import com.neeplayer.md5
+import com.neeplayer.network.Response
+import com.neeplayer.network.lastfm.LastFmApi.GetTokenBody
+import com.neeplayer.network.safeRequest
 import io.ktor.client.HttpClient
-import io.ktor.client.features.ResponseException
-import io.ktor.client.request.request
 import io.ktor.client.response.HttpResponse
 import io.ktor.http.HttpMethod
 import io.ktor.http.ParametersBuilder
 import io.ktor.http.URLBuilder
 import io.ktor.http.takeFrom
-import kotlinx.io.IOException
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.SerializationException
 import javax.inject.Inject
 
 
@@ -79,24 +75,16 @@ class LastFmKtorApi @Inject constructor(private val httpClient: HttpClient) : La
             httpMethod: HttpMethod = HttpMethod.Get,
             parametersConfiguration: ParametersBuilder.() -> Unit = {}
     ): Response<T> {
-        return try {
-            httpClient.request<T> {
-                this.method = httpMethod
-                url.takeFrom(baseUrlBuilder)
-                url.parameters.apply {
-                    append("api_key", LastFmApi.apiKey)
-                    append("method", method)
-                    parametersConfiguration()
-                    append("api_sig", calculateSign())
-                    append("format", "json")
-                }
-            }.let(::Success)
-        } catch (e: IOException) {
-            Response.Error
-        } catch (e: SerializationException) {
-            Response.Error
-        } catch (e: ResponseException) {
-            Response.Error
+        return httpClient.safeRequest {
+            this.method = httpMethod
+            url.takeFrom(baseUrlBuilder)
+            url.parameters.apply {
+                append("api_key", LastFmApi.apiKey)
+                append("method", method)
+                parametersConfiguration()
+                append("api_sig", calculateSign())
+                append("format", "json")
+            }
         }
     }
 

@@ -1,17 +1,13 @@
-package com.neeplayer.api.apotify
+package com.neeplayer.network.spotify
 
-import com.neeplayer.api.Response
-import com.neeplayer.api.Response.Success
+import com.neeplayer.network.Response
+import com.neeplayer.network.safeRequest
 import io.ktor.client.HttpClient
-import io.ktor.client.features.ResponseException
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.header
-import io.ktor.client.request.request
 import io.ktor.http.URLBuilder
 import io.ktor.http.takeFrom
-import kotlinx.io.IOException
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.SerializationException
 import javax.inject.Inject
 
 
@@ -51,18 +47,10 @@ class SpotifyKtorApi @Inject constructor(private val httpClient: HttpClient) : S
     private suspend inline fun <reified T> spotifyRequest(
             block: HttpRequestBuilder.() -> Unit
     ): Response<T> {
-        return try {
-            httpClient.request<T> {
-                url.takeFrom(baseUrlBuilder)
-                header("Authorization", "Bearer ${SpotifyApi.token}")
-                block()
-            }.let(::Success)
-        } catch (e: IOException) {
-            Response.Error
-        } catch (e: SerializationException) {
-            Response.Error
-        } catch (e: ResponseException) {
-            Response.Error
+        return httpClient.safeRequest {
+            url.takeFrom(baseUrlBuilder)
+            header("Authorization", "Bearer ${SpotifyApi.token}")
+            block()
         }
     }
 }

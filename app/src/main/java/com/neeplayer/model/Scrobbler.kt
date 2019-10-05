@@ -2,8 +2,8 @@ package com.neeplayer.model
 
 import android.content.Context
 import com.neeplayer.R
-import com.neeplayer.api.lastfm.LastFmApi
-import com.neeplayer.api.Response
+import com.neeplayer.network.lastfm.LastFmApi
+import com.neeplayer.network.Response
 import com.neeplayer.minutes
 import com.neeplayer.model.Preferences.Item.BooleanItem.ScrobblingEnabled
 import com.neeplayer.seconds

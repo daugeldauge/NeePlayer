@@ -1,4 +1,4 @@
-package com.neeplayer.api
+package com.neeplayer.network
 
 sealed class Response<out T> {
     class Success<T>(val body: T) : Response<T>()

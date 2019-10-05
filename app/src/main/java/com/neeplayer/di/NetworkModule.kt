@@ -1,12 +1,12 @@
 package com.neeplayer.di
 
 import com.neeplayer.BuildConfig
-import com.neeplayer.api.apotify.SpotifyApi
-import com.neeplayer.api.apotify.SpotifyKtorApi
-import com.neeplayer.api.deezer.DeezerApi
-import com.neeplayer.api.deezer.DeezerKtorApi
-import com.neeplayer.api.lastfm.LastFmApi
-import com.neeplayer.api.lastfm.LastFmKtorApi
+import com.neeplayer.network.spotify.SpotifyApi
+import com.neeplayer.network.spotify.SpotifyKtorApi
+import com.neeplayer.network.deezer.DeezerApi
+import com.neeplayer.network.deezer.DeezerKtorApi
+import com.neeplayer.network.lastfm.LastFmApi
+import com.neeplayer.network.lastfm.LastFmKtorApi
 import dagger.Binds
 import dagger.Module
 import dagger.Provides

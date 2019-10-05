@@ -1,8 +1,8 @@
 package com.neeplayer.ui.auth
 
 import android.net.Uri
-import com.neeplayer.api.Response
-import com.neeplayer.api.lastfm.LastFmApi
+import com.neeplayer.network.Response
+import com.neeplayer.network.lastfm.LastFmApi
 import com.neeplayer.model.Preferences
 import com.neeplayer.model.Preferences.Item.BooleanItem.ScrobblingEnabled
 import com.neeplayer.model.Preferences.Item.StringItem.LastFmAuthToken

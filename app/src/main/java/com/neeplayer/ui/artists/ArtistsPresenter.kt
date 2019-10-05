@@ -1,10 +1,10 @@
 package com.neeplayer.ui.artists
 
-import com.neeplayer.api.apotify.SpotifyApi
-import com.neeplayer.api.deezer.DeezerApi
 import com.neeplayer.model.Artist
 import com.neeplayer.model.ArtistImagesStorage
 import com.neeplayer.model.Database
+import com.neeplayer.network.deezer.DeezerApi
+import com.neeplayer.network.spotify.SpotifyApi
 import com.neeplayer.ui.BasePresenter
 import com.neeplayer.ui.Router
 import kotlinx.coroutines.launch
@@ -52,7 +52,7 @@ class ArtistsPresenter @Inject constructor(
                 .items
                 .firstOrNull()
                 ?.images
-                ?.run { getOrNull(1) ?: firstOrNull() } // Second-quality image, if present
+                ?.run { getOrNull(1) ?: firstOrNull() } // Take second-quality image (if present)
                 ?.url
     }
 

@@ -26,6 +26,7 @@ import com.neeplayer.model.Song
 import com.neeplayer.toast
 import com.neeplayer.ui.MainActivity
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 import javax.inject.Inject
 
 class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener, NowPlayingView {
@@ -157,6 +158,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         unregisterReceiver(headsetPlugReceiver)
         foreground = false
         stopForeground(true)
+        mainScope.cancel()
         presenter.onDestroy()
     }
 

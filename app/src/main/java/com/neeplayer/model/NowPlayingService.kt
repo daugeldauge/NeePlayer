@@ -1,12 +1,11 @@
 package com.neeplayer.model
 
-import com.neeplayer.RxProperty
-import com.neeplayer.filterNotNull
 import com.neeplayer.model.Preferences.Item.LongItem.NowPlayingSongId
-import rx.Observable
-import rx.Single
-import rx.schedulers.Schedulers
-import rx.subjects.BehaviorSubject
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -16,28 +15,34 @@ class NowPlayingService @Inject constructor(
         private val database: Database
 ) {
 
-    private val nowPlayingSubject = BehaviorSubject.create<Playlist?>()
+    private val nowPlayingChannel = ConflatedBroadcastChannel<Playlist?>()
+    private val nowPlaying: Playlist?
+        get() = nowPlayingChannel.valueOrNull
 
-    var nowPlaying by RxProperty(null, nowPlayingSubject)
 
-    val nowPlayingObservable: Observable<Playlist>
-        get() = nowPlayingSubject.filterNotNull()
+    private val progressChannel = ConflatedBroadcastChannel<Int>()
 
-    private val progressSubject = BehaviorSubject.create<Int>()
 
-    val progressObservable: Observable<Int>
-        get() = progressSubject
+    val nowPlayingFlow = nowPlayingChannel.asFlow().filterNotNull()
+    val progressFlow = progressChannel.asFlow()
 
-    var progress by RxProperty(0, progressSubject)
+    fun alter(block: (current: Playlist?) -> Playlist?) {
+        nowPlayingChannel.offer(nowPlaying.let(block))
+    }
+
+    fun offerProgress(value: Int) {
+        progressChannel.offer(value)
+    }
 
     fun tryRestoreNowPlaying() {
         if (nowPlaying != null) {
             return
         }
 
-        Single.create<Playlist?> { it.onSuccess(database.restorePlaylist(preferences.get(NowPlayingSongId))) }
-            .subscribeOn(Schedulers.io())
-            .subscribe { nowPlaying = it }
+        GlobalScope.launch {
+            val restoredPlaylist = database.restorePlaylist(preferences.get(NowPlayingSongId))
+            alter { restoredPlaylist }
+        }
     }
 
     fun save() {

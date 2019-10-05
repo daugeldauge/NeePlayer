@@ -2,13 +2,14 @@ package com.neeplayer.model
 
 import android.content.Context
 import com.neeplayer.R
-import com.neeplayer.network.lastfm.LastFmApi
-import com.neeplayer.network.Response
 import com.neeplayer.minutes
 import com.neeplayer.model.Preferences.Item.BooleanItem.ScrobblingEnabled
+import com.neeplayer.network.Response
+import com.neeplayer.network.lastfm.LastFmApi
 import com.neeplayer.seconds
 import com.neeplayer.toast
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -34,34 +35,38 @@ class Scrobbler @Inject constructor(
     private val mainScope = MainScope()
 
     init {
-        service.nowPlayingObservable.subscribe {
-            if (lastSong != it.currentSong) {
-                overallPlaying = 0
-                playingPeriodStart = null
-                isCurrentSongScrobbled = false
-            }
+        mainScope.launch {
+            service.nowPlayingFlow.collect {
+                if (lastSong != it.currentSong) {
+                    overallPlaying = 0
+                    playingPeriodStart = null
+                    isCurrentSongScrobbled = false
+                }
 
-            if (it.paused) {
-                overallPlaying = currentOverallPlaying() ?: overallPlaying
-                playingPeriodStart = null
-            } else if (playingPeriodStart == null) {
-                playingPeriodStart = time()
-            }
+                if (it.paused) {
+                    overallPlaying = currentOverallPlaying() ?: overallPlaying
+                    playingPeriodStart = null
+                } else if (playingPeriodStart == null) {
+                    playingPeriodStart = time()
+                }
 
-            lastSong = it.currentSong
+                lastSong = it.currentSong
+            }
         }
 
-        service.progressObservable.subscribe {
-                val song = lastSong ?: return@subscribe
-                val currentOverall = currentOverallPlaying() ?: return@subscribe
+        mainScope.launch {
+            service.progressFlow.collect {
+                val song = lastSong ?: return@collect
+                val currentOverall = currentOverallPlaying() ?: return@collect
 
                 if (preferences.isSignedIn() &&
                         preferences.getOrDefault(ScrobblingEnabled) &&
                         !isCurrentSongScrobbled &&
-                        song.duration > MIN_SONG_LENGTH_TO_SCROBBLE && (currentOverall >= song.duration * SCROBBLE_FRACTION_THRESHOLD || currentOverall >= SCROBBLE_THRESHOLD )
+                        song.duration > MIN_SONG_LENGTH_TO_SCROBBLE && (currentOverall >= song.duration * SCROBBLE_FRACTION_THRESHOLD || currentOverall >= SCROBBLE_THRESHOLD)
                 ) {
                     scrobble(song)
                 }
+            }
         }
     }
 

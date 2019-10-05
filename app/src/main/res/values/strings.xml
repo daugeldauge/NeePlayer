@@ -15,5 +15,6 @@
     <string name="sign_out">Sign out</string>
 
     <string name="now_playing">Now playing</string>
+    <string name="now_playing_artist_album">%1$s — %2$s</string>
     <string name="music_notification_channel_description">Music controls</string>
 </resources>

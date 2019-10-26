@@ -10,7 +10,9 @@ import javax.inject.Inject
 class NowPlayingPresenter @Inject constructor(private val service: NowPlayingService) {
 
     private var lastSong: Song? = null
-    private var lastSetProgress: Int? = null
+
+    private val progressPayload
+        get() = hashCode()
 
     fun bind(scope: CoroutineScope, view: NowPlayingView) {
         scope.launch {
@@ -31,9 +33,9 @@ class NowPlayingPresenter @Inject constructor(private val service: NowPlayingSer
         }
 
         scope.launch {
-            service.progressFlow.collect {
-                if (it != lastSetProgress) {
-                    view.seek(it)
+            service.progressFlow.collect { (payload, value) ->
+                if (payload != progressPayload) {
+                    view.seek(value)
                 }
             }
         }
@@ -52,8 +54,7 @@ class NowPlayingPresenter @Inject constructor(private val service: NowPlayingSer
     }
 
     fun onSeek(progress: Int) {
-        lastSetProgress = progress
-        service.offerProgress(progress)
+        service.offerProgress(progressPayload, progress)
     }
 
     fun onDestroy() {

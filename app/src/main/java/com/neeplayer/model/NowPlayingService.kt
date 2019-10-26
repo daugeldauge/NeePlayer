@@ -20,8 +20,9 @@ class NowPlayingService @Inject constructor(
     private val nowPlaying: Playlist?
         get() = nowPlayingChannel.valueOrNull
 
+    data class Progress(val payload: Any, val value: Int)
 
-    private val progressChannel = ConflatedBroadcastChannel<Int>()
+    private val progressChannel = ConflatedBroadcastChannel<Progress>()
 
 
     val nowPlayingFlow = nowPlayingChannel.asFlow().filterNotNull()
@@ -31,8 +32,8 @@ class NowPlayingService @Inject constructor(
         nowPlayingChannel.offer(nowPlaying.let(block))
     }
 
-    fun offerProgress(value: Int) {
-        progressChannel.offer(value)
+    fun offerProgress(payload: Any, value: Int) {
+        progressChannel.offer(Progress(payload, value))
     }
 
     fun tryRestoreNowPlaying() {

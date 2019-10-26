@@ -39,9 +39,7 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.1.0")
     implementation("com.google.android.material:material:1.0.0")
 
-    val glideVersion = "4.10.0"
-    implementation("com.github.bumptech.glide:glide:$glideVersion")
-    kapt("com.github.bumptech.glide:compiler:$glideVersion")
+    implementation("com.github.bumptech.glide:glide:4.10.0")
 
     implementation("com.pushtorefresh.storio:content-resolver:1.8.0")
 

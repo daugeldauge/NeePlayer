@@ -8,7 +8,7 @@ import com.bumptech.glide.Glide
 import java.util.concurrent.TimeUnit
 
 @BindingAdapter("imagePath")
-fun loadImageFile(view: ImageView, path: String?) = loadImage(view, "file://" + path)
+fun loadImageFile(view: ImageView, path: String?) = loadImage(view, "file://$path")
 
 @BindingAdapter("imageURL")
 fun loadImage(view: ImageView, url: String?) = Glide.with(view.context).load(url).into(view)

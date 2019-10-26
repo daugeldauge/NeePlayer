@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 interface SpotifyApi {
     companion object {
-        const val token = "BQCWhkZIULuYO_kovCbqUEM5RIuMWIH-K84h3Ez4XLtwp1ZPHH9cygP2uFEDcUVill5yl8eIWPcdM41g0bBxEsJ9qqRU7mZc02EFS5drID2vRf0C2W6AN8IIBox-OedA-6FADAdJvQKS2AmKjTBnN7WjO6TUQ9c46w"
+        const val token = "BQBo7BQDkAqdQs2kSaLlA0SJSTNPpq6FAxJKaueiPMdjApGw1ktD-mcLzhiQU0Vk7JZY-TH0Jl7HLVIIC10g1akaqB362rL9t4jRPpy4q2EvIZ8kT_1-YBsODh8BUcYQRkrJ9fU8a9n8TOoRpG3JhN8S_T1ZxidfyQ"
     }
 
     @Serializable

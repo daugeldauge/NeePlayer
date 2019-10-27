@@ -1,11 +1,8 @@
 package com.neeplayer.model
 
-import android.content.Context
-import javax.inject.Inject
-import javax.inject.Singleton
+import android.app.Application
 
-@Singleton
-class ArtistImagesStorage @Inject constructor (context: Context) {
+class ArtistImagesStorage(context: Application) {
 
     private val preferences by lazy {
         context.getSharedPreferences("ArtistImages", 0)

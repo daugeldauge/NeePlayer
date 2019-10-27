@@ -1,6 +1,6 @@
 package com.neeplayer.model
 
-import android.content.Context
+import android.app.Application
 import com.neeplayer.R
 import com.neeplayer.minutes
 import com.neeplayer.model.Preferences.Item.BooleanItem.ScrobblingEnabled
@@ -11,14 +11,11 @@ import com.neeplayer.toast
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class Scrobbler @Inject constructor(
-        private val context: Context,
+class Scrobbler(
+        private val context: Application,
         service: NowPlayingService,
-        private val lastFm: LastFmApi,
+        private val lastFm: Lazy<LastFmApi>,
         private val preferences: Preferences
 ) {
 
@@ -84,7 +81,7 @@ class Scrobbler @Inject constructor(
         val sessionKey = preferences.get(Preferences.Item.StringItem.SessionKey) ?: return
 
         mainScope.launch {
-            val response = lastFm.scrobble(
+            val response = lastFm.value.scrobble(
                     track = songTitle,
                     album = song.album.title,
                     artist = song.album.artist.name,

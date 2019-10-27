@@ -1,25 +1,39 @@
 package com.neeplayer
 
 import android.app.Application
-import com.neeplayer.di.AppModule
-import com.neeplayer.di.DaggerAppComponent
+import com.neeplayer.di.activityModule
+import com.neeplayer.di.appModule
+import com.neeplayer.di.networkModule
 import com.neeplayer.model.Scrobbler
+import org.koin.android.ext.android.get
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
 import timber.log.Timber
-import javax.inject.Inject
 
 class NeePlayerApp : Application() {
-    val appComponent by lazy {
-        DaggerAppComponent.builder().appModule(AppModule(this)).build()
-    }
-
-    @Inject
-    @Suppress("unused")
-    internal lateinit var scrobbler: Scrobbler
 
     override fun onCreate() {
         super.onCreate()
+
         initLogger()
-        appComponent.inject(this)
+        createKoin()
+        startScrobbling()
+    }
+
+    private fun createKoin() {
+        startKoin {
+            androidContext(this@NeePlayerApp)
+
+            modules(listOf(
+                    appModule,
+                    activityModule,
+                    networkModule
+            ))
+        }
+    }
+
+    private fun startScrobbling() {
+        get<Scrobbler>()
     }
 
     private fun initLogger() {

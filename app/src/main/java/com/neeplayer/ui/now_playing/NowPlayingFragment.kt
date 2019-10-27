@@ -1,20 +1,18 @@
 package com.neeplayer.ui.now_playing
 
-import androidx.databinding.DataBindingUtil
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.ActionBar
-import androidx.fragment.app.Fragment
+import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.neeplayer.R
 import com.neeplayer.databinding.FragmentNowPlayingBinding
-import com.neeplayer.di.component
 import com.neeplayer.model.Song
 import com.neeplayer.ui.CoroFragment
 import com.neeplayer.ui.common.*
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
 
 class NowPlayingFragment : CoroFragment(R.layout.fragment_now_playing), NowPlayingView {
 
@@ -27,15 +25,9 @@ class NowPlayingFragment : CoroFragment(R.layout.fragment_now_playing), NowPlayi
     private lateinit var binding: FragmentNowPlayingBinding
     private lateinit var bottomSheet: BottomSheetBehavior<View>
 
-    @Inject
-    lateinit var presenter: NowPlayingPresenter
+    private val presenter by inject<NowPlayingPresenter>()
 
     private var freezeProgress = false
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        requireContext().component.inject(this)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return FragmentNowPlayingBinding.inflate(inflater, container, false).root

@@ -4,10 +4,10 @@ import com.neeplayer.model.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-class AlbumsPresenter @Inject constructor(
-        private val database: Database, private val nowPlayingService: NowPlayingService
+class AlbumsPresenter(
+        private val database: Database,
+        private val nowPlayingService: NowPlayingService
 ) {
 
     private var songs = emptyList<Song>()

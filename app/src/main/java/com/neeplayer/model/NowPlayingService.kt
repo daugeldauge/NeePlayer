@@ -7,11 +7,8 @@ import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class NowPlayingService @Inject constructor(
+class NowPlayingService(
         private val preferences: Preferences,
         private val database: Database
 ) {

@@ -12,8 +12,6 @@ import io.ktor.http.ParametersBuilder
 import io.ktor.http.URLBuilder
 import io.ktor.http.takeFrom
 import kotlinx.serialization.Serializable
-import javax.inject.Inject
-
 
 interface LastFmApi {
 
@@ -44,7 +42,7 @@ interface LastFmApi {
     ): Response<*>
 }
 
-class LastFmKtorApi @Inject constructor(private val httpClient: HttpClient) : LastFmApi {
+class LastFmKtorApi(private val httpClient: HttpClient) : LastFmApi {
 
     private val baseUrlBuilder = URLBuilder("https://ws.audioscrobbler.com/2.0")
 

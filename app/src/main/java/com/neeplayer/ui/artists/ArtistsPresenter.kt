@@ -9,9 +9,8 @@ import com.neeplayer.ui.Router
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
-class ArtistsPresenter @Inject constructor(
+class ArtistsPresenter(
         private val database: Database,
         private val artistImagesStorage: ArtistImagesStorage,
         private val deezer: DeezerApi,

@@ -8,8 +8,6 @@ import io.ktor.client.request.header
 import io.ktor.http.URLBuilder
 import io.ktor.http.takeFrom
 import kotlinx.serialization.Serializable
-import javax.inject.Inject
-
 
 interface SpotifyApi {
     companion object {
@@ -31,7 +29,7 @@ interface SpotifyApi {
     suspend fun searchArtist(artistName: String): Response<SearchBody>
 }
 
-class SpotifyKtorApi @Inject constructor(private val httpClient: HttpClient) : SpotifyApi {
+class SpotifyKtorApi(private val httpClient: HttpClient) : SpotifyApi {
 
     private val baseUrlBuilder = URLBuilder("https://api.spotify.com/v1")
 

@@ -1,13 +1,11 @@
 package com.neeplayer.model
 
+import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import com.neeplayer.model.Preferences.Item.StringItem.SessionKey
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class Preferences @Inject constructor(context: Context) {
+class Preferences(context: Application) {
 
     private val preferences = context.getSharedPreferences("main", Context.MODE_PRIVATE)
 

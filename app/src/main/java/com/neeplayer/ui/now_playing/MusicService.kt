@@ -21,13 +21,12 @@ import androidx.annotation.IdRes
 import androidx.core.app.NotificationCompat
 import com.neeplayer.BuildConfig
 import com.neeplayer.R
-import com.neeplayer.di.component
 import com.neeplayer.model.Song
 import com.neeplayer.toast
 import com.neeplayer.ui.MainActivity
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
 
 class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener, NowPlayingView {
 
@@ -54,8 +53,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     private var lastKnownAudioFocusState: Int? = null
     private var foreground = false
 
-    @Inject
-    lateinit var presenter: NowPlayingPresenter
+    private val presenter by inject<NowPlayingPresenter>()
 
     private val mediaSession by lazy { MediaSessionCompat(this, BuildConfig.APPLICATION_ID, ComponentName(this, MediaButtonEventsReceiver::class.java), null) }
 
@@ -63,7 +61,6 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
 
     override fun onCreate() {
         super.onCreate()
-        component.inject(this)
         presenter.bind(mainScope, this)
         initMediaPLayer()
         mediaSession.setCallback(mediaSessionCallback)

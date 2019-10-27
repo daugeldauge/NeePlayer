@@ -6,12 +6,8 @@ import android.provider.MediaStore.Audio.Artists.Albums
 import android.provider.MediaStore.Audio.Media
 import com.pushtorefresh.storio.contentresolver.StorIOContentResolver
 import com.pushtorefresh.storio.contentresolver.queries.Query
-import javax.inject.Inject
-import javax.inject.Singleton
 
-
-@Singleton class Database
-@Inject constructor (private val storIOContentResolver: StorIOContentResolver, private val artistResolver: ArtistResolver) {
+class Database(private val storIOContentResolver: StorIOContentResolver, private val artistResolver: ArtistResolver) {
 
     fun getArtists(): List<Artist> {
         return storIOContentResolver

@@ -10,9 +10,8 @@ import com.neeplayer.network.lastfm.LastFmApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-class AuthPresenter @Inject constructor(
+class AuthPresenter(
         private val lastFm: LastFmApi,
         private val preferences: Preferences
 ) {

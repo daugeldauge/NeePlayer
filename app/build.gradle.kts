@@ -30,7 +30,6 @@ android {
 }
 
 dependencies {
-
     val kotlinVersion = org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
 
@@ -43,10 +42,6 @@ dependencies {
 
     implementation("com.pushtorefresh.storio:content-resolver:1.8.0")
 
-    val daggerVersion = "2.24"
-    kapt("com.google.dagger:dagger-compiler:$daggerVersion")
-    implementation("com.google.dagger:dagger:$daggerVersion")
-
     implementation("com.jakewharton.timber:timber:4.7.1")
 
     val ktorVersion = "1.2.5"
@@ -56,6 +51,11 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.13.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.1")
+
+    val koinVersion = "2.0.1"
+    implementation("org.koin:koin-core:$koinVersion")
+    implementation("org.koin:koin-android:$koinVersion")
+    implementation("org.koin:koin-android-scope:$koinVersion")
 }
 
 androidExtensions {

@@ -1,14 +1,14 @@
 package com.neeplayer.di
 
-import androidx.appcompat.app.AppCompatActivity
+import com.neeplayer.ui.MainActivity
 import com.neeplayer.ui.Router
-import dagger.Module
-import dagger.Provides
+import com.neeplayer.ui.artists.ArtistsPresenter
+import org.koin.core.qualifier.named
+import org.koin.dsl.module
 
-@Module
-class ActivityModule(private val activity: AppCompatActivity) {
-
-    @Provides
-    @ActivityScope
-    fun provideRouter() = Router(activity)
+val activityModule = module {
+    scope(named<MainActivity>()) {
+        scoped { Router(get()) }
+        factory { ArtistsPresenter(get(), get(), get(), get(), get()) }
+    }
 }

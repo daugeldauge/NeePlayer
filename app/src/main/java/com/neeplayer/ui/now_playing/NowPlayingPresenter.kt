@@ -5,9 +5,8 @@ import com.neeplayer.model.Song
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-class NowPlayingPresenter @Inject constructor(private val service: NowPlayingService) {
+class NowPlayingPresenter(private val service: NowPlayingService) {
 
     private var lastSong: Song? = null
 

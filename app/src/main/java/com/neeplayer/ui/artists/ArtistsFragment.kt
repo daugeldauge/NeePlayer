@@ -5,30 +5,25 @@ import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.neeplayer.R
-import com.neeplayer.di.component
 import com.neeplayer.model.Artist
 import com.neeplayer.ui.CoroFragment
 import com.neeplayer.ui.common.actionBar
 import com.neeplayer.ui.common.uiThread
-import javax.inject.Inject
+import org.koin.android.scope.currentScope
 
 class ArtistsFragment : CoroFragment(R.layout.fragment_artists), ArtistsView {
     companion object {
         val TAG: String = ArtistsFragment::class.java.name
     }
 
-    @Inject
-    internal lateinit var presenter: ArtistsPresenter
+    private val presenter by lazy {
+        requireActivity().currentScope.get<ArtistsPresenter>()
+    }
 
     private val adapter by lazy {
         ArtistAdapter(requireContext()) {
             presenter.onArtistClicked(it)
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        component.inject(this)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

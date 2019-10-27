@@ -10,8 +10,6 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.neeplayer.R
-import com.neeplayer.di.ActivityModule
-import com.neeplayer.di.component
 import com.neeplayer.model.NowPlayingService
 import com.neeplayer.toast
 import com.neeplayer.ui.auth.AuthPresenter
@@ -23,7 +21,9 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.filter
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
+import org.koin.android.scope.currentScope
+import org.koin.core.definition.DefinitionFactory
 
 class MainActivity : AppCompatActivity(), AuthView {
 
@@ -32,16 +32,9 @@ class MainActivity : AppCompatActivity(), AuthView {
         private const val READ_EXTERNAL_STORAGE_REQUEST_CODE = 42
     }
 
-    val activityComponent by lazy { component.plus(ActivityModule(this)) }
-
-    @Inject
-    internal lateinit var presenter: AuthPresenter
-
-    @Inject
-    internal lateinit var nowPlayingModel: NowPlayingService
-
-    @Inject
-    internal lateinit var router: Router
+    private val presenter by inject<AuthPresenter>()
+    private val nowPlayingService by inject<NowPlayingService>()
+    private val router by currentScope.inject<Router>()
 
 
     private var menuElements = emptySet<AuthView.MenuElement>()
@@ -57,7 +50,7 @@ class MainActivity : AppCompatActivity(), AuthView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activityComponent.inject(this)
+        currentScope.beanRegistry.saveDefinition(DefinitionFactory.createFactory { supportFragmentManager })
 
         setContentView(R.layout.activity_main)
         presenter.bind(scope, this)
@@ -86,7 +79,7 @@ class MainActivity : AppCompatActivity(), AuthView {
     }
 
     private fun onReadStoragePermissionGranted() {
-        nowPlayingModel.tryRestoreNowPlaying()
+        nowPlayingService.tryRestoreNowPlaying()
         if (!router.areArtistsShown()) {
             router.goToArtists()
         }

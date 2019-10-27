@@ -7,7 +7,6 @@ import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.URLProtocol
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import javax.inject.Inject
 
 
 interface DeezerApi {
@@ -24,7 +23,7 @@ interface DeezerApi {
     suspend fun searchArtist(artistName: String): Response<SearchBody>
 }
 
-class DeezerKtorApi @Inject constructor(private val httpClient: HttpClient) : DeezerApi {
+class DeezerKtorApi(private val httpClient: HttpClient) : DeezerApi {
 
     override suspend fun searchArtist(artistName: String) = deezerRequest<DeezerApi.SearchBody> {
         url {

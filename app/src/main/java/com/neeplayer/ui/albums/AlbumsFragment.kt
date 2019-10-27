@@ -6,7 +6,6 @@ import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.neeplayer.R
-import com.neeplayer.di.component
 import com.neeplayer.model.AlbumWithSongs
 import com.neeplayer.model.Artist
 import com.neeplayer.model.Song
@@ -14,7 +13,7 @@ import com.neeplayer.ui.CoroFragment
 import com.neeplayer.ui.common.actionBar
 import com.neeplayer.ui.getValue
 import com.neeplayer.ui.setValue
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
 
 class AlbumsFragment() : CoroFragment(R.layout.fragment_albums), AlbumsView {
 
@@ -29,8 +28,7 @@ class AlbumsFragment() : CoroFragment(R.layout.fragment_albums), AlbumsView {
 
     private var artist: Artist by arguments!!
 
-    @Inject
-    internal lateinit var presenter: AlbumsPresenter
+    private val presenter by inject<AlbumsPresenter>()
 
     private val listView by lazy {
         view as RecyclerView
@@ -38,11 +36,6 @@ class AlbumsFragment() : CoroFragment(R.layout.fragment_albums), AlbumsView {
 
     private val adapter by lazy {
         listView.adapter as AlbumSongAdapter
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        requireContext().component.inject(this)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

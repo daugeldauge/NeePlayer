@@ -6,7 +6,6 @@ import java.math.BigInteger
 import java.security.MessageDigest
 import java.util.concurrent.TimeUnit
 
-
 fun String.md5(): String {
     val digest = MessageDigest.getInstance("MD5").digest(this.toByteArray(charset("UTF-8")))
     return String.format("%032x", BigInteger(1, digest))

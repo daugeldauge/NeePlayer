@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
 
 interface SpotifyApi {
     companion object {
-        const val token = "BQBo7BQDkAqdQs2kSaLlA0SJSTNPpq6FAxJKaueiPMdjApGw1ktD-mcLzhiQU0Vk7JZY-TH0Jl7HLVIIC10g1akaqB362rL9t4jRPpy4q2EvIZ8kT_1-YBsODh8BUcYQRkrJ9fU8a9n8TOoRpG3JhN8S_T1ZxidfyQ"
+        const val token = "BQAb4uHYGY-VCdVI_nwaAsFdfMYZIO6pxxSM1-W6TbIVPkW4StR2W6mlbfboCV-BgiBAfhbGbdWQVQQ-fFeKWCY7hRT-BsRfPuWM5bavMFAew5T5lzN0Xw0ms_mxtQPkzF9t2EJgr6xgn3PyUE_8t-nelcpY4CU"
     }
 
     @Serializable

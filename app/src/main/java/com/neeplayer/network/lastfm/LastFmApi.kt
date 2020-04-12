@@ -6,7 +6,7 @@ import com.neeplayer.network.Response
 import com.neeplayer.network.lastfm.LastFmApi.GetTokenBody
 import com.neeplayer.network.safeRequest
 import io.ktor.client.HttpClient
-import io.ktor.client.response.HttpResponse
+import io.ktor.client.statement.HttpStatement
 import io.ktor.http.HttpMethod
 import io.ktor.http.ParametersBuilder
 import io.ktor.http.URLBuilder
@@ -58,7 +58,7 @@ class LastFmKtorApi(private val httpClient: HttpClient) : LastFmApi {
             track: String,
             timestamp: Long,
             album: String?
-    ) = lastFmRequest<HttpResponse>("track.scrobble", HttpMethod.Post) {
+    ) = lastFmRequest<HttpStatement>("track.scrobble", HttpMethod.Post) {
         append("sk", sessionKey)
         append("artist", artist)
         append("track", track)

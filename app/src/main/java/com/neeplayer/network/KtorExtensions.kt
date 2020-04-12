@@ -5,7 +5,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.features.ResponseException
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.request
-import kotlinx.io.IOException
+import io.ktor.utils.io.errors.IOException
 import kotlinx.serialization.SerializationException
 
 suspend inline fun <reified T> HttpClient.safeRequest(block: HttpRequestBuilder.() -> Unit): Response<T> {

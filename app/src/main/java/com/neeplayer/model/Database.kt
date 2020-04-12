@@ -28,7 +28,7 @@ class Database(private val storIOContentResolver: StorIOContentResolver, private
                 .listOfObjects(Album::class.java)
                 .withQuery(Query.builder()
                         .uri(Albums.getContentUri("external", artist.id))
-                        .columns(BaseColumns._ID, Albums.ALBUM, Albums.FIRST_YEAR, Albums.ALBUM_ART)
+                        .columns(Albums.ALBUM_ID, Albums.ALBUM, Albums.FIRST_YEAR, Albums.ALBUM_ART)
                         .sortOrder(Albums.FIRST_YEAR)
                         .build())
                 .withGetResolver(AlbumResolver(artist))

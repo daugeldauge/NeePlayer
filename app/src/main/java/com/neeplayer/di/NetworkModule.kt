@@ -14,7 +14,6 @@ import io.ktor.client.features.json.serializer.KotlinxSerializer
 import io.ktor.client.features.logging.LogLevel
 import io.ktor.client.features.logging.Logger
 import io.ktor.client.features.logging.Logging
-import kotlinx.serialization.UnstableDefault
 import org.koin.dsl.module
 import timber.log.Timber
 
@@ -25,10 +24,9 @@ val networkModule = module {
     single<SpotifyApi> { SpotifyKtorApi(get()) }
 }
 
-@UseExperimental(UnstableDefault::class)
 fun createKtorHttpClient() = HttpClient(Android) {
     Json {
-        serializer = KotlinxSerializer(kotlinx.serialization.json.Json.nonstrict)
+        serializer = KotlinxSerializer(kotlinx.serialization.json.Json { ignoreUnknownKeys = true })
     }
 
     if (BuildConfig.DEBUG) {

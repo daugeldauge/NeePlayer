@@ -10,7 +10,7 @@ pluginManagement {
     resolutionStrategy {
         eachPlugin {
             when (val pluginId = requested.id.id) {
-                "com.android.application", "com.android.library" -> "com.android.tools.build:gradle:4.0.0-beta04"
+                "com.android.application", "com.android.library" -> "com.android.tools.build:gradle:3.6.0"
                 "kotlin-android",
                 "kotlin-kapt",
                 "kotlin-android-extensions" -> "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
@@ -23,3 +23,4 @@ pluginManagement {
 }
 
 include("app")
+include("compose")

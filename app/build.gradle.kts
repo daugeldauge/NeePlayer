@@ -21,8 +21,8 @@ android {
 
         vectorDrawables.useSupportLibrary = true
     }
-    buildFeatures {
-        dataBinding = true
+    dataBinding {
+        isEnabled = true
     }
     packagingOptions {
         exclude("META-INF/**.kotlin_module")

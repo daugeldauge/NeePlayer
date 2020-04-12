@@ -53,6 +53,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     private var lastKnownAudioFocusState: Int? = null
     private var foreground = false
 
+    private val audioManager by lazy { getSystemService(AUDIO_SERVICE) as AudioManager }
     private val presenter by inject<NowPlayingPresenter>()
 
     private val mediaSession by lazy { MediaSessionCompat(this, BuildConfig.APPLICATION_ID, ComponentName(this, MediaButtonEventsReceiver::class.java), null) }
@@ -108,6 +109,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         paused = true
         if (state == State.STARTED) {
             player.pause()
+            audioManager.abandonAudioFocus(audioFocusListener)
             state = State.PAUSED
             stopTicking()
             updateInfo(song!!)
@@ -256,7 +258,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
     //endregion
 
     private fun startPlaying() {
-        when ((getSystemService(AUDIO_SERVICE) as AudioManager).requestAudioFocus(audioFocusListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)) {
+        when (audioManager.requestAudioFocus(audioFocusListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)) {
             AudioManager.AUDIOFOCUS_REQUEST_GRANTED -> {
                 player.start()
                 tick()

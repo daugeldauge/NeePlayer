@@ -8,10 +8,16 @@ import com.bumptech.glide.Glide
 import java.util.concurrent.TimeUnit
 
 @BindingAdapter("imagePath")
-fun loadImageFile(view: ImageView, path: String?) = loadImage(view, "file://$path")
+fun loadImageFile(view: ImageView, path: String?) = loadImage(view, path?.let { "file://$it" })
 
 @BindingAdapter("imageURL")
-fun loadImage(view: ImageView, url: String?) = Glide.with(view.context).load(url).into(view)
+fun loadImage(view: ImageView, url: String?) = Glide.with(view.context).run {
+    if (url != null) {
+        load(url).into(view)
+    } else {
+        clear(view)
+    }
+}
 
 @BindingAdapter("drawable")
 fun setDrawable(view: ImageView, drawable: Drawable) = view.setImageDrawable(drawable)

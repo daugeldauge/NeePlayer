@@ -36,4 +36,5 @@ dependencies {
     implementation("androidx.ui:ui-layout:$composeVersion")
     implementation("androidx.ui:ui-material:$composeVersion")
 
+    implementation("com.github.bumptech.glide:glide:4.10.0")
 }

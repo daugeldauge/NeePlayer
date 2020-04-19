@@ -1,4 +1,4 @@
-// TODO remove this when https://issuetracker.google.com/issues/154388196 will be fixed
+// TODO remove this block when https://issuetracker.google.com/issues/154388196 will be fixed
 buildscript {
     repositories {
         google()

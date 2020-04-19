@@ -8,15 +8,15 @@ pluginManagement {
 
     resolutionStrategy {
         eachPlugin {
-            when (val pluginId = requested.id.id) {
-                "com.android.application", "com.android.library" -> "com.android.tools.build:gradle:4.1.0-alpha06"
+            when (requested.id.id) {
+//                "com.android.application", "com.android.library" -> "com.android.tools.build:gradle:4.1.0-alpha06" // TODO uncomment this when https://issuetracker.google.com/issues/154388196 will be fixed
                 "kotlin-android",
                 "kotlin-kapt",
                 "kotlin-android-extensions" -> "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
                 "kotlinx-serialization" -> "org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion"
                 "build-time-tracker" -> "net.rdrei.android.buildtimetracker:gradle-plugin:0.11.1"
-                else -> error("Unknown plugin id: '$pluginId'")
-            }.let(::useModule)
+                else -> null
+            }?.let(::useModule)
         }
     }
 }

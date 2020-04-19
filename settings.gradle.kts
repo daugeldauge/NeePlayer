@@ -4,13 +4,12 @@ pluginManagement {
     repositories {
         jcenter()
         google()
-        maven(url = "https://dl.bintray.com/kotlin/kotlin-eap")
     }
 
     resolutionStrategy {
         eachPlugin {
             when (val pluginId = requested.id.id) {
-                "com.android.application", "com.android.library" -> "com.android.tools.build:gradle:3.6.0"
+                "com.android.application", "com.android.library" -> "com.android.tools.build:gradle:4.1.0-alpha06"
                 "kotlin-android",
                 "kotlin-kapt",
                 "kotlin-android-extensions" -> "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"

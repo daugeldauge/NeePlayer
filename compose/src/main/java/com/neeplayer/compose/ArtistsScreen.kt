@@ -41,12 +41,7 @@ fun ArtistItem(artist: Artist) {
 fun PreviewArtistsScreen() {
     MaterialTheme(colors = lightColorPalette()) {
         Surface {
-            ArtistsScreen(artists = listOf(
-                    Artist(0, "David Bowie", 10, 2),
-                    Artist(0, "Yes", 10, 2),
-                    Artist(0, "Grateful Dead", 10, 2),
-                    Artist(0, "Joy Division", 10, 2)
-            ))
+            ArtistsScreen(artists = Sample.artists)
         }
     }
 }

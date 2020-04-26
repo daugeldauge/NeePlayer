@@ -1,83 +1,39 @@
 package com.neeplayer.compose
 
 import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import androidx.compose.Composable
-import androidx.compose.onCommit
+import androidx.compose.onPreCommit
 import androidx.compose.state
 import androidx.ui.core.ContextAmbient
-import androidx.ui.core.Modifier
-import androidx.ui.core.WithConstraints
-import androidx.ui.foundation.Canvas
-import androidx.ui.foundation.Image
-import androidx.ui.graphics.ImageAsset
-import androidx.ui.graphics.asImageAsset
-import androidx.ui.layout.fillMaxSize
-import androidx.ui.unit.IntPx
 import com.bumptech.glide.Glide
-import com.bumptech.glide.RequestBuilder
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
-import com.bumptech.glide.request.transition.Transition
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 
-/**
- *  Copied from https://github.com/mvarnagiris/compose-glide-image
- */
 @Composable
-fun GlideImage(
-        model: Any?,
-        customize: RequestBuilder<Bitmap>.() -> RequestBuilder<Bitmap> = { this }
-) {
-    WithConstraints { constraints, _ ->
-        val image = state<ImageAsset?> { null }
-        val drawable = state<Drawable?> { null }
-        val context = ContextAmbient.current
-
-        onCommit(model) {
-            val target = object : CustomTarget<Bitmap>() {
-                override fun onLoadCleared(placeholder: Drawable?) {
-                    image.value = null
-                    drawable.value = placeholder
-                }
-
-                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                    image.value = resource.asImageAsset()
-                }
+fun glideBitmap(model: Any?): Bitmap? {
+    val result = state<Bitmap?> { null }
+    val context = ContextAmbient.current
+    onPreCommit(model) {
+        val listener = object : RequestListener<Bitmap> {
+            override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Bitmap>?, isFirstResource: Boolean): Boolean {
+                result.value = null
+                return false
             }
 
-            val width = if (constraints.maxWidth > IntPx.Zero && constraints.maxWidth < IntPx.Infinity) {
-                constraints.maxWidth.value
-            } else {
-                SIZE_ORIGINAL
-            }
-
-            val height = if (constraints.maxHeight > IntPx.Zero && constraints.maxHeight < IntPx.Infinity) {
-                constraints.maxHeight.value
-            } else {
-                SIZE_ORIGINAL
-            }
-
-            val glide = Glide.with(context)
-            glide
-                    .asBitmap()
-                    .load(model)
-                    .override(width, height)
-                    .let(customize)
-                    .into(target)
-
-            onDispose {
-                image.value = null
-                drawable.value = null
-                glide.clear(target)
+            override fun onResourceReady(resource: Bitmap?, model: Any?, target: Target<Bitmap>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                result.value = resource
+                return true
             }
         }
 
-        val theImage = image.value
-        val theDrawable = drawable.value
-        if (theImage != null) {
-            Image(asset = theImage)
-        } else if (theDrawable != null) {
-            Canvas(modifier = Modifier.fillMaxSize()) { theDrawable.draw(nativeCanvas) }
-        }
+        Glide.with(context)
+                .asBitmap()
+                .load(model)
+                .addListener(listener)
+                .preload()
+
     }
+    return result.value
 }

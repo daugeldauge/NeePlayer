@@ -8,20 +8,23 @@ data class Artist(
         val imageUrl: String? = null
 )
 
+sealed class Composition
+
 data class Album(
         val id: Long,
         val artist: Artist,
         val title: String?,
         val year: Int?,
-        val art: String?
-)
+        val art: String?,
+        val numberOfSongs: Int
+) : Composition()
 
 data class Song(
         val id: Long,
         val title: String?,
         val duration: Int,
         val track: Int?
-)
+) : Composition()
 
 data class AlbumWithSongs(
         val album: Album,

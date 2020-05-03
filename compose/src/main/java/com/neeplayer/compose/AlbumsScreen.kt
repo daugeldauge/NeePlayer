@@ -34,25 +34,24 @@ fun SongView(song: Song) {
                 Image(ColorPainter(NeeColors.imageAlt), modifier = Modifier.size(24.dp)) // TODO: real icon
             } else {
                 Text(
-                        style = MaterialTheme.typography.body2,
-                        modifier = Modifier.width(30.dp) + Modifier.gravity(Alignment.CenterEnd),
-                        text = song.formattedTrack
+                    style = MaterialTheme.typography.body2,
+                    modifier = Modifier.width(30.dp) + Modifier.gravity(Alignment.CenterEnd),
+                    text = song.formattedTrack
                 )
             }
         }
         Text(
-                style = MaterialTheme.typography.body1,
-                modifier = Modifier.weight(1f),
-                text = song.title.orEmpty(),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-
+            style = MaterialTheme.typography.body1,
+            modifier = Modifier.weight(1f),
+            text = song.title.orEmpty(),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
 
         Text(
-                style = MaterialTheme.typography.body2,
-                modifier = Modifier.padding(start = 4.dp),
-                text = song.formattedDuration
+            style = MaterialTheme.typography.body2,
+            modifier = Modifier.padding(start = 4.dp),
+            text = song.formattedDuration
         )
     }
 }
@@ -61,26 +60,26 @@ fun SongView(song: Song) {
 fun AlbumSummaryView(album: Album) {
     Row(modifier = Modifier.height(130.dp) + Modifier.padding(all = 15.dp)) {
         Image(
-                modifier = Modifier.size(100.dp),
-                painter = ColorPainter(NeeColors.imageAlt)
+            modifier = Modifier.size(100.dp),
+            painter = ColorPainter(NeeColors.imageAlt)
         )
 
         Column(modifier = Modifier.padding(10.dp)) {
 
             Text(
-                    style = MaterialTheme.typography.body1,
-                    text = album.title.orEmpty(),
-                    maxLines = 2
+                style = MaterialTheme.typography.body1,
+                text = album.title.orEmpty(),
+                maxLines = 2
             )
 
             Text(
-                    style = MaterialTheme.typography.body2,
-                    text = album.description
+                style = MaterialTheme.typography.body2,
+                text = album.description
             )
 
             Text(
-                    style = MaterialTheme.typography.body2,
-                    text = album.formattedYear
+                style = MaterialTheme.typography.body2,
+                text = album.formattedYear
             )
 
         }
@@ -102,7 +101,6 @@ private val Album.description: String
 
 private val Album.formattedYear: String
     get() = year?.takeIf { it > 0 }?.toString().orEmpty()
-
 
 
 @Preview

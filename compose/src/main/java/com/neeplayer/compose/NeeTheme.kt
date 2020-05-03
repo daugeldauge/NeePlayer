@@ -27,17 +27,17 @@ fun NeeTheme(content: @Composable() () -> Unit) {
 
 private fun typography(): Typography {
     return Typography(
-            body1 = TextStyle(
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 16.sp,
-                    letterSpacing = 0.sp,
-                    color = NeeColors.black87
-            ),
-            body2 = TextStyle(
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 14.sp,
-                    letterSpacing = 0.sp,
-                    color = NeeColors.black54
-            )
+        body1 = TextStyle(
+            fontWeight = FontWeight.Normal,
+            fontSize = 16.sp,
+            letterSpacing = 0.sp,
+            color = NeeColors.black87
+        ),
+        body2 = TextStyle(
+            fontWeight = FontWeight.Normal,
+            fontSize = 14.sp,
+            letterSpacing = 0.sp,
+            color = NeeColors.black54
+        )
     )
 }

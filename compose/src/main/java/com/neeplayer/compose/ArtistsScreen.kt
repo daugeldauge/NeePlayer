@@ -23,8 +23,8 @@ fun ArtistsScreen(artists: List<Artist>) {
 @Composable
 fun ArtistItem(artist: Artist) {
     Row(
-            modifier = Modifier.padding(start = 10.dp, end = 10.dp, bottom = 5.dp, top = 5.dp),
-            verticalGravity = Alignment.CenterVertically
+        modifier = Modifier.padding(start = 10.dp, end = 10.dp, bottom = 5.dp, top = 5.dp),
+        verticalGravity = Alignment.CenterVertically
     ) {
         GlideImage(artist.imageUrl, modifier = Modifier.size(90.dp))
         Column(modifier = Modifier.padding(all = 10.dp)) {

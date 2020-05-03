@@ -32,27 +32,27 @@ fun GlideImage(model: Any?, modifier: Modifier = Modifier) {
         onCommit(model) {
             val glide = Glide.with(context)
             val target = glide
-                    .asBitmap()
-                    .load(model)
-                    .centerCrop()
-                    .override(constraints.maxWidth.glideSize, constraints.maxHeight.glideSize)
-                    .into(object : CustomTarget<Bitmap>() {
-                        override fun onLoadStarted(placeholder: Drawable?) {
-                            painter.value = placeholderPainter
-                        }
+                .asBitmap()
+                .load(model)
+                .centerCrop()
+                .override(constraints.maxWidth.glideSize, constraints.maxHeight.glideSize)
+                .into(object : CustomTarget<Bitmap>() {
+                    override fun onLoadStarted(placeholder: Drawable?) {
+                        painter.value = placeholderPainter
+                    }
 
-                        override fun onLoadCleared(placeholder: Drawable?) {
-                            painter.value = placeholderPainter
-                        }
+                    override fun onLoadCleared(placeholder: Drawable?) {
+                        painter.value = placeholderPainter
+                    }
 
-                        override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                            painter.value = ImagePainter(resource.asImageAsset())
-                        }
+                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                        painter.value = ImagePainter(resource.asImageAsset())
+                    }
 
-                        override fun onLoadFailed(errorDrawable: Drawable?) {
-                            painter.value = errorPainter
-                        }
-                    })
+                    override fun onLoadFailed(errorDrawable: Drawable?) {
+                        painter.value = errorPainter
+                    }
+                })
 
 
             onDispose {

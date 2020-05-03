@@ -10,6 +10,12 @@ import androidx.ui.text.TextStyle
 import androidx.ui.text.font.FontWeight
 import androidx.ui.unit.sp
 
+object NeeColors {
+    val imageAlt = Color(0xffe0e0e0)
+    val black87 = Color(0xff212121)
+    val black54 = Color(0xff757575)
+}
+
 @Composable
 fun NeeTheme(content: @Composable() () -> Unit) {
     MaterialTheme(colors = lightColorPalette(), typography = typography()) {
@@ -20,20 +26,18 @@ fun NeeTheme(content: @Composable() () -> Unit) {
 }
 
 private fun typography(): Typography {
-    val black87 = Color(0xFF212121)
-    val black54 = Color(0xFF757575)
     return Typography(
             body1 = TextStyle(
                     fontWeight = FontWeight.Normal,
                     fontSize = 16.sp,
                     letterSpacing = 0.sp,
-                    color = black87
+                    color = NeeColors.black87
             ),
             body2 = TextStyle(
                     fontWeight = FontWeight.Normal,
                     fontSize = 14.sp,
                     letterSpacing = 0.sp,
-                    color = black54
+                    color = NeeColors.black54
             )
     )
 }

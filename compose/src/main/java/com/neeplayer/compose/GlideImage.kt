@@ -24,7 +24,7 @@ import com.bumptech.glide.request.transition.Transition
 @Composable
 fun GlideImage(model: Any?, modifier: Modifier = Modifier) {
     val placeholderPainter = ColorPainter(Color.Transparent)
-    val errorPainter = ColorPainter(Color.LightGray)
+    val errorPainter = ColorPainter(NeeColors.imageAlt)
     val painter = state<Painter> { placeholderPainter }
     val context = ContextAmbient.current
 

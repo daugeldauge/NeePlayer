@@ -11,44 +11,24 @@ object Sample {
             Artist(0, "Joy Division", 10, 2, "https://citaty.info/files/posters/158847.jpg")
     ).repeat(50)
 
+    private val songs = listOf(
+            Song(0, "Sound and Vision (Remaster, reprise and other things)", 350_000, 1, false),
+            Song(0, "Promises", 350_000, 2, false),
+            Song(0, "Animal Instinct", 350_000, 3, true),
+            Song(0, "Linger", 12_000, 4, false),
+            Song(0, "Heart of Gold", 234_000, 5, false)
+    )
 
     val albums = listOf(
-            AlbumWithSongs(
-                    album = Album(0, artists[0], "Low", 1970, null, 10),
-                    songs = listOf(
-                            Song(0, "Sound and Vision", 350, 1),
-                            Song(0, "Promises", 350, 2),
-                            Song(0, "Animal Instinct", 350, 3),
-                            Song(0, "Linger", 12, 4),
-                            Song(0, "Sound and Vision", 350, 5)
-                    )
-            ),
-            AlbumWithSongs(
-                    album = Album(0, artists[1], "Fragile", 2001, null, 2),
-                    songs = listOf(
-                            Song(0, "Sound and Vision", 350, 1),
-                            Song(0, "Promises", 350, 2),
-                            Song(0, "Animal Instinct", 350, 3),
-                            Song(0, "Linger", 12, 4),
-                            Song(0, "Sound and Vision", 350, 5)
-                    )
-            ),
-            AlbumWithSongs(
-                    album = Album(0, artists[2], "Wake of the Flood", 1970, null, 10),
-                    songs = listOf(
-                            Song(0, "Sound and Vision", 350, 1),
-                            Song(0, "Promises", 350, 2),
-                            Song(0, "Animal Instinct", 350, 3),
-                            Song(0, "Linger", 12, 4),
-                            Song(0, "Sound and Vision", 350, 5)
-                    )
-            )
-    ).repeat(10)
+                    Album(0, artists[0], "Low", 1970, null, 10, -100),
+                    Album(0, artists[1], "Fragile", null, null, 2, 10_000_000),
+                    Album(0, artists[2], "Wake of the Flood", 1970, null, 10, 312_000)
+    ).map { AlbumWithSongs(it, songs ) }.repeat(10)
 }
 
 fun ComponentActivity.setSampleContent() {
     setContent {
-        PreviewArtistsScreen()
+        PreviewAlbumsScreen()
     }
 }
 

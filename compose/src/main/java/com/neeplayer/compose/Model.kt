@@ -16,14 +16,16 @@ data class Album(
         val title: String?,
         val year: Int?,
         val art: String?,
-        val numberOfSongs: Int
+        val numberOfSongs: Int,
+        val duration: Long
 ) : Composition()
 
 data class Song(
         val id: Long,
         val title: String?,
-        val duration: Int,
-        val track: Int?
+        val duration: Long,
+        val track: Int?,
+        val nowPlaying: Boolean
 ) : Composition()
 
 data class AlbumWithSongs(

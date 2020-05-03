@@ -23,7 +23,8 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "0.1.0-dev09"
+        kotlinCompilerVersion = "1.3.70-dev-withExperimentalGoogleExtensions-20200424"
+        kotlinCompilerExtensionVersion = "0.1.0-dev10"
     }
 }
 
@@ -31,7 +32,7 @@ dependencies {
     val kotlinVersion = org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION
     api("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
 
-    val composeVersion = "0.1.0-dev09"
+    val composeVersion = "0.1.0-dev10"
     api("androidx.ui:ui-tooling:$composeVersion")
     api("androidx.ui:ui-layout:$composeVersion")
     api("androidx.ui:ui-material:$composeVersion")

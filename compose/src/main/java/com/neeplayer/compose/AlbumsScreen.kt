@@ -5,9 +5,7 @@ import androidx.ui.core.Alignment
 import androidx.ui.core.Modifier
 import androidx.ui.foundation.AdapterList
 import androidx.ui.foundation.Icon
-import androidx.ui.foundation.Image
 import androidx.ui.foundation.Text
-import androidx.ui.graphics.painter.ColorPainter
 import androidx.ui.layout.*
 import androidx.ui.material.MaterialTheme
 import androidx.ui.res.vectorResource
@@ -37,11 +35,12 @@ fun SongView(song: Song) {
             } else {
                 Text(
                     style = MaterialTheme.typography.body2,
-                    modifier = Modifier.width(30.dp) + Modifier.gravity(Alignment.CenterEnd),
+                    modifier = Modifier.width(30.dp).gravity(Alignment.CenterEnd),
                     text = song.formattedTrack
                 )
             }
         }
+
         Text(
             style = MaterialTheme.typography.body1,
             modifier = Modifier.weight(1f),
@@ -53,17 +52,17 @@ fun SongView(song: Song) {
         Text(
             style = MaterialTheme.typography.body2,
             modifier = Modifier.padding(start = 4.dp),
-            text = song.formattedDuration
+            text = song.duration.formatDuration()
         )
     }
 }
 
 @Composable
 fun AlbumSummaryView(album: Album) {
-    Row(modifier = Modifier.height(130.dp) + Modifier.padding(all = 15.dp)) {
-        Image(
+    Row(modifier = Modifier.height(130.dp).padding(all = 15.dp)) {
+        GlideImage(
             modifier = Modifier.size(100.dp),
-            painter = ColorPainter(NeeColors.imageAlt)
+            model = album.art
         )
 
         Column(modifier = Modifier.padding(10.dp)) {
@@ -87,13 +86,6 @@ fun AlbumSummaryView(album: Album) {
         }
     }
 }
-
-private val Song.formattedDuration: String
-    get() {
-        val min = TimeUnit.MILLISECONDS.toMinutes(duration)
-        val sec = TimeUnit.MILLISECONDS.toSeconds(duration) - TimeUnit.MINUTES.toSeconds(min)
-        return "%d:%02d".format(min, sec)
-    }
 
 private val Song.formattedTrack: String
     get() = track?.rem(1000)?.toString().orEmpty()

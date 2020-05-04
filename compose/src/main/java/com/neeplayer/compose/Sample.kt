@@ -11,7 +11,7 @@ object Sample {
         Artist(0, "Joy Division", 10, 2, "https://citaty.info/files/posters/158847.jpg")
     ).repeat(50)
 
-    private val songs = listOf(
+    val songs = listOf(
         Song(0, "Sound and Vision (Remaster, reprise and other things)", 350_000, 1, false),
         Song(0, "Promises", 350_000, 2, false),
         Song(0, "Animal Instinct", 350_000, 3, true),
@@ -20,15 +20,15 @@ object Sample {
     )
 
     val albums = listOf(
-        Album(0, artists[0], "Low", 1970, null, 10, -100),
-        Album(0, artists[1], "Fragile", null, null, 2, 10_000_000),
-        Album(0, artists[2], "Wake of the Flood", 1970, null, 10, 312_000)
+        Album(0, "Low", 1970, null, 10, -100),
+        Album(0, "Fragile", null, null, 2, 10_000_000),
+        Album(0, "Wake of the Flood", 1970, null, 10, 312_000)
     ).map { AlbumWithSongs(it, songs) }.repeat(10)
 }
 
 fun ComponentActivity.setSampleContent() {
     setContent {
-        PreviewAlbumsScreen()
+        PreviewNowPlayingScreen()
     }
 }
 

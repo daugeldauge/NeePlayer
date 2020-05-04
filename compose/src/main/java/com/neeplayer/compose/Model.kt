@@ -12,7 +12,6 @@ sealed class Composition
 
 data class Album(
     val id: Long,
-    val artist: Artist,
     val title: String?,
     val year: Int?,
     val art: String?,

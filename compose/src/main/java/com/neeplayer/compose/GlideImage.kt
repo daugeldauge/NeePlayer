@@ -60,7 +60,6 @@ fun GlideImage(model: Any?, modifier: Modifier = Modifier) {
                 glide.clear(target)
             }
         }
-
         Crossfade(current = painter.value) { Image(it) }
     }
 }

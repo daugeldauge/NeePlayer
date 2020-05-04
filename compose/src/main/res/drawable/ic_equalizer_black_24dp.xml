@@ -1,0 +1,25 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+        android:width="24dp"
+        android:height="24dp"
+        android:viewportWidth="24.0"
+        android:viewportHeight="24.0">
+
+    <group>
+        <path
+            android:name="first_column"
+            android:fillColor="#ff000000"
+            android:pathData="M4,20 h4 v-8 h-4 v8 z"/>
+
+        <path
+            android:name="second_column"
+            android:fillColor="#ff000000"
+            android:pathData="M10,20 h4 v-16 h-4 v16 z"/>
+
+        <path
+            android:name="third_column"
+            android:fillColor="#ff000000"
+            android:pathData="M16,9 v11 h4 v-11 h-4 z"/>
+
+
+    </group>
+</vector>

@@ -4,11 +4,13 @@ import androidx.compose.Composable
 import androidx.ui.core.Alignment
 import androidx.ui.core.Modifier
 import androidx.ui.foundation.AdapterList
+import androidx.ui.foundation.Icon
 import androidx.ui.foundation.Image
 import androidx.ui.foundation.Text
 import androidx.ui.graphics.painter.ColorPainter
 import androidx.ui.layout.*
 import androidx.ui.material.MaterialTheme
+import androidx.ui.res.vectorResource
 import androidx.ui.text.style.TextOverflow
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.dp
@@ -31,7 +33,7 @@ fun SongView(song: Song) {
     Row(modifier = Modifier.padding(start = 20.dp, end = 25.dp, top = 10.dp, bottom = 10.dp), verticalGravity = Alignment.CenterVertically) {
         Stack(modifier = Modifier.width(35.dp)) {
             if (song.nowPlaying) {
-                Image(ColorPainter(NeeColors.imageAlt), modifier = Modifier.size(24.dp)) // TODO: real icon
+                Icon(vectorResource(id = R.drawable.ic_equalizer_black_24dp))
             } else {
                 Text(
                     style = MaterialTheme.typography.body2,

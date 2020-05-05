@@ -109,8 +109,13 @@ class MainActivity : AppCompatActivity(), AuthView {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        optionsItemSelectionsChannel.offer(item.itemId)
-        return true
+        return when (val id = item.itemId) {
+            R.id.sign_in, R.id.sign_out, R.id.scrobbling -> {
+                optionsItemSelectionsChannel.offer(id)
+                true
+            }
+            else -> false
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {

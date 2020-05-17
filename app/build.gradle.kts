@@ -38,7 +38,7 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.1.0")
     implementation("com.google.android.material:material:1.1.0")
 
-    implementation("com.github.bumptech.glide:glide:4.10.0")
+    implementation("com.github.bumptech.glide:glide:4.11.0")
 
     implementation("com.pushtorefresh.storio:content-resolver:1.8.0")
 
@@ -50,7 +50,7 @@ dependencies {
     implementation("io.ktor:ktor-client-serialization-jvm:$ktorVersion")
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.20.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.5")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.6")
 
     val koinVersion = "2.0.1"
     implementation("org.koin:koin-core:$koinVersion")

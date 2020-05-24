@@ -1,5 +1,6 @@
 package com.neeplayer.ui.artists
 
+import com.neeplayer.BuildConfig
 import com.neeplayer.model.Artist
 import com.neeplayer.model.ArtistImagesStorage
 import com.neeplayer.model.Database
@@ -43,6 +44,9 @@ class ArtistsPresenter(
     }
 
     private suspend fun fetchImageFromSpotify(artist: Artist): String? {
+        if (!BuildConfig.DEBUG) {
+            return null
+        }
         val response = spotify.searchArtist(artist.name).success() ?: return null
 
         return response.body

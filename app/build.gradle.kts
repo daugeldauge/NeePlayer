@@ -16,8 +16,8 @@ android {
         minSdkVersion(23)
         targetSdkVersion(28)
         applicationId = "com.neeplayer"
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.0.1"
 
         vectorDrawables.useSupportLibrary = true
     }

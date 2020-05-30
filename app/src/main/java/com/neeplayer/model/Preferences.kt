@@ -9,34 +9,32 @@ class Preferences(context: Application) {
 
     private val preferences = context.getSharedPreferences("main", Context.MODE_PRIVATE)
 
-    sealed class Item<T> {
-        internal val key = javaClass.simpleName
-
+    sealed class Item<T>(val key: String) {
         abstract fun put(editor: SharedPreferences.Editor, value: T)
         abstract fun get(preferences: SharedPreferences): T?
 
-        sealed class StringItem : Item<String>() {
+        sealed class StringItem(key: String) : Item<String>(key) {
             override fun put(editor: SharedPreferences.Editor, value: String) {
                 editor.putString(key, value)
             }
 
             override fun get(preferences: SharedPreferences) = preferences.getString(key, null)
 
-            object SessionKey : StringItem()
-            object LastFmAuthToken : StringItem()
+            object SessionKey : StringItem("session_key")
+            object LastFmAuthToken : StringItem("last_fm_auth_token")
         }
 
-        sealed class LongItem : Item<Long>() {
+        sealed class LongItem(key: String) : Item<Long>(key) {
             override fun put(editor: SharedPreferences.Editor, value: Long) {
                 editor.putLong(key, value)
             }
 
             override fun get(preferences: SharedPreferences) = if (preferences.contains(key)) preferences.getLong(key, 0) else null
 
-            object NowPlayingSongId : LongItem()
+            object NowPlayingSongId : LongItem("now_playing_song_id")
         }
 
-        sealed class BooleanItem(override val default: Boolean) : Item<Boolean>(), ItemWithDefaultValue<Boolean> {
+        sealed class BooleanItem(key: String, override val default: Boolean) : Item<Boolean>(key), ItemWithDefaultValue<Boolean> {
 
             override fun put(editor: SharedPreferences.Editor, value: Boolean) {
                 editor.putBoolean(key, value)
@@ -44,7 +42,7 @@ class Preferences(context: Application) {
 
             override fun get(preferences: SharedPreferences): Boolean? = if (preferences.contains(key)) preferences.getBoolean(key, false) else null
 
-            object ScrobblingEnabled : BooleanItem(default = true)
+            object ScrobblingEnabled : BooleanItem("scrobbling_enabled", default = true)
         }
     }
 

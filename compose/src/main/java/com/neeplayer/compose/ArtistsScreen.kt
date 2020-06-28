@@ -3,8 +3,8 @@ package com.neeplayer.compose
 import androidx.compose.Composable
 import androidx.ui.core.Alignment
 import androidx.ui.core.Modifier
-import androidx.ui.foundation.AdapterList
 import androidx.ui.foundation.Text
+import androidx.ui.foundation.lazy.LazyColumnItems
 import androidx.ui.layout.Column
 import androidx.ui.layout.Row
 import androidx.ui.layout.padding
@@ -15,7 +15,7 @@ import androidx.ui.unit.dp
 
 @Composable
 fun ArtistsScreen(artists: List<Artist>) {
-    AdapterList(data = artists) {
+    LazyColumnItems(items = artists) {
         ArtistItem(artist = it)
     }
 }

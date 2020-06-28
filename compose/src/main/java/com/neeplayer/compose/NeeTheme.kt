@@ -1,13 +1,17 @@
 package com.neeplayer.compose
 
 import androidx.compose.Composable
+import androidx.ui.core.Modifier
+import androidx.ui.foundation.Box
 import androidx.ui.graphics.Color
+import androidx.ui.layout.size
 import androidx.ui.material.MaterialTheme
 import androidx.ui.material.Surface
 import androidx.ui.material.Typography
 import androidx.ui.material.lightColorPalette
 import androidx.ui.text.TextStyle
 import androidx.ui.text.font.FontWeight
+import androidx.ui.unit.dp
 import androidx.ui.unit.sp
 
 object NeeColors {

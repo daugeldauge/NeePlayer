@@ -6,6 +6,7 @@ import androidx.compose.Composable
 import androidx.compose.onCommit
 import androidx.compose.state
 import androidx.ui.animation.Crossfade
+import androidx.ui.core.Constraints
 import androidx.ui.core.ContextAmbient
 import androidx.ui.core.Modifier
 import androidx.ui.core.WithConstraints
@@ -15,7 +16,6 @@ import androidx.ui.graphics.asImageAsset
 import androidx.ui.graphics.painter.ColorPainter
 import androidx.ui.graphics.painter.ImagePainter
 import androidx.ui.graphics.painter.Painter
-import androidx.ui.unit.IntPx
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
@@ -28,7 +28,7 @@ fun GlideImage(model: Any?, modifier: Modifier = Modifier) {
     val painter = state<Painter> { placeholderPainter }
     val context = ContextAmbient.current
 
-    WithConstraints(modifier) { constraints, _ ->
+    WithConstraints(modifier) {
         onCommit(model) {
             val glide = Glide.with(context)
             val target = glide
@@ -60,9 +60,9 @@ fun GlideImage(model: Any?, modifier: Modifier = Modifier) {
                 glide.clear(target)
             }
         }
-        Crossfade(current = painter.value) { Image(it) }
+        Crossfade(current = painter.value) { Image(it, modifier = modifier) }
     }
 }
 
-private val IntPx.glideSize
-    get() = takeIf { it != IntPx.Infinity }?.value ?: SIZE_ORIGINAL
+private val Int.glideSize
+    get() = takeIf { it != Constraints.Infinity } ?: SIZE_ORIGINAL

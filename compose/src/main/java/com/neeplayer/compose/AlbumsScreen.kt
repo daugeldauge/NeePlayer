@@ -3,9 +3,9 @@ package com.neeplayer.compose
 import androidx.compose.Composable
 import androidx.ui.core.Alignment
 import androidx.ui.core.Modifier
-import androidx.ui.foundation.AdapterList
 import androidx.ui.foundation.Icon
 import androidx.ui.foundation.Text
+import androidx.ui.foundation.lazy.LazyColumnItems
 import androidx.ui.layout.*
 import androidx.ui.material.MaterialTheme
 import androidx.ui.res.vectorResource
@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit
 fun AlbumsScreen(albums: List<AlbumWithSongs>) {
     val compositions = albums.asSequence().flatMap { sequenceOf(it.album) + it.songs }.toList()
 
-    AdapterList(data = compositions) { composition ->
+    LazyColumnItems(items = compositions) { composition ->
         when (composition) {
             is Album -> AlbumSummaryView(album = composition)
             is Song -> SongView(song = composition)

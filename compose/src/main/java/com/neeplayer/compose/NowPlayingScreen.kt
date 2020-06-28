@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.Composable
 import androidx.ui.core.Alignment
 import androidx.ui.core.Modifier
+import androidx.ui.core.WithConstraints
 import androidx.ui.core.drawShadow
 import androidx.ui.foundation.Icon
 import androidx.ui.foundation.Image
@@ -11,7 +12,10 @@ import androidx.ui.foundation.Text
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.painter.ColorPainter
 import androidx.ui.layout.*
-import androidx.ui.material.*
+import androidx.ui.material.BottomDrawerLayout
+import androidx.ui.material.DrawerState
+import androidx.ui.material.IconButton
+import androidx.ui.material.MaterialTheme
 import androidx.ui.res.vectorResource
 import androidx.ui.text.style.TextOverflow
 import androidx.ui.tooling.preview.Preview
@@ -24,7 +28,7 @@ class NowPlayingState(val song: Song, val album: Album, val artist: Artist, val 
 @Composable
 fun NowPlayingScreen(state: NowPlayingState?) {
     BottomDrawerLayout(drawerState = DrawerState.Opened, onStateChange = {}, drawerContent = { DrawerContent(state = state) }) {
-        Image(painter = ColorPainter(Color.Cyan))
+        Image(painter = ColorPainter(Color.Cyan), modifier = Modifier.fillMaxSize())
     }
 }
 
@@ -40,15 +44,12 @@ private fun DrawerContent(state: NowPlayingState?) {
 private fun Body(state: NowPlayingState?) {
     Column {
 
-        Image(
-            modifier = Modifier.fillMaxWidth(),
-            painter = ColorPainter(Color.Cyan)
-        )
-
-        GlideImage(
-            modifier = Modifier.fillMaxWidth(),
-            model = state?.album?.art
-        )
+        WithConstraints(Modifier.fillMaxWidth()) {
+            GlideImage(
+                modifier = Modifier.size(maxWidth),
+                model = state?.album?.art
+            )
+        }
 
         Row(modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp)) {
 

@@ -56,9 +56,9 @@ dependencies {
     implementation("io.ktor:ktor-client-serialization-jvm:$ktorVersion")
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.20.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.6")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.7")
 
-    val koinVersion = "2.0.1"
+    val koinVersion = "2.1.6"
     implementation("org.koin:koin-core:$koinVersion")
     implementation("org.koin:koin-android:$koinVersion")
     implementation("org.koin:koin-android-scope:$koinVersion")

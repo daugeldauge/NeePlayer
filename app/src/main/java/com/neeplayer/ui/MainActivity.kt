@@ -23,7 +23,6 @@ import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.filter
 import org.koin.android.ext.android.inject
 import org.koin.android.scope.currentScope
-import org.koin.core.definition.DefinitionFactory
 
 class MainActivity : AppCompatActivity(), AuthView {
 
@@ -50,7 +49,7 @@ class MainActivity : AppCompatActivity(), AuthView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        currentScope.beanRegistry.saveDefinition(DefinitionFactory.createFactory { supportFragmentManager })
+        currentScope.declare(supportFragmentManager)
 
         setContentView(R.layout.activity_main)
         presenter.bind(scope, this)

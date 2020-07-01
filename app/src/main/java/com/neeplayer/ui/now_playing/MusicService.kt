@@ -5,20 +5,29 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.*
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.AudioManager
-import android.media.MediaPlayer
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
-import android.os.PowerManager
 import android.provider.MediaStore
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import android.widget.RemoteViews
-import androidx.annotation.IdRes
+import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
+import androidx.media.app.NotificationCompat.MediaStyle
+import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.ExoPlaybackException
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.audio.AudioAttributes
+import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.upstream.ContentDataSource
+import com.google.android.exoplayer2.util.Log
+import com.google.android.exoplayer2.util.Log.LOG_LEVEL_ALL
 import com.neeplayer.BuildConfig
 import com.neeplayer.R
 import com.neeplayer.model.Song
@@ -28,42 +37,59 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import org.koin.android.ext.android.inject
 
-class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener, NowPlayingView {
-
-    private enum class State {
-        IDLE, INITIALIZED, PREPARING, PREPARED, STARTED, PAUSED
-    }
-
-    private val NOTIFICATION_ID = 42
-
-    private val PLAY_PREVIOUS_ACTION = "PLAY_PREVIOUS"
-    private val PLAY_OR_PAUSE_ACTION = "PLAY_OR_PAUSE"
-    private val PLAY_NEXT_ACTION = "PLAY_NEXT"
+class MusicService : Service(), NowPlayingView {
 
     private val handler = Handler()
-    private val TICK_PERIOD = 100L
-
-    private val CHANNEL_ID = "music_controls"
-
-    private val player: MediaPlayer = MediaPlayer()
-
-    private var paused = true
-    private var song: Song? = null
-    private var state = State.IDLE
-    private var lastKnownAudioFocusState: Int? = null
-    private var foreground = false
-
-    private val audioManager by lazy { getSystemService(AUDIO_SERVICE) as AudioManager }
-    private val presenter by inject<NowPlayingPresenter>()
-
-    private val mediaSession by lazy { MediaSessionCompat(this, BuildConfig.APPLICATION_ID, ComponentName(this, MediaButtonEventsReceiver::class.java), null) }
-
     private val mainScope = MainScope()
+    private val presenter by inject<NowPlayingPresenter>()
+    private val mediaSession by lazy { MediaSessionCompat(this, BuildConfig.APPLICATION_ID, ComponentName(this, MediaButtonEventsReceiver::class.java), null) }
+    private val mediaSourceFactory = ProgressiveMediaSource.Factory { ContentDataSource(this) }
+
+    private var wasForeground = false
+
+    private val player by lazy {
+        SimpleExoPlayer.Builder(applicationContext).build().apply {
+            val audioAttributes = AudioAttributes.Builder()
+                .setUsage(C.USAGE_MEDIA)
+                .setContentType(C.CONTENT_TYPE_MUSIC)
+                .build()
+
+            setAudioAttributes(audioAttributes, /*handleAudioFocus=*/ true)
+
+            addListener(object : Player.EventListener {
+                override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+                    if (playbackState == Player.STATE_ENDED) {
+                        stopTicking()
+                        presenter.onNextClicked()
+                    }
+                }
+
+                override fun onPlayerError(error: ExoPlaybackException) {
+                    stopTicking()
+                    applicationContext.toast(R.string.media_player_error)
+                }
+            })
+
+            Log.setLogLevel(LOG_LEVEL_ALL)
+        }
+    }
+
+
+    private var currentSong: Song? = null
+        set(value) {
+            if (value != field && value != null) {
+                val songUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, value.id)
+                player.prepare(mediaSourceFactory.createMediaSource(songUri))
+                field = value
+            }
+        }
 
     override fun onCreate() {
         super.onCreate()
         presenter.bind(mainScope, this)
-        initMediaPLayer()
+        MediaSessionConnector(mediaSession).apply {
+            setPlayer(player)
+        }
         mediaSession.setCallback(mediaSessionCallback)
         mediaSession.isActive = true
 
@@ -81,71 +107,24 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
 
     override fun onBind(intent: Intent?): IBinder? = null
 
-    //region NowPlayingView methods
-    override fun setSong(song: Song) {
-        this.song = song
-        player.reset()
-        val songUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, song.id)
+    override fun render(song: Song, paused: Boolean) {
+        currentSong = song
 
-        try {
-            player.setDataSource(applicationContext, songUri)
-            state = State.INITIALIZED
-            player.prepareAsync()
-        } catch (e: Exception) {
-            applicationContext.toast("Error on setting data source")
-        }
-
-    }
-
-    override fun play() {
-        paused = false
-        if (state == State.PREPARED || state == State.PAUSED) {
-            startPlaying()
-            updateInfo(song!!)
-        }
-    }
-
-    override fun pause() {
-        paused = true
-        if (state == State.STARTED) {
-            player.pause()
-            audioManager.abandonAudioFocus(audioFocusListener)
-            state = State.PAUSED
+        player.playWhenReady = !paused
+        if (paused) {
             stopTicking()
-            updateInfo(song!!)
+        } else {
+            tick()
         }
+
+        updateInfo(song, paused)
     }
+
 
     override fun seek(progress: Int) {
-        if (state == State.STARTED || state == State.PAUSED) {
-            player.seekTo(progress)
-        }
+        player.seekTo(progress.toLong())
     }
     //endregion
-
-    //region Media player callbacks
-    override fun onPrepared(mp: MediaPlayer) {
-        state = State.PREPARED
-        if (!paused) {
-            startPlaying()
-        }
-        updateInfo(song!!)
-    }
-
-    override fun onCompletion(mp: MediaPlayer) {
-        mp.reset()
-        state = State.IDLE
-        stopTicking()
-        presenter.onNextClicked()
-    }
-
-    override fun onError(mp: MediaPlayer, what: Int, extra: Int): Boolean {
-        mp.reset()
-        state = State.IDLE
-        stopTicking()
-        applicationContext.toast(R.string.media_player_error)
-        return true
-    }
 
     //endregion
 
@@ -155,7 +134,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         player.release()
         mediaSession.release()
         unregisterReceiver(headsetPlugReceiver)
-        foreground = false
+        wasForeground = false
         stopForeground(true)
         mainScope.cancel()
         presenter.onDestroy()
@@ -166,46 +145,34 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
         super.onTaskRemoved(rootIntent)
     }
 
-    private fun initMediaPLayer() {
-        player.setWakeMode(applicationContext, PowerManager.PARTIAL_WAKE_LOCK)
-        player.setAudioStreamType(AudioManager.STREAM_MUSIC)
+    private fun updateInfo(song: Song, paused: Boolean) {
+        val albumArt = BitmapFactory.decodeFile(song.album.art)
 
-        player.setOnPreparedListener(this)
-        player.setOnCompletionListener(this)
-        player.setOnErrorListener(this)
-    }
-
-    private fun updateInfo(song: Song) {
         mediaSession.setMetadata(
-                MediaMetadataCompat.Builder()
-                        .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, song.album.artist.name)
-                        .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, song.album.title)
-                        .putString(MediaMetadataCompat.METADATA_KEY_TITLE, song.title)
-                        .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, BitmapFactory.decodeFile(song.album.art))
-                        .build()
+            MediaMetadataCompat.Builder()
+                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, song.album.artist.name)
+                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, song.album.title)
+                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, song.title)
+                .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, albumArt)
+                .build()
         )
 
         mediaSession.setPlaybackState(
-                PlaybackStateCompat.Builder()
-                        .setState(if (paused) PlaybackStateCompat.STATE_PAUSED else PlaybackStateCompat.STATE_PLAYING, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 1f)
-                        .setActions(PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PAUSE or PlaybackStateCompat.ACTION_PLAY_PAUSE or PlaybackStateCompat.ACTION_SKIP_TO_NEXT or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
-                        .build()
+            PlaybackStateCompat.Builder()
+                .setState(if (paused) PlaybackStateCompat.STATE_PAUSED else PlaybackStateCompat.STATE_PLAYING, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 1f)
+                .setActions(PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PAUSE or PlaybackStateCompat.ACTION_PLAY_PAUSE or PlaybackStateCompat.ACTION_SKIP_TO_NEXT or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
+                .build()
         )
 
-        updateNotification(song)
+        updateNotification(song, paused, albumArt)
     }
 
     //region Notifications
-    private fun updateNotification(song: Song) {
-        val bigContent = RemoteViews(packageName, R.layout.big_notification)
-        val smallContent = RemoteViews(packageName, R.layout.small_notification)
-
-        fillNotificationContent(bigContent, song)
-        fillNotificationContent(smallContent, song)
+    private fun updateNotification(song: Song, paused: Boolean, albumArt: Bitmap) {
 
         val intent = Intent(this, MainActivity::class.java)
-                .setAction(MainActivity.OPEN_NOW_PLAYING_ACTION)
-                .setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            .setAction(MainActivity.OPEN_NOW_PLAYING_ACTION)
+            .setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
 
         val contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
@@ -214,96 +181,54 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
             notificationManager.createNotificationChannel(NotificationChannel(CHANNEL_ID, getString(R.string.music_notification_channel_description), NotificationManager.IMPORTANCE_HIGH))
         }
 
-        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setCategory(NotificationCompat.CATEGORY_STATUS)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setTicker(song.title)
-                .setContentIntent(contentIntent)
-                .setSmallIcon(R.drawable.ic_play_arrow_white)
-                .setContent(smallContent)
-                .setCustomBigContentView(bigContent)
-                .build()
+        val mediaStyle = MediaStyle().setMediaSession(mediaSession.sessionToken)
 
-        if (!paused) {
-            foreground = true
-            startForeground(NOTIFICATION_ID, notification)
-        } else if (foreground) {
-            stopForeground(false)
-            notificationManager.notify(NOTIFICATION_ID, notification)
+        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setCategory(NotificationCompat.CATEGORY_STATUS)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setTicker(song.title)
+            .setContentTitle(song.title)
+            .setContentText(song.album.artist.name)
+            .setContentIntent(contentIntent)
+            .setLargeIcon(albumArt)
+            .setSmallIcon(R.drawable.ic_play_arrow_white)
+            .addMediaAction(R.drawable.ic_fast_rewind_black_medium, PLAY_PREVIOUS_ACTION)
+            .addMediaAction(if (paused) R.drawable.ic_play_arrow_black_medium else R.drawable.ic_pause_black_medium, PLAY_OR_PAUSE_ACTION)
+            .addMediaAction(R.drawable.ic_fast_forward_black_medium, PLAY_NEXT_ACTION)
+            .setStyle(mediaStyle)
+            .build()
+
+        when {
+            !paused -> {
+                wasForeground = true
+                startForeground(NOTIFICATION_ID, notification)
+            }
+            wasForeground -> {
+                stopForeground(false)
+                notificationManager.notify(NOTIFICATION_ID, notification)
+            }
         }
     }
 
-    private fun fillNotificationContent(content: RemoteViews, song: Song) {
-
-        val albumArt = BitmapFactory.decodeFile(song.album.art)
-        content.setImageViewBitmap(R.id.notification_album_art, albumArt)
-        content.setTextViewText(R.id.notification_song_title, song.title)
-        content.setTextViewText(R.id.notification_artist, song.album.artist.name)
-        content.setImageViewResource(R.id.notification_play_pause_button, if (paused) R.drawable.ic_play_arrow_black_medium else R.drawable.ic_pause_black_medium)
-        content.setImageViewResource(R.id.notification_fast_forward_button, R.drawable.ic_fast_forward_black_medium)
-        content.setImageViewResource(R.id.notification_fast_rewind_button, R.drawable.ic_fast_rewind_black_medium)
-
-        setupPendingIntent(content, R.id.notification_fast_rewind_button, PLAY_PREVIOUS_ACTION)
-        setupPendingIntent(content, R.id.notification_play_pause_button, PLAY_OR_PAUSE_ACTION)
-        setupPendingIntent(content, R.id.notification_fast_forward_button, PLAY_NEXT_ACTION)
+    private fun NotificationCompat.Builder.addMediaAction(@DrawableRes drawableRes: Int, action: String): NotificationCompat.Builder {
+        return addAction(drawableRes, action, createPendingIntent(action))
     }
 
-    private fun setupPendingIntent(content: RemoteViews, @IdRes viewId: Int, action: String) {
+    private fun createPendingIntent(action: String): PendingIntent {
         val intent = Intent(this, MusicService::class.java).setAction(action)
-        val pendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-        content.setOnClickPendingIntent(viewId, pendingIntent)
+        return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
     //endregion
 
-    private fun startPlaying() {
-        when (audioManager.requestAudioFocus(audioFocusListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)) {
-            AudioManager.AUDIOFOCUS_REQUEST_GRANTED -> {
-                player.start()
-                tick()
-                state = State.STARTED
-            }
-            AudioManager.AUDIOFOCUS_REQUEST_FAILED -> {
-                toast(R.string.audio_focus_request_error)
-                presenter.onPlayPauseClicked()
-            }
-        }
-    }
-
     private fun tick() {
-        presenter.onSeek(player.currentPosition)
+        presenter.onSeek(player.currentPosition.toInt())
         handler.postDelayed({ tick() }, TICK_PERIOD)
     }
 
     private fun stopTicking() {
         handler.removeCallbacksAndMessages(null)
-    }
-
-    private val audioFocusListener = AudioManager.OnAudioFocusChangeListener {
-        when (it) {
-            AudioManager.AUDIOFOCUS_GAIN -> {
-                when (lastKnownAudioFocusState) {
-                    AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
-                        presenter.onPlayPauseClicked()
-                    }
-                    AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
-                        player.setVolume(1f, 1f)
-                    }
-                }
-            }
-            AudioManager.AUDIOFOCUS_LOSS -> {
-                presenter.onPlayPauseClicked()
-                stopSelf()
-            }
-            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
-                presenter.onPlayPauseClicked()
-            }
-            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
-                player.setVolume(0.2f, 0.2f)
-            }
-        }
-        lastKnownAudioFocusState = it
     }
 
     private val mediaSessionCallback = object : MediaSessionCompat.Callback() {
@@ -312,9 +237,7 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
 
     private val headsetPlugReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (!paused) {
-                presenter.onPlayPauseClicked()
-            }
+            presenter.onPauseClicked()
         }
     }
 
@@ -325,3 +248,14 @@ class MusicService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnEr
 
     }
 }
+
+
+private const val NOTIFICATION_ID = 42
+
+private const val PLAY_PREVIOUS_ACTION = "PLAY_PREVIOUS"
+private const val PLAY_OR_PAUSE_ACTION = "PLAY_OR_PAUSE"
+private const val PLAY_NEXT_ACTION = "PLAY_NEXT"
+
+private const val TICK_PERIOD = 100L
+private const val CHANNEL_ID = "music_controls"
+

@@ -32,7 +32,16 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            manifestPlaceholders["app_name"] = "@string/app_name"
         }
+        getByName("debug") {
+            applicationIdSuffix = ".debug"
+            manifestPlaceholders["app_name"] = "@string/app_name_debug"
+        }
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 }
 
@@ -62,6 +71,11 @@ dependencies {
     implementation("org.koin:koin-core:$koinVersion")
     implementation("org.koin:koin-android:$koinVersion")
     implementation("org.koin:koin-android-scope:$koinVersion")
+
+    val exoplayerVersion = "2.11.6"
+    implementation("com.google.android.exoplayer:exoplayer-core:$exoplayerVersion")
+    implementation("com.google.android.exoplayer:extension-mediasession:$exoplayerVersion")
+
 }
 
 androidExtensions {

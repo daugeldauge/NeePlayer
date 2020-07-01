@@ -12,6 +12,7 @@ import com.neeplayer.databinding.FragmentNowPlayingBinding
 import com.neeplayer.model.Song
 import com.neeplayer.ui.CoroFragment
 import com.neeplayer.ui.common.*
+import org.koin.android.ext.android.bind
 import org.koin.android.ext.android.inject
 
 class NowPlayingFragment : CoroFragment(R.layout.fragment_now_playing), NowPlayingView {
@@ -89,16 +90,9 @@ class NowPlayingFragment : CoroFragment(R.layout.fragment_now_playing), NowPlayi
         super.onDestroyView()
     }
 
-    override fun setSong(song: Song) = uiThread {
+    override fun render(song: Song, paused: Boolean) {
         binding.song = song
-    }
-
-    override fun play() = uiThread {
-        binding.paused = false
-    }
-
-    override fun pause() = uiThread {
-        binding.paused = true
+        binding.paused = paused
     }
 
     override fun seek(progress: Int) = uiThread {

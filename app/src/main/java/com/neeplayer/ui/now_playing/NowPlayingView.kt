@@ -4,11 +4,7 @@ import com.neeplayer.model.Song
 
 interface NowPlayingView {
 
-    fun setSong(song: Song)
-
-    fun play()
-
-    fun pause()
+    fun render(song: Song, paused: Boolean)
 
     fun seek(progress: Int)
 }

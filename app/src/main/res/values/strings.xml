@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Neé</string>
+    <string name="app_name_debug">Neé Debug</string>
 
     <string name="last_fm_auth_error">Authentication error. Please try again.</string>
     <string name="last_fm_auth_success">Authentication succeeded</string>

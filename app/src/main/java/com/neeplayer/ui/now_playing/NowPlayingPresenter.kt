@@ -8,26 +8,13 @@ import kotlinx.coroutines.launch
 
 class NowPlayingPresenter(private val service: NowPlayingService) {
 
-    private var lastSong: Song? = null
-
     private val progressPayload
         get() = hashCode()
 
     fun bind(scope: CoroutineScope, view: NowPlayingView) {
         scope.launch {
             service.nowPlayingFlow.collect {
-                val song = it.currentSong
-
-                if (song != lastSong) {
-                    lastSong = song
-                    view.setSong(song)
-                }
-
-                if (it.paused) {
-                    view.pause()
-                } else {
-                    view.play()
-                }
+                view.render(it.currentSong, it.paused)
             }
         }
 
@@ -50,6 +37,10 @@ class NowPlayingPresenter(private val service: NowPlayingService) {
 
     fun onPlayPauseClicked() {
         service.alter { current -> current?.togglePaused() }
+    }
+
+    fun onPauseClicked() {
+        service.alter { current -> current?.copy(paused = true) }
     }
 
     fun onSeek(progress: Int) {

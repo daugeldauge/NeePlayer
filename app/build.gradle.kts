@@ -71,11 +71,6 @@ dependencies {
     implementation("org.koin:koin-core:$koinVersion")
     implementation("org.koin:koin-android:$koinVersion")
     implementation("org.koin:koin-android-scope:$koinVersion")
-
-    val exoplayerVersion = "2.11.6"
-    implementation("com.google.android.exoplayer:exoplayer-core:$exoplayerVersion")
-    implementation("com.google.android.exoplayer:extension-mediasession:$exoplayerVersion")
-
 }
 
 androidExtensions {

@@ -1,5 +1,5 @@
 pluginManagement {
-    val kotlinVersion = "1.3.71"
+    val kotlinVersion = "1.4.0"
 
     repositories {
         jcenter()

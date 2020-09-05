@@ -1,33 +1,30 @@
 package com.neeplayer.compose
 
 import androidx.annotation.DrawableRes
-import androidx.compose.Composable
-import androidx.ui.core.Alignment
-import androidx.ui.core.Modifier
-import androidx.ui.core.WithConstraints
-import androidx.ui.core.drawShadow
-import androidx.ui.foundation.Icon
-import androidx.ui.foundation.Image
-import androidx.ui.foundation.Text
-import androidx.ui.graphics.Color
-import androidx.ui.graphics.painter.ColorPainter
-import androidx.ui.layout.*
-import androidx.ui.material.BottomDrawerLayout
-import androidx.ui.material.DrawerState
-import androidx.ui.material.IconButton
-import androidx.ui.material.MaterialTheme
-import androidx.ui.res.vectorResource
-import androidx.ui.text.style.TextOverflow
+import androidx.compose.foundation.Icon
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.WithConstraints
+import androidx.compose.ui.draw.drawShadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.ui.tooling.preview.Preview
-import androidx.ui.unit.dp
-import androidx.ui.unit.sp
 
 class NowPlayingState(val song: Song, val album: Album, val artist: Artist, val playing: Boolean, val progress: Long)
 
 
 @Composable
 fun NowPlayingScreen(state: NowPlayingState?) {
-    BottomDrawerLayout(drawerState = DrawerState.Opened, onStateChange = {}, drawerContent = { DrawerContent(state = state) }) {
+    BottomDrawerLayout(drawerState = rememberBottomDrawerState(initialValue = BottomDrawerValue.Open), drawerContent = { DrawerContent(state = state) }) {
         Image(painter = ColorPainter(Color.Cyan), modifier = Modifier.fillMaxSize())
     }
 }

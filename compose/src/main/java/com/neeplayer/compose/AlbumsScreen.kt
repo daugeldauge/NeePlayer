@@ -1,29 +1,29 @@
 package com.neeplayer.compose
 
-import androidx.compose.Composable
-import androidx.ui.core.Alignment
-import androidx.ui.core.Modifier
-import androidx.ui.foundation.Icon
-import androidx.ui.foundation.Text
-import androidx.ui.foundation.lazy.LazyColumnItems
-import androidx.ui.layout.*
-import androidx.ui.material.MaterialTheme
-import androidx.ui.res.vectorResource
-import androidx.ui.text.style.TextOverflow
+import androidx.compose.foundation.Icon
+import androidx.compose.foundation.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumnFor
+import androidx.compose.material.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
-import androidx.ui.unit.dp
 import java.util.concurrent.TimeUnit
 
 @Composable
 fun AlbumsScreen(albums: List<AlbumWithSongs>) {
     val compositions = albums.asSequence().flatMap { sequenceOf(it.album) + it.songs }.toList()
 
-    LazyColumnItems(items = compositions) { composition ->
+    LazyColumnFor(items = compositions, itemContent = { composition ->
         when (composition) {
             is Album -> AlbumSummaryView(album = composition)
             is Song -> SongView(song = composition)
         }
-    }
+    })
 }
 
 @Composable

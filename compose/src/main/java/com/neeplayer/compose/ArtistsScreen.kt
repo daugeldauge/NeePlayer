@@ -1,23 +1,23 @@
 package com.neeplayer.compose
 
-import androidx.compose.Composable
-import androidx.ui.core.Alignment
-import androidx.ui.core.Modifier
-import androidx.ui.foundation.Text
-import androidx.ui.foundation.lazy.LazyColumnItems
-import androidx.ui.layout.Column
-import androidx.ui.layout.Row
-import androidx.ui.layout.padding
-import androidx.ui.layout.size
-import androidx.ui.material.MaterialTheme
+import androidx.compose.foundation.Text
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumnFor
+import androidx.compose.material.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
-import androidx.ui.unit.dp
 
 @Composable
 fun ArtistsScreen(artists: List<Artist>) {
-    LazyColumnItems(items = artists) {
+    LazyColumnFor(items = artists, itemContent = {
         ArtistItem(artist = it)
-    }
+    })
 }
 
 @Composable

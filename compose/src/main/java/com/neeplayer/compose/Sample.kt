@@ -1,7 +1,7 @@
 package com.neeplayer.compose
 
 import androidx.activity.ComponentActivity
-import androidx.ui.core.setContent
+import androidx.compose.ui.platform.setContent
 
 object Sample {
     val artists = listOf(
@@ -28,7 +28,7 @@ object Sample {
 
 fun ComponentActivity.setSampleContent() {
     setContent {
-        PreviewNowPlayingScreen()
+        PreviewArtistsScreen()
     }
 }
 

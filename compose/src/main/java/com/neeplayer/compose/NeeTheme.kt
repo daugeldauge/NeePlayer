@@ -1,18 +1,14 @@
 package com.neeplayer.compose
 
-import androidx.compose.Composable
-import androidx.ui.core.Modifier
-import androidx.ui.foundation.Box
-import androidx.ui.graphics.Color
-import androidx.ui.layout.size
-import androidx.ui.material.MaterialTheme
-import androidx.ui.material.Surface
-import androidx.ui.material.Typography
-import androidx.ui.material.lightColorPalette
-import androidx.ui.text.TextStyle
-import androidx.ui.text.font.FontWeight
-import androidx.ui.unit.dp
-import androidx.ui.unit.sp
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.material.Typography
+import androidx.compose.material.lightColors
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 
 object NeeColors {
     val imageAlt = Color(0xffe0e0e0)
@@ -22,7 +18,7 @@ object NeeColors {
 
 @Composable
 fun NeeTheme(content: @Composable() () -> Unit) {
-    MaterialTheme(colors = lightColorPalette(), typography = typography()) {
+    MaterialTheme(colors = lightColors(), typography = typography()) {
         Surface {
             content()
         }

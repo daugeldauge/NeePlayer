@@ -15,16 +15,18 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-
     buildFeatures {
         compose = true
     }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+        useIR = true
+        freeCompilerArgs = listOf("-Xallow-jvm-ir-dependencies", "-Xskip-prerelease-check")
+    }
     composeOptions {
-        kotlinCompilerVersion = "1.3.70-dev-withExperimentalGoogleExtensions-20200424"
-        kotlinCompilerExtensionVersion = "0.1.0-dev14"
+        kotlinCompilerVersion = "1.4.0"
+        kotlinCompilerExtensionVersion = "1.0.0-alpha02"
     }
 }
 
@@ -32,10 +34,10 @@ dependencies {
     val kotlinVersion = org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION
     api("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
 
-    val composeVersion = "0.1.0-dev14"
+    val composeVersion = "1.0.0-alpha02"
+    api("androidx.compose.ui:ui:$composeVersion")
+    api("androidx.compose.material:material:$composeVersion")
     api("androidx.ui:ui-tooling:$composeVersion")
-    api("androidx.ui:ui-layout:$composeVersion")
-    api("androidx.ui:ui-material:$composeVersion")
 
     implementation("com.github.bumptech.glide:glide:4.11.0")
 }

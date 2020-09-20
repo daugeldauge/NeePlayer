@@ -26,7 +26,7 @@ android {
     }
     composeOptions {
         kotlinCompilerVersion = "1.4.0"
-        kotlinCompilerExtensionVersion = "1.0.0-alpha02"
+        kotlinCompilerExtensionVersion = "1.0.0-alpha03"
     }
 }
 
@@ -34,7 +34,7 @@ dependencies {
     val kotlinVersion = org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION
     api("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
 
-    val composeVersion = "1.0.0-alpha02"
+    val composeVersion = "1.0.0-alpha03"
     api("androidx.compose.ui:ui:$composeVersion")
     api("androidx.compose.material:material:$composeVersion")
     api("androidx.ui:ui-tooling:$composeVersion")

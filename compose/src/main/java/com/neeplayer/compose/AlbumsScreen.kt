@@ -30,7 +30,7 @@ fun AlbumsScreen(albums: List<AlbumWithSongs>) {
 fun SongView(song: Song) {
     Row(
         modifier = Modifier.padding(start = 20.dp, end = 25.dp, top = 10.dp, bottom = 10.dp).fillMaxWidth(),
-        verticalGravity = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Stack(modifier = Modifier.width(35.dp)) {
             if (song.nowPlaying) {
@@ -38,7 +38,7 @@ fun SongView(song: Song) {
             } else {
                 Text(
                     style = MaterialTheme.typography.body2,
-                    modifier = Modifier.width(30.dp).gravity(Alignment.CenterEnd),
+                    modifier = Modifier.width(30.dp).align(Alignment.CenterEnd),
                     text = song.formattedTrack
                 )
             }

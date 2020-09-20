@@ -68,7 +68,7 @@ private fun Body(state: NowPlayingState?) {
 
             Column(
                 modifier = Modifier.fillMaxWidth().padding(start = 8.dp, end = 8.dp),
-                horizontalGravity = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
                 Text(
@@ -90,7 +90,7 @@ private fun Body(state: NowPlayingState?) {
             Row(
                 modifier = Modifier.weight(1f),
                 horizontalArrangement = Arrangement.Center,
-                verticalGravity = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically
             ) {
 
                 MusicControl(R.drawable.ic_fast_rewind_black_48dp)

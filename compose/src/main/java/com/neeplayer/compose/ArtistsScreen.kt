@@ -1,10 +1,7 @@
 package com.neeplayer.compose
 
 import androidx.compose.foundation.Text
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumnFor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -23,7 +20,7 @@ fun ArtistsScreen(artists: List<Artist>) {
 @Composable
 fun ArtistItem(artist: Artist) {
     Row(
-        modifier = Modifier.padding(start = 10.dp, end = 10.dp, bottom = 5.dp, top = 5.dp),
+        modifier = Modifier.padding(start = 10.dp, end = 10.dp, bottom = 5.dp, top = 5.dp).fillMaxWidth(),
         verticalGravity = Alignment.CenterVertically
     ) {
         GlideImage(artist.imageUrl, modifier = Modifier.size(90.dp))

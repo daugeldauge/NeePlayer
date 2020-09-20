@@ -28,7 +28,10 @@ fun AlbumsScreen(albums: List<AlbumWithSongs>) {
 
 @Composable
 fun SongView(song: Song) {
-    Row(modifier = Modifier.padding(start = 20.dp, end = 25.dp, top = 10.dp, bottom = 10.dp), verticalGravity = Alignment.CenterVertically) {
+    Row(
+        modifier = Modifier.padding(start = 20.dp, end = 25.dp, top = 10.dp, bottom = 10.dp).fillMaxWidth(),
+        verticalGravity = Alignment.CenterVertically
+    ) {
         Stack(modifier = Modifier.width(35.dp)) {
             if (song.nowPlaying) {
                 Icon(vectorResource(id = R.drawable.ic_equalizer_black_24dp))

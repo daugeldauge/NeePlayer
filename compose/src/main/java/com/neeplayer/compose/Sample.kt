@@ -28,7 +28,7 @@ object Sample {
 
 fun ComponentActivity.setSampleContent() {
     setContent {
-        PreviewArtistsScreen()
+        PreviewAlbumsScreen()
     }
 }
 

@@ -1,5 +1,5 @@
 plugins {
-    id("com.android.library")
+    id("com.android.application")
     id("kotlin-android")
 }
 
@@ -11,6 +11,14 @@ android {
 
     defaultConfig {
         minSdkVersion(23)
+        targetSdkVersion(29)
+        applicationId = "com.neeplayer.compose"
+        versionCode = 1
+        versionName = "1.0"
+    }
+
+    packagingOptions {
+        exclude("META-INF/**.kotlin_module")
     }
 
     compileOptions {

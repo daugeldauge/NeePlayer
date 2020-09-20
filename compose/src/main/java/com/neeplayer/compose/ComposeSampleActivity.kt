@@ -1,12 +1,14 @@
-package com.neeplayer.compose.sample
+package com.neeplayer.compose
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import com.neeplayer.compose.setSampleContent
+import androidx.compose.ui.platform.setContent
 
 class ComposeSampleActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setSampleContent()
+        setContent {
+            PreviewArtistsScreen()
+        }
     }
 }

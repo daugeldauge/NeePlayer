@@ -1,8 +1,5 @@
 package com.neeplayer.compose
 
-import androidx.activity.ComponentActivity
-import androidx.compose.ui.platform.setContent
-
 object Sample {
     val artists = listOf(
         Artist(0, "David Bowie", 10, 2, "https://1.bp.blogspot.com/_jKzgD4pKhNk/TBlyvk3XIgI/AAAAAAAAB9U/5N0Y6UGFH4g/s400/bowieprep1.jpg"),
@@ -24,12 +21,6 @@ object Sample {
         Album(0, "Fragile", null, null, 2, 10_000_000),
         Album(0, "Wake of the Flood", 1970, null, 10, 312_000),
     ).map { AlbumWithSongs(it, songs) }.repeat(10)
-}
-
-fun ComponentActivity.setSampleContent() {
-    setContent {
-        PreviewArtistsScreen()
-    }
 }
 
 private fun <T> Iterable<T>.repeat(n: Int) = List(n) { this }.flatten()

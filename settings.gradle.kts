@@ -23,4 +23,3 @@ pluginManagement {
 
 include("app")
 include("compose")
-include("compose:compose-sample")

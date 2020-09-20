@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.unit.dp
+import com.neeplayer.compose.ComposeSampleActivity.Screen.*
 
 class ComposeSampleActivity : ComponentActivity() {
 
@@ -20,16 +21,16 @@ class ComposeSampleActivity : ComponentActivity() {
         Home, Artists, Albums, NowPlaying
     }
 
-    private val state = mutableStateOf(Screen.Home)
+    private val state = mutableStateOf(Home)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             when (state.value) {
-                Screen.Home -> HomeScreen()
-                Screen.Artists -> PreviewArtistsScreen()
-                Screen.Albums -> PreviewAlbumsScreen()
-                Screen.NowPlaying -> PreviewNowPlayingScreen()
+                Home -> HomeScreen()
+                Artists -> PreviewArtistsScreen()
+                Albums -> PreviewAlbumsScreen()
+                NowPlaying -> PreviewNowPlayingScreen()
             }
         }
     }
@@ -37,9 +38,9 @@ class ComposeSampleActivity : ComponentActivity() {
     @Composable
     private fun HomeScreen() = NeeTheme {
         Column(modifier = Modifier.fillMaxSize()) {
-            Screen.Artists.button()
-            Screen.Albums.button()
-            Screen.NowPlaying.button()
+            Artists.button()
+            Albums.button()
+            NowPlaying.button()
         }
     }
 
@@ -51,8 +52,8 @@ class ComposeSampleActivity : ComponentActivity() {
     }
 
     override fun onBackPressed() {
-        if (state.value != Screen.Home) {
-            state.value = Screen.Home
+        if (state.value != Home) {
+            state.value = Home
         } else {
             super.onBackPressed()
         }

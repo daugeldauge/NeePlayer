@@ -3,6 +3,9 @@ plugins {
     id("kotlin-android")
 }
 
+var compose: String by ext
+compose = "1.0.0-alpha03"
+
 android {
     compileSdkVersion(29)
 
@@ -25,8 +28,7 @@ android {
         freeCompilerArgs = listOf("-Xallow-jvm-ir-dependencies", "-Xskip-prerelease-check")
     }
     composeOptions {
-        kotlinCompilerVersion = "1.4.0"
-        kotlinCompilerExtensionVersion = "1.0.0-alpha03"
+        kotlinCompilerExtensionVersion = compose
     }
 }
 
@@ -34,10 +36,9 @@ dependencies {
     val kotlinVersion = org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION
     api("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
 
-    val composeVersion = "1.0.0-alpha03"
-    api("androidx.compose.ui:ui:$composeVersion")
-    api("androidx.compose.material:material:$composeVersion")
-    api("androidx.ui:ui-tooling:$composeVersion")
+    api("androidx.compose.ui:ui:$compose")
+    api("androidx.compose.material:material:$compose")
+    api("androidx.ui:ui-tooling:$compose")
 
     implementation("com.github.bumptech.glide:glide:4.11.0")
 }

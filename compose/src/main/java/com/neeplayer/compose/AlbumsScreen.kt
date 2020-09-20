@@ -8,10 +8,14 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
+import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
 import java.util.concurrent.TimeUnit
 
 @Composable
@@ -63,9 +67,11 @@ fun SongView(song: Song) {
 @Composable
 fun AlbumSummaryView(album: Album) {
     Row(modifier = Modifier.height(130.dp).padding(all = 15.dp)) {
-        GlideImage(
+        CoilImageWithCrossfade(
             modifier = Modifier.size(100.dp),
-            model = album.art
+            data = album.art.orEmpty(),
+            contentScale = ContentScale.Crop,
+            getFailurePainter = { ColorPainter(Color.LightGray) },
         )
 
         Column(modifier = Modifier.padding(10.dp)) {

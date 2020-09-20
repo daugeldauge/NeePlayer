@@ -40,5 +40,5 @@ dependencies {
     api("androidx.compose.material:material:$compose")
     api("androidx.ui:ui-tooling:$compose")
 
-    implementation("com.github.bumptech.glide:glide:4.11.0")
+    implementation("dev.chrisbanes.accompanist:accompanist-coil:0.2.2")
 }

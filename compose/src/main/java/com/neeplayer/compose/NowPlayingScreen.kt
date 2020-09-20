@@ -13,11 +13,13 @@ import androidx.compose.ui.WithConstraints
 import androidx.compose.ui.draw.drawShadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.ui.tooling.preview.Preview
+import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
 
 class NowPlayingState(val song: Song, val album: Album, val artist: Artist, val playing: Boolean, val progress: Long)
 
@@ -42,9 +44,11 @@ private fun Body(state: NowPlayingState?) {
     Column {
 
         WithConstraints(Modifier.fillMaxWidth()) {
-            GlideImage(
+            CoilImageWithCrossfade(
                 modifier = Modifier.size(maxWidth),
-                model = state?.album?.art
+                data = state?.album?.art.orEmpty(),
+                contentScale = ContentScale.Crop,
+                getFailurePainter = { ColorPainter(Color.LightGray) },
             )
         }
 

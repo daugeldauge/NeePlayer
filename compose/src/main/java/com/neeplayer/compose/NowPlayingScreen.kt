@@ -5,7 +5,6 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Box
 import androidx.compose.foundation.ContentGravity
 import androidx.compose.foundation.Icon
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,13 +13,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.Stack
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Slider
 import androidx.compose.material.ripple.RippleIndication
@@ -39,36 +36,32 @@ import androidx.compose.ui.unit.sp
 import androidx.ui.tooling.preview.Preview
 import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
 
-class NowPlayingState(val song: Song, val album: Album, val artist: Artist, val playing: Boolean, val progress: Long)
-
 @Composable
-fun NowPlayingScreen(state: NowPlayingState?) {
-    val drawerState = rememberBottomDrawerState(initialValue = BottomDrawerValue.Expanded)
+fun NowPlayingScreen(state: NowPlayingState?, container: AppStateContainer) {
+    val drawerState = rememberBottomDrawerState(initialValue = BottomDrawerValue.Closed)
 
     BottomDrawerLayout(
         drawerState = drawerState,
-        drawerContent = { DrawerContent(state = state, drawerValue = drawerState.targetValue) },
-        closedAnchorOffset = headerHeight
-    ) {
-        Image(painter = ColorPainter(Color.Cyan), modifier = Modifier.fillMaxSize())
-    }
+        drawerContent = { DrawerContent(state = state, drawerValue = drawerState.targetValue, container = container) },
+        closedAnchorOffset = headerHeight,
+    ) {}
 }
 
 @Composable
-private fun DrawerContent(state: NowPlayingState?, drawerValue: BottomDrawerValue) {
+private fun DrawerContent(state: NowPlayingState?, drawerValue: BottomDrawerValue, container: AppStateContainer) {
     Stack {
-        Body(state = state)
+        Body(state = state, container = container)
 
         Crossfade(current = drawerValue) { value ->
             if (value == BottomDrawerValue.Closed) {
-                Header(state = state)
+                Header(state = state, onPlayPauseClick = { container.playOrPause() })
             }
         }
     }
 }
 
 @Composable
-private fun Body(state: NowPlayingState?) {
+private fun Body(state: NowPlayingState?, container: AppStateContainer) {
     Column {
 
         WithConstraints(Modifier.fillMaxWidth()) {
@@ -83,8 +76,8 @@ private fun Body(state: NowPlayingState?) {
         Spacer(modifier = Modifier.weight(1f))
 
         Column(
-            modifier = Modifier.padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
             Text(
@@ -108,18 +101,20 @@ private fun Body(state: NowPlayingState?) {
             horizontalArrangement = Arrangement.Center
         ) {
 
-            MusicControl(R.drawable.ic_fast_rewind_black_48dp)
+            MusicControl(R.drawable.ic_fast_rewind_black_48dp) { container.playPrevious() }
 
-            MusicControl(state.playPauseResourse())
+            MusicControl(state.playPauseResourse()) { container.playOrPause() }
 
-            MusicControl(R.drawable.ic_fast_forward_black_48dp)
+            MusicControl(R.drawable.ic_fast_forward_black_48dp) { container.playNext()}
         }
 
         Stack(modifier = Modifier.padding(8.dp)) {
 
-            val progress = if (state != null) state.progress.toFloat() / state.song.duration else 0f
-
-            Slider(value = progress, onValueChange = {})
+            Slider(
+                value = state?.progress?.toFloat() ?: 0f,
+                valueRange = 0f..(state?.song?.duration?.toFloat() ?: 1f),
+                onValueChange = { value -> container.seekTo(value.toLong()) }
+            )
 
             Row(modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp).align(Alignment.BottomCenter)) {
 
@@ -162,14 +157,14 @@ private fun Header(state: NowPlayingState?, onPlayPauseClick: () -> Unit = {}) {
         Column(modifier = Modifier.weight(1f).padding(start = 12.dp, end = 12.dp)) {
 
             Text(
-                text = state?.artist?.name.orEmpty(),
+                text = state?.song?.title.orEmpty(),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.body1
             )
 
             Text(
-                text = state?.song?.title.orEmpty(),
+                text = state?.artist?.name.orEmpty(),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.body2
@@ -177,7 +172,7 @@ private fun Header(state: NowPlayingState?, onPlayPauseClick: () -> Unit = {}) {
 
         }
 
-        MusicControl(iconResource = state.playPauseResourse(), width = 48.dp)
+        MusicControl(iconResource = state.playPauseResourse(), width = 48.dp, onClick = onPlayPauseClick)
     }
 
 }
@@ -203,11 +198,14 @@ private val headerHeight = 72.dp
 @Composable
 fun PreviewNowPlayingScreen() = NeeTheme {
     NowPlayingScreen(NowPlayingState(
-        song = Sample.songs.first(),
-        album = Sample.albums.first().album,
-        artist = Sample.artists.first(),
+        playlist = listOf(PlaylistItem(
+            song = Sample.songs.first(),
+            album = Sample.albums.first().album,
+            artist = Sample.artists.first(),
+        )),
+        position = 0,
         playing = true,
-        progress = 132_000
-    ))
+        progress = 132_000,
+    ), AppStateContainer())
 }
 

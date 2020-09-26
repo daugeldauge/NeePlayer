@@ -2,6 +2,7 @@ package com.neeplayer.compose
 
 import androidx.compose.foundation.Icon
 import androidx.compose.foundation.Text
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumnFor
 import androidx.compose.material.MaterialTheme
@@ -19,25 +20,29 @@ import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
 import java.util.concurrent.TimeUnit
 
 @Composable
-fun AlbumsScreen(albums: List<AlbumWithSongs>) {
+fun AlbumsScreen(artist: Artist, albums: List<AlbumWithSongs>, nowPlayingSongId: Long?, container: AppStateContainer) {
     val compositions = albums.asSequence().flatMap { sequenceOf(it.album) + it.songs }.toList()
 
     LazyColumnFor(items = compositions, itemContent = { composition ->
         when (composition) {
             is Album -> AlbumSummaryView(album = composition)
-            is Song -> SongView(song = composition)
+            is Song -> SongView(song = composition, playing = composition.id == nowPlayingSongId, onClick = {
+                container.playSong(song = composition, artist = artist, albums = albums)
+            })
         }
     })
 }
 
 @Composable
-fun SongView(song: Song) {
+fun SongView(song: Song, playing: Boolean, onClick: () -> Unit) {
     Row(
-        modifier = Modifier.padding(start = 20.dp, end = 25.dp, top = 10.dp, bottom = 10.dp).fillMaxWidth(),
+        modifier = Modifier.clickable(onClick = onClick)
+            .padding(start = 20.dp, end = 25.dp, top = 10.dp, bottom = 10.dp)
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Stack(modifier = Modifier.width(35.dp)) {
-            if (song.nowPlaying) {
+        Stack(modifier = Modifier.width(35.dp).height(24.dp)) {
+            if (playing) {
                 Icon(vectorResource(id = R.drawable.ic_equalizer_black_24dp))
             } else {
                 Text(
@@ -109,6 +114,11 @@ private val Album.formattedYear: String
 @Preview
 @Composable
 fun PreviewAlbumsScreen() = NeeTheme {
-    AlbumsScreen(albums = Sample.albums)
+    AlbumsScreen(
+        artist = Sample.artists.first(),
+        albums = Sample.albums,
+        nowPlayingSongId = 3,
+        container = AppStateContainer()
+    )
 }
 

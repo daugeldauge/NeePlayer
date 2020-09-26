@@ -1,6 +1,7 @@
 package com.neeplayer.compose
 
 import androidx.compose.foundation.Text
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumnFor
 import androidx.compose.material.MaterialTheme
@@ -15,16 +16,19 @@ import androidx.ui.tooling.preview.Preview
 import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
 
 @Composable
-fun ArtistsScreen(artists: List<Artist>) {
+fun ArtistsScreen(artists: List<Artist>, container: AppStateContainer) {
     LazyColumnFor(items = artists, itemContent = {
-        ArtistItem(artist = it)
+        ArtistItem(artist = it, container = container)
     })
 }
 
 @Composable
-fun ArtistItem(artist: Artist) {
+fun ArtistItem(artist: Artist, container: AppStateContainer) {
     Row(
-        modifier = Modifier.padding(start = 10.dp, end = 10.dp, bottom = 5.dp, top = 5.dp).fillMaxWidth(),
+        modifier = Modifier
+            .clickable(onClick = { container.goToAlbums(artist) })
+            .padding(start = 10.dp, end = 10.dp, bottom = 5.dp, top = 5.dp)
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         CoilImageWithCrossfade(
@@ -43,6 +47,6 @@ fun ArtistItem(artist: Artist) {
 @Preview
 @Composable
 fun PreviewArtistsScreen() = NeeTheme {
-    ArtistsScreen(artists = Sample.artists)
+    ArtistsScreen(artists = Sample.artists, AppStateContainer())
 }
 

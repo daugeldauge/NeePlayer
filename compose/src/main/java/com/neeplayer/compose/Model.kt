@@ -23,8 +23,7 @@ data class Song(
     val id: Long,
     val title: String?,
     val duration: Long,
-    val track: Int?,
-    val nowPlaying: Boolean
+    val track: Int?
 ) : Composition()
 
 data class AlbumWithSongs(

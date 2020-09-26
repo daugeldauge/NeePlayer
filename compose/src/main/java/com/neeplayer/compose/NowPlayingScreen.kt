@@ -1,10 +1,7 @@
 package com.neeplayer.compose
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Icon
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.Text
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -42,7 +39,7 @@ private fun DrawerContent(state: NowPlayingState?) {
 
 @Composable
 private fun Body(state: NowPlayingState?) {
-    Column {
+    Column(modifier = Modifier.background(MaterialTheme.colors.background)) {
 
         WithConstraints(Modifier.fillMaxWidth()) {
             CoilImageWithCrossfade(
@@ -53,58 +50,66 @@ private fun Body(state: NowPlayingState?) {
             )
         }
 
-        Row(modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp)) {
+
+        Stack(modifier = Modifier.padding(8.dp)) {
+
+            val progress = if (state != null) state.progress.toFloat() / state.song.duration else 0f
+
+            Slider(value = progress, onValueChange = {})
+
+            Row(modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp).align(Alignment.BottomCenter)) {
+
+                Text(
+                    style = MaterialTheme.typography.body2,
+                    text = state?.progress.formatDuration()
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Text(
+                    style = MaterialTheme.typography.body2,
+                    text = state?.song?.duration.formatDuration()
+                )
+
+            }
+        }
+
+
+        Column(
+            modifier = Modifier.weight(1f)
+                .padding(start = 16.dp, end = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Bottom
+        ) {
 
             Text(
-                style = MaterialTheme.typography.body2,
-                text = state?.progress.formatDuration()
+                style = MaterialTheme.typography.body1.copy(fontSize = 22.sp),
+                text = state?.song?.title.orEmpty(),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
 
-            Spacer(modifier = Modifier.weight(1f))
-
             Text(
-                style = MaterialTheme.typography.body2,
-                text = state?.song?.duration.formatDuration()
+                style = MaterialTheme.typography.body2.copy(fontSize = 18.sp),
+                text = "${state?.artist?.name} — ${state?.album?.title}",
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
 
         }
 
-        Column(modifier = Modifier.fillMaxSize()) {
+        Row(
+            modifier = Modifier.weight(1f)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.Top
+        ) {
 
-            Column(
-                modifier = Modifier.fillMaxWidth().padding(start = 8.dp, end = 8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+            MusicControl(R.drawable.ic_fast_rewind_black_48dp)
 
-                Text(
-                    style = MaterialTheme.typography.body1.copy(fontSize = 22.sp),
-                    text = state?.song?.title.orEmpty(),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+            MusicControl(state.playPauseResourse())
 
-                Text(
-                    style = MaterialTheme.typography.body2.copy(fontSize = 18.sp),
-                    text = "${state?.artist?.name} — ${state?.album?.title}",
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-
-            }
-
-            Row(
-                modifier = Modifier.weight(1f),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                MusicControl(R.drawable.ic_fast_rewind_black_48dp)
-
-                MusicControl(state.playPauseResourse())
-
-                MusicControl(R.drawable.ic_fast_forward_black_48dp)
-            }
-
+            MusicControl(R.drawable.ic_fast_forward_black_48dp)
         }
 
     }
@@ -112,8 +117,8 @@ private fun Body(state: NowPlayingState?) {
 
 @Composable
 private fun MusicControl(@DrawableRes iconResource: Int, onClick: () -> Unit = {}) {
-    IconButton(onClick = onClick) {
-        Icon(modifier = Modifier.width(88.dp), asset = vectorResource(id = iconResource))
+    IconButton(modifier = Modifier.width(88.dp), onClick = onClick) {
+        Icon(asset = vectorResource(id = iconResource))
     }
 }
 

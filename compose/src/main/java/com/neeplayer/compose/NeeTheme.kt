@@ -11,14 +11,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
 object NeeColors {
-    val imageAlt = Color(0xffe0e0e0)
+    val primary = Color(0xff009688)
+    val primaryVariant = Color(0xff00796b)
     val black87 = Color(0xff212121)
     val black54 = Color(0xff757575)
 }
 
 @Composable
 fun NeeTheme(content: @Composable() () -> Unit) {
-    MaterialTheme(colors = lightColors(), typography = typography()) {
+    val colors = lightColors().copy(
+        primary = NeeColors.primary,
+        primaryVariant = NeeColors.primaryVariant,
+        background = Color.White,
+    )
+    MaterialTheme(colors = colors, typography = typography()) {
         Surface {
             content()
         }

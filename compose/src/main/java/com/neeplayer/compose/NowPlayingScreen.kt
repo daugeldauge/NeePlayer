@@ -36,7 +36,6 @@ import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
 
 class NowPlayingState(val song: Song, val album: Album, val artist: Artist, val playing: Boolean, val progress: Long)
 
-
 @Composable
 fun NowPlayingScreen(state: NowPlayingState?) {
     val drawerState = rememberBottomDrawerState(initialValue = BottomDrawerValue.Expanded)
@@ -44,8 +43,7 @@ fun NowPlayingScreen(state: NowPlayingState?) {
     BottomDrawerLayout(
         drawerState = drawerState,
         drawerContent = { DrawerContent(state = state, drawerValue = drawerState.targetValue) },
-        drawerBackgroundColor = Color.Transparent,
-        drawerShape = MaterialTheme.shapes.medium
+        closedAnchorOffset = headerHeight
     ) {
         Image(painter = ColorPainter(Color.Cyan), modifier = Modifier.fillMaxSize())
     }
@@ -66,7 +64,7 @@ private fun DrawerContent(state: NowPlayingState?, drawerValue: BottomDrawerValu
 
 @Composable
 private fun Body(state: NowPlayingState?) {
-    Column(modifier = Modifier.background(MaterialTheme.colors.background)) {
+    Column {
 
         WithConstraints(Modifier.fillMaxWidth()) {
             CoilImageWithCrossfade(
@@ -76,6 +74,8 @@ private fun Body(state: NowPlayingState?) {
                 getFailurePainter = { ColorPainter(Color.LightGray) },
             )
         }
+
+        Spacer(modifier = Modifier.weight(1f))
 
         Column(
             modifier = Modifier.padding(16.dp),
@@ -133,6 +133,8 @@ private fun Body(state: NowPlayingState?) {
             }
         }
 
+        Spacer(modifier = Modifier.weight(1f))
+
     }
 }
 
@@ -146,7 +148,7 @@ private fun MusicControl(@DrawableRes iconResource: Int, onClick: () -> Unit = {
 @Composable
 private fun Header(state: NowPlayingState?, onPlayPauseClick: () -> Unit = {}) {
     Row(
-        modifier = Modifier.height(72.dp)
+        modifier = Modifier.height(headerHeight)
             .background(MaterialTheme.colors.background)
             .padding(4.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -186,6 +188,8 @@ private fun Header(state: NowPlayingState?, onPlayPauseClick: () -> Unit = {}) {
 }
 
 private fun NowPlayingState?.playPauseResourse() = if (this?.playing != true) R.drawable.ic_play_arrow_black_48dp else R.drawable.ic_pause_black_48dp
+
+private val headerHeight = 72.dp
 
 @Preview
 @Composable

@@ -171,8 +171,8 @@ fun BottomDrawerLayout(
     drawerElevation: Dp = DrawerConstants.DefaultElevation,
     drawerBackgroundColor: Color = MaterialTheme.colors.surface,
     drawerContentColor: Color = contentColorFor(drawerBackgroundColor),
-    scrimColor: Color = MaterialTheme.colors.onSurface
-        .copy(alpha = DrawerConstants.ScrimDefaultOpacity),
+    scrimColor: Color = MaterialTheme.colors.onSurface.copy(alpha = DrawerConstants.ScrimDefaultOpacity),
+    closedAnchorOffset: Dp = 0.dp,
     bodyContent: @Composable () -> Unit
 ) {
     WithConstraints(modifier.fillMaxSize()) {
@@ -182,22 +182,13 @@ fun BottomDrawerLayout(
         }
 
         val minValue = 0f
-        val maxValue = constraints.maxHeight.toFloat()
+        val maxValue = constraints.maxHeight.toFloat() - DensityAmbient.current.run {closedAnchorOffset.toPx() }
 
         val anchors = mapOf(
             maxValue to BottomDrawerValue.Closed,
             minValue to BottomDrawerValue.Expanded
         )
-        Stack(
-            Modifier.swipeable(
-                state = drawerState,
-                anchors = anchors,
-                thresholds = { _, _ -> FixedThreshold(BottomDrawerThreshold) },
-                orientation = Orientation.Vertical,
-                enabled = gesturesEnabled,
-                resistance = null
-            )
-        ) {
+        Stack {
             Stack {
                 bodyContent()
             }
@@ -218,7 +209,16 @@ fun BottomDrawerLayout(
                         maxWidth = constraints.maxWidth.toDp(),
                         maxHeight = constraints.maxHeight.toDp()
                     )
-                }.offsetPx(y = drawerState.offset).offset(y = -72.dp),
+                }
+                    .offsetPx(y = drawerState.offset)
+                    .swipeable(
+                        state = drawerState,
+                        anchors = anchors,
+                        thresholds = { _, _ -> FixedThreshold(BottomDrawerThreshold) },
+                        orientation = Orientation.Vertical,
+                        enabled = gesturesEnabled,
+                        resistance = null
+                    ),
                 shape = drawerShape,
                 color = drawerBackgroundColor,
                 contentColor = drawerContentColor,

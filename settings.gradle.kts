@@ -9,7 +9,7 @@ pluginManagement {
     resolutionStrategy {
         eachPlugin {
             when (requested.id.id) {
-                "com.android.application", "com.android.library" -> "com.android.tools.build:gradle:4.2.0-alpha11"
+                "com.android.application", "com.android.library" -> "com.android.tools.build:gradle:4.2.0-alpha12"
                 "kotlin-android",
                 "kotlin-kapt",
                 "kotlin-android-extensions" -> "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"

@@ -1,14 +1,29 @@
 package com.neeplayer.compose
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.Icon
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.Text
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Stack
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Slider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.WithConstraints
-import androidx.compose.ui.draw.drawShadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
@@ -24,16 +39,28 @@ class NowPlayingState(val song: Song, val album: Album, val artist: Artist, val 
 
 @Composable
 fun NowPlayingScreen(state: NowPlayingState?) {
-    BottomDrawerLayout(drawerState = rememberBottomDrawerState(initialValue = BottomDrawerValue.Open), drawerContent = { DrawerContent(state = state) }) {
+    val drawerState = rememberBottomDrawerState(initialValue = BottomDrawerValue.Expanded)
+
+    BottomDrawerLayout(
+        drawerState = drawerState,
+        drawerContent = { DrawerContent(state = state, drawerValue = drawerState.targetValue) },
+        drawerBackgroundColor = Color.Transparent,
+        drawerShape = MaterialTheme.shapes.medium
+    ) {
         Image(painter = ColorPainter(Color.Cyan), modifier = Modifier.fillMaxSize())
     }
 }
 
 @Composable
-private fun DrawerContent(state: NowPlayingState?) {
-    Stack(modifier = Modifier.drawShadow(elevation = 12.dp)) {
+private fun DrawerContent(state: NowPlayingState?, drawerValue: BottomDrawerValue) {
+    Stack {
         Body(state = state)
-        Header(state = state)
+
+        Crossfade(current = drawerValue) { value ->
+            if (value == BottomDrawerValue.Closed) {
+                Header(state = state)
+            }
+        }
     }
 }
 
@@ -50,6 +77,38 @@ private fun Body(state: NowPlayingState?) {
             )
         }
 
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+
+            Text(
+                style = MaterialTheme.typography.body1.copy(fontSize = 22.sp),
+                text = state?.song?.title.orEmpty(),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            Text(
+                style = MaterialTheme.typography.body2.copy(fontSize = 18.sp),
+                text = "${state?.artist?.name} — ${state?.album?.title}",
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+
+            MusicControl(R.drawable.ic_fast_rewind_black_48dp)
+
+            MusicControl(state.playPauseResourse())
+
+            MusicControl(R.drawable.ic_fast_forward_black_48dp)
+        }
 
         Stack(modifier = Modifier.padding(8.dp)) {
 
@@ -72,44 +131,6 @@ private fun Body(state: NowPlayingState?) {
                 )
 
             }
-        }
-
-
-        Column(
-            modifier = Modifier.weight(1f)
-                .padding(start = 16.dp, end = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Bottom
-        ) {
-
-            Text(
-                style = MaterialTheme.typography.body1.copy(fontSize = 22.sp),
-                text = state?.song?.title.orEmpty(),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-
-            Text(
-                style = MaterialTheme.typography.body2.copy(fontSize = 18.sp),
-                text = "${state?.artist?.name} — ${state?.album?.title}",
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-
-        }
-
-        Row(
-            modifier = Modifier.weight(1f)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.Top
-        ) {
-
-            MusicControl(R.drawable.ic_fast_rewind_black_48dp)
-
-            MusicControl(state.playPauseResourse())
-
-            MusicControl(R.drawable.ic_fast_forward_black_48dp)
         }
 
     }
@@ -161,6 +182,7 @@ private fun Header(state: NowPlayingState?, onPlayPauseClick: () -> Unit = {}) {
         }
 
     }
+
 }
 
 private fun NowPlayingState?.playPauseResourse() = if (this?.playing != true) R.drawable.ic_play_arrow_black_48dp else R.drawable.ic_pause_black_48dp

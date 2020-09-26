@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Icon
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.Text
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -99,7 +100,7 @@ private fun Body(state: NowPlayingState?) {
 
                 MusicControl(R.drawable.ic_fast_rewind_black_48dp)
 
-                MusicControl(if (state?.playing != true) R.drawable.ic_play_arrow_black_48dp else R.drawable.ic_pause_black_48dp)
+                MusicControl(state.playPauseResourse())
 
                 MusicControl(R.drawable.ic_fast_forward_black_48dp)
             }
@@ -117,9 +118,47 @@ private fun MusicControl(@DrawableRes iconResource: Int, onClick: () -> Unit = {
 }
 
 @Composable
-private fun Header(state: NowPlayingState?) {
+private fun Header(state: NowPlayingState?, onPlayPauseClick: () -> Unit = {}) {
+    Row(
+        modifier = Modifier.height(72.dp)
+            .background(MaterialTheme.colors.background)
+            .padding(4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
 
+        CoilImageWithCrossfade(
+            modifier = Modifier.size(64.dp),
+            data = state?.album?.art.orEmpty(),
+            contentScale = ContentScale.Crop,
+            getFailurePainter = { ColorPainter(Color.LightGray) },
+        )
+
+        Column(modifier = Modifier.weight(1f).padding(start = 12.dp, end = 12.dp)) {
+
+            Text(
+                text = state?.artist?.name.orEmpty(),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.body1
+            )
+
+            Text(
+                text = state?.song?.title.orEmpty(),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.body2
+            )
+
+        }
+
+        IconButton(onClick = onPlayPauseClick) {
+            Icon(asset = vectorResource(state.playPauseResourse()))
+        }
+
+    }
 }
+
+private fun NowPlayingState?.playPauseResourse() = if (this?.playing != true) R.drawable.ic_play_arrow_black_48dp else R.drawable.ic_pause_black_48dp
 
 @Preview
 @Composable

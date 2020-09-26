@@ -2,10 +2,13 @@ package com.neeplayer.compose
 
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.Box
+import androidx.compose.foundation.ContentGravity
 import androidx.compose.foundation.Icon
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,6 +23,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Slider
+import androidx.compose.material.ripple.RippleIndication
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,6 +33,7 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.ui.tooling.preview.Preview
@@ -139,13 +144,6 @@ private fun Body(state: NowPlayingState?) {
 }
 
 @Composable
-private fun MusicControl(@DrawableRes iconResource: Int, onClick: () -> Unit = {}) {
-    IconButton(modifier = Modifier.width(88.dp), onClick = onClick) {
-        Icon(asset = vectorResource(id = iconResource))
-    }
-}
-
-@Composable
 private fun Header(state: NowPlayingState?, onPlayPauseClick: () -> Unit = {}) {
     Row(
         modifier = Modifier.height(headerHeight)
@@ -179,12 +177,22 @@ private fun Header(state: NowPlayingState?, onPlayPauseClick: () -> Unit = {}) {
 
         }
 
-        IconButton(onClick = onPlayPauseClick) {
-            Icon(asset = vectorResource(state.playPauseResourse()))
-        }
-
+        MusicControl(iconResource = state.playPauseResourse(), width = 48.dp)
     }
 
+}
+
+@Composable
+private fun MusicControl(@DrawableRes iconResource: Int, width: Dp = 88.dp, onClick: () -> Unit = {}) {
+    Box(modifier = Modifier
+        .width(width)
+        .clickable(
+            onClick = onClick,
+            indication = RippleIndication(bounded = false, radius = 56.dp)),
+        gravity = ContentGravity.Center
+    ) {
+        Icon(asset = vectorResource(id = iconResource))
+    }
 }
 
 private fun NowPlayingState?.playPauseResourse() = if (this?.playing != true) R.drawable.ic_play_arrow_black_48dp else R.drawable.ic_pause_black_48dp

@@ -35,7 +35,7 @@ fun BottomSheetBehavior<out View>.setCallback(
         onSlide: ((offset: Float) -> Unit)? = null,
         onStateChanged: ((state: Int) -> Unit)? = null
 ) {
-    this.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+    this.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
         override fun onSlide(bottomSheet: View, slideOffset: Float) {
             if (onSlide == null || slideOffset == 0f) {
                 return

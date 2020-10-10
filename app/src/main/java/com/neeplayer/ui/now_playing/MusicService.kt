@@ -11,6 +11,7 @@ import android.media.AudioManager
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.provider.MediaStore
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
@@ -28,7 +29,7 @@ import org.koin.android.ext.android.inject
 
 class MusicService : Service(), NowPlayingView {
 
-    private val handler = Handler()
+    private val handler = Handler(Looper.getMainLooper())
     private val mainScope = MainScope()
     private val presenter by inject<NowPlayingPresenter>()
     private val mediaSession by lazy { MediaSessionCompat(this, BuildConfig.APPLICATION_ID, ComponentName(this, MediaButtonEventsReceiver::class.java), null) }
@@ -117,7 +118,7 @@ class MusicService : Service(), NowPlayingView {
     }
 
     private fun updateInfo(song: Song, paused: Boolean) {
-        val albumArt = BitmapFactory.decodeFile(song.album.art)
+        val albumArt = song.album.art?.let(BitmapFactory::decodeFile)
 
         mediaSession.setMetadata(
             MediaMetadataCompat.Builder()
@@ -139,7 +140,7 @@ class MusicService : Service(), NowPlayingView {
     }
 
     //region Notifications
-    private fun updateNotification(song: Song, paused: Boolean, albumArt: Bitmap) {
+    private fun updateNotification(song: Song, paused: Boolean, albumArt: Bitmap?) {
 
         val intent = Intent(this, MainActivity::class.java)
             .setAction(MainActivity.OPEN_NOW_PLAYING_ACTION)

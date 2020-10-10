@@ -7,7 +7,7 @@ var compose: String by ext
 compose = "1.0.0-alpha04"
 
 android {
-    compileSdkVersion(29)
+    compileSdkVersion(30)
 
     defaultConfig {
         minSdkVersion(23)
@@ -45,9 +45,6 @@ android {
 }
 
 dependencies {
-    val kotlinVersion = org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION
-    api("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-
     api("androidx.compose.ui:ui:$compose")
     api("androidx.compose.material:material:$compose")
     api("androidx.ui:ui-tooling:$compose")

@@ -10,11 +10,11 @@ plugins {
 }
 
 android {
-    compileSdkVersion(29)
+    compileSdkVersion(30)
 
     defaultConfig {
         minSdkVersion(23)
-        targetSdkVersion(28)
+        targetSdkVersion(29)
         applicationId = "com.neeplayer"
         versionCode = 2
         versionName = "1.0.1"
@@ -46,12 +46,9 @@ android {
 }
 
 dependencies {
-    val kotlinVersion = org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-
-    implementation("androidx.media:media:1.1.0")
+    implementation("androidx.media:media:1.2.0")
     implementation("androidx.recyclerview:recyclerview:1.1.0")
-    implementation("com.google.android.material:material:1.1.0")
+    implementation("com.google.android.material:material:1.2.1")
 
     implementation("com.github.bumptech.glide:glide:4.11.0")
 
@@ -59,13 +56,13 @@ dependencies {
 
     implementation("com.jakewharton.timber:timber:4.7.1")
 
-    val ktorVersion = "1.3.2"
+    val ktorVersion = "1.4.1"
     implementation("io.ktor:ktor-client-android:$ktorVersion")
     implementation("io.ktor:ktor-client-logging-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-serialization-jvm:$ktorVersion")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.20.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.7")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
 
     val koinVersion = "2.1.6"
     implementation("org.koin:koin-core:$koinVersion")

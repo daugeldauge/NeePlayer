@@ -1,6 +1,5 @@
 package com.neeplayer.model
 
-import android.provider.BaseColumns
 import android.provider.MediaStore.Audio.Artists
 import android.provider.MediaStore.Audio.Artists.Albums
 import android.provider.MediaStore.Audio.Media
@@ -42,7 +41,7 @@ class Database(private val storIOContentResolver: StorIOContentResolver, private
                 .listOfObjects(Song::class.java)
                 .withQuery(Query.builder()
                         .uri(Media.EXTERNAL_CONTENT_URI)
-                        .columns(Media._ID, Media.TITLE,  Media.DURATION, Media.TRACK)
+                        .columns(Media._ID, Media.TITLE, Media.DURATION, Media.TRACK)
                         .where(Media.ALBUM_ID + "=?")
                         .whereArgs(album.id)
                         .sortOrder(Media.TRACK)

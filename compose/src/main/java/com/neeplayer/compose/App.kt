@@ -2,8 +2,8 @@ package com.neeplayer.compose
 
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.contentColor
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Stack
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
@@ -20,9 +20,9 @@ fun App(container: AppStateContainer) {
             TopAppBar(title = { Text(text = "Neé", color = contentColor()) })
 
 
-            Stack {
+            Box {
 
-                Stack(modifier = Modifier.padding(bottom = 72.dp)) {
+                Box(modifier = Modifier.padding(bottom = 72.dp)) {
                     when (val screen = state.currentScreen) {
                         is Screen.Artists -> ArtistsScreen(artists = state.artists, container = container)
                         is Screen.Albums -> AlbumsScreen(

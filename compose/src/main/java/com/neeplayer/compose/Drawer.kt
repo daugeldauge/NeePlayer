@@ -188,8 +188,8 @@ fun BottomDrawerLayout(
             maxValue to BottomDrawerValue.Closed,
             minValue to BottomDrawerValue.Expanded
         )
-        Stack {
-            Stack {
+        Box {
+            Box {
                 bodyContent()
             }
             Scrim(

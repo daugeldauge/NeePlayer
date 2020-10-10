@@ -2,17 +2,15 @@ package com.neeplayer.compose
 
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.Box
-import androidx.compose.foundation.ContentGravity
 import androidx.compose.foundation.Icon
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.Stack
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -49,7 +47,7 @@ fun NowPlayingScreen(state: NowPlayingState?, container: AppStateContainer) {
 
 @Composable
 private fun DrawerContent(state: NowPlayingState?, drawerValue: BottomDrawerValue, container: AppStateContainer) {
-    Stack {
+    Box {
         Body(state = state, container = container)
 
         Crossfade(current = drawerValue) { value ->
@@ -108,7 +106,7 @@ private fun Body(state: NowPlayingState?, container: AppStateContainer) {
             MusicControl(R.drawable.ic_fast_forward_black_48dp) { container.playNext()}
         }
 
-        Stack(modifier = Modifier.padding(8.dp)) {
+        Box(modifier = Modifier.padding(8.dp)) {
 
             Slider(
                 value = state?.progress?.toFloat() ?: 0f,
@@ -184,7 +182,7 @@ private fun MusicControl(@DrawableRes iconResource: Int, width: Dp = 88.dp, onCl
         .clickable(
             onClick = onClick,
             indication = RippleIndication(bounded = false, radius = 56.dp)),
-        gravity = ContentGravity.Center
+        alignment = Alignment.Center
     ) {
         Icon(asset = vectorResource(id = iconResource))
     }

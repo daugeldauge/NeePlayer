@@ -1,5 +1,5 @@
 pluginManagement {
-    val kotlinVersion = "1.4.0"
+    val kotlinVersion = "1.4.10"
 
     repositories {
         jcenter()
@@ -9,7 +9,7 @@ pluginManagement {
     resolutionStrategy {
         eachPlugin {
             when (requested.id.id) {
-                "com.android.application", "com.android.library" -> "com.android.tools.build:gradle:4.2.0-alpha12"
+                "com.android.application", "com.android.library" -> "com.android.tools.build:gradle:4.2.0-alpha13"
                 "kotlin-android",
                 "kotlin-kapt",
                 "kotlin-android-extensions" -> "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"

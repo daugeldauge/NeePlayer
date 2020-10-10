@@ -41,7 +41,7 @@ fun SongView(song: Song, playing: Boolean, onClick: () -> Unit) {
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Stack(modifier = Modifier.width(35.dp).height(24.dp)) {
+        Box(modifier = Modifier.width(35.dp).height(24.dp)) {
             if (playing) {
                 Icon(vectorResource(id = R.drawable.ic_equalizer_black_24dp))
             } else {

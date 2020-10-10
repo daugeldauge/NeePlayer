@@ -17,9 +17,9 @@ object Sample {
     )
 
     val albums = listOf(
-        Album(1, "Low", 1970, artists[0].imageUrl, 10, -100),
-        Album(2, "Fragile", null, artists[1].imageUrl, 2, 10_000_000),
-        Album(3, "Wake of the Flood", 1970, artists[2].imageUrl, 10, 312_000),
+        Album(1, "Low", 1970, artists[0].imageUrl),
+        Album(2, "Fragile", null, artists[1].imageUrl),
+        Album(3, "Wake of the Flood", 1970, artists[2].imageUrl),
     ).map { AlbumWithSongs(it, songs) }.repeat(10)
 }
 

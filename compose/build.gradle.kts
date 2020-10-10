@@ -45,9 +45,22 @@ android {
 }
 
 dependencies {
-    api("androidx.compose.ui:ui:$compose")
-    api("androidx.compose.material:material:$compose")
-    api("androidx.ui:ui-tooling:$compose")
+    implementation("androidx.compose.ui:ui:$compose")
+    implementation("androidx.compose.material:material:$compose")
+    implementation("androidx.ui:ui-tooling:$compose")
 
     implementation("dev.chrisbanes.accompanist:accompanist-coil:0.2.2")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
+}
+
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions {
+        freeCompilerArgs = listOf(
+            "-Xuse-experimental=kotlin.Experimental",
+            "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi",
+            "-Xuse-experimental=kotlinx.coroutines.FlowPreview"
+        )
+    }
 }

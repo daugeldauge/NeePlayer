@@ -21,11 +21,11 @@ import java.util.concurrent.TimeUnit
 
 @Composable
 fun AlbumsScreen(artist: Artist, albums: List<AlbumWithSongs>, nowPlayingSongId: Long?, container: AppStateContainer) {
-    val compositions = albums.asSequence().flatMap { sequenceOf(it.album) + it.songs }.toList()
+    val compositions = albums.asSequence().flatMap { sequenceOf(it) + it.songs }.toList()
 
     LazyColumnFor(items = compositions, itemContent = { composition ->
         when (composition) {
-            is Album -> AlbumSummaryView(album = composition)
+            is AlbumWithSongs -> AlbumSummaryView(albumWithSongs = composition)
             is Song -> SongView(song = composition, playing = composition.id == nowPlayingSongId, onClick = {
                 container.playSong(song = composition, artist = artist, albums = albums)
             })
@@ -70,7 +70,9 @@ fun SongView(song: Song, playing: Boolean, onClick: () -> Unit) {
 }
 
 @Composable
-fun AlbumSummaryView(album: Album) {
+fun AlbumSummaryView(albumWithSongs: AlbumWithSongs) {
+    val album = albumWithSongs.album
+
     Row(modifier = Modifier.height(130.dp).padding(all = 15.dp)) {
         CoilImageWithCrossfade(
             modifier = Modifier.size(100.dp),
@@ -89,7 +91,7 @@ fun AlbumSummaryView(album: Album) {
 
             Text(
                 style = MaterialTheme.typography.body2,
-                text = album.description
+                text = albumWithSongs.description
             )
 
             Text(
@@ -104,8 +106,8 @@ fun AlbumSummaryView(album: Album) {
 private val Song.formattedTrack: String
     get() = track?.rem(1000)?.toString().orEmpty()
 
-private val Album.description: String
-    get() = "%d songs, %d min".format(numberOfSongs, TimeUnit.MILLISECONDS.toMinutes(duration))
+private val AlbumWithSongs.description: String
+    get() = "%d songs, %d min".format(songs.size, TimeUnit.MILLISECONDS.toMinutes(songs.map { it.duration }.sum()))
 
 private val Album.formattedYear: String
     get() = year?.takeIf { it > 0 }?.toString().orEmpty()

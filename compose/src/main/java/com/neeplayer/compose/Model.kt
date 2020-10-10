@@ -14,9 +14,7 @@ data class Album(
     val id: Long,
     val title: String?,
     val year: Int?,
-    val art: String?,
-    val numberOfSongs: Int,
-    val duration: Long
+    val art: String?
 ) : Composition()
 
 data class Song(

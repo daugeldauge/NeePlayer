@@ -1,12 +1,10 @@
 package com.neeplayer.compose
 
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
+import kotlinx.coroutines.flow.MutableStateFlow
 
 data class AppState(
-    val currentScreen: Screen = Screen.Artists,
-    val artists: List<Artist> = emptyList(),
-    val albums: Map<Long, List<AlbumWithSongs>> = emptyMap(), // TODO async
+    val currentScreen: Screen = Screen.Artists(),
     val nowPlayingExpanded: Boolean = false,
     val nowPlaying: NowPlayingState? = null,
 )
@@ -21,7 +19,7 @@ data class NowPlayingState(
         require(position in playlist.indices)
     }
 
-    val current = playlist[position]
+    private val current = playlist[position]
     val song = current.song
     val album = current.album
     val artist = current.artist
@@ -35,21 +33,21 @@ data class PlaylistItem(
 
 sealed class Screen {
 
-    object Artists : Screen()
+    data class Artists(val artists: List<Artist> = emptyList()) : Screen()
 
-    class Albums(val artist: Artist, val data: List<AlbumWithSongs> = emptyList()) : Screen()
+    data class Albums(val artist: Artist, val albums: List<AlbumWithSongs> = emptyList()) : Screen()
 }
 
 
 class AppStateContainer {
 
-    val state = mutableStateOf(AppState())
+    val state = MutableStateFlow(AppState())
 
     fun goBack(): Boolean {
         mutate {
             when {
                 nowPlayingExpanded -> copy(nowPlayingExpanded = false)
-                currentScreen !is Screen.Artists -> copy(currentScreen = Screen.Artists)
+                currentScreen !is Screen.Artists -> copy(currentScreen = Screen.Artists())
                 else -> return false
             }
 
@@ -100,6 +98,24 @@ class AppStateContainer {
 
     fun seekTo(progress: Long) = mutateNowPlaying {
         copy(progress = progress)
+    }
+
+    fun updateArtists(artists: List<Artist>) = mutate {
+        val screen = currentScreen
+        if (screen is Screen.Artists) {
+            copy(currentScreen = screen.copy(artists = artists))
+        } else {
+            this
+        }
+    }
+
+    fun updateAlbums(albums: List<AlbumWithSongs>) = mutate {
+        val screen = currentScreen
+        if (screen is Screen.Albums) {
+            copy(currentScreen = screen.copy(albums = albums))
+        } else {
+            this
+        }
     }
 
     private inline fun mutate(block: AppState.() -> AppState) {

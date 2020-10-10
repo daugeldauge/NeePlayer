@@ -1,6 +1,5 @@
 package com.neeplayer.ui.albums
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,21 +11,16 @@ import com.neeplayer.model.Song
 import com.neeplayer.ui.CoroFragment
 import com.neeplayer.ui.common.actionBar
 import com.neeplayer.ui.getValue
-import com.neeplayer.ui.setValue
+import com.neeplayer.ui.putArgument
 import org.koin.android.ext.android.inject
 
 class AlbumsFragment() : CoroFragment(R.layout.fragment_albums), AlbumsView {
 
-    init {
-        arguments = Bundle()
-    }
-
-    @SuppressLint("ValidFragment")
     constructor(artist: Artist): this() {
-        this.artist = artist
+        putArgument(::artist, artist)
     }
 
-    private var artist: Artist by arguments!!
+    private val artist: Artist by { arguments }
 
     private val presenter by inject<AlbumsPresenter>()
 

@@ -2,10 +2,11 @@ package com.neeplayer.ui
 
 import android.os.Bundle
 import android.os.Parcelable
+import androidx.fragment.app.Fragment
 import kotlin.reflect.KProperty
 
-operator fun <T : Parcelable> Bundle.getValue(thisRef: Any?, property: KProperty<*>): T = getParcelable(property.name)!!
-
-operator fun <T : Parcelable> Bundle.setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-    putParcelable(property.name, value)
+fun <T: Parcelable> Fragment.putArgument(property: KProperty<T>, value: T) {
+    (arguments ?: Bundle().also { arguments = it }).putParcelable(property.name, value)
 }
+
+operator fun <T : Parcelable> (() -> Bundle?).getValue(thisRef: Any?, property: KProperty<*>): T = this()!!.getParcelable(property.name)!!

@@ -29,6 +29,7 @@ import com.google.android.exoplayer2.upstream.ContentDataSource
 import com.google.android.exoplayer2.util.Log
 import com.google.android.exoplayer2.util.Log.LOG_LEVEL_ALL
 import com.bumptech.glide.Glide
+import com.google.android.exoplayer2.MediaItem
 import com.neeplayer.BuildConfig
 import com.neeplayer.R
 import com.neeplayer.model.Song
@@ -68,7 +69,7 @@ class MusicService : Service(), NowPlayingView {
 
             setAudioAttributes(audioAttributes, /*handleAudioFocus=*/ true)
 
-            addListener(object : Player.EventListener {
+            addListener(object : Player.Listener {
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     if (playbackState == Player.STATE_ENDED) {
                         stopTicking()
@@ -91,7 +92,8 @@ class MusicService : Service(), NowPlayingView {
         set(value) {
             if (value != field && value != null) {
                 val songUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, value.id)
-                player.prepare(mediaSourceFactory.createMediaSource(songUri))
+                player.setMediaSource(mediaSourceFactory.createMediaSource(MediaItem.fromUri(songUri)))
+                player.prepare()
                 field = value
             }
         }

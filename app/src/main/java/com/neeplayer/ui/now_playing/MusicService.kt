@@ -7,9 +7,7 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.*
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.media.AudioManager
-import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
@@ -168,11 +166,9 @@ class MusicService : Service(), NowPlayingView {
         val contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notificationManager.createNotificationChannel(NotificationChannel(CHANNEL_ID,
-                getString(R.string.music_notification_channel_description),
-                NotificationManager.IMPORTANCE_LOW).apply { setSound(null, null) })
-        }
+        notificationManager.createNotificationChannel(NotificationChannel(CHANNEL_ID,
+            getString(R.string.music_notification_channel_description),
+            NotificationManager.IMPORTANCE_LOW).apply { setSound(null, null) })
 
         val mediaStyle = MediaStyle().setMediaSession(mediaSession.sessionToken)
             .setShowActionsInCompactView(0, 1, 2)

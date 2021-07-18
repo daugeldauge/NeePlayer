@@ -1,5 +1,6 @@
 package com.neeplayer.ui.now_playing
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -32,7 +33,15 @@ class MusicService : Service(), NowPlayingView {
     private val handler = Handler(Looper.getMainLooper())
     private val mainScope = MainScope()
     private val presenter by inject<NowPlayingPresenter>()
-    private val mediaSession by lazy { MediaSessionCompat(this, BuildConfig.APPLICATION_ID, ComponentName(this, MediaButtonEventsReceiver::class.java), null) }
+
+    private val mediaSession by lazy {
+        MediaSessionCompat(
+            this,
+            BuildConfig.APPLICATION_ID,
+            ComponentName(this, MediaButtonEventsReceiver::class.java),
+            PendingIntent.getBroadcast(this, 0, Intent(Intent.ACTION_MEDIA_BUTTON), PENDING_INTENT_FLAG_MUTABLE)
+        )
+    }
 
     private var wasForeground = false
 
@@ -146,14 +155,17 @@ class MusicService : Service(), NowPlayingView {
             .setAction(MainActivity.OPEN_NOW_PLAYING_ACTION)
             .setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
 
-        val contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notificationManager.createNotificationChannel(NotificationChannel(CHANNEL_ID, getString(R.string.music_notification_channel_description), NotificationManager.IMPORTANCE_LOW).apply { setSound(null, null) })
+            notificationManager.createNotificationChannel(NotificationChannel(CHANNEL_ID,
+                getString(R.string.music_notification_channel_description),
+                NotificationManager.IMPORTANCE_LOW).apply { setSound(null, null) })
         }
 
         val mediaStyle = MediaStyle().setMediaSession(mediaSession.sessionToken)
+            .setShowActionsInCompactView(0, 1, 2)
 
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setCategory(NotificationCompat.CATEGORY_STATUS)
@@ -188,7 +200,7 @@ class MusicService : Service(), NowPlayingView {
 
     private fun createPendingIntent(action: String): PendingIntent {
         val intent = Intent(this, MusicService::class.java).setAction(action)
-        return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
     }
 
     //endregion
@@ -229,3 +241,6 @@ private const val PLAY_NEXT_ACTION = "PLAY_NEXT"
 
 private const val TICK_PERIOD = 100L
 private const val CHANNEL_ID = "music_controls"
+
+@SuppressLint("InlinedApi") // const will be inlined
+private const val PENDING_INTENT_FLAG_MUTABLE = PendingIntent.FLAG_MUTABLE

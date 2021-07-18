@@ -14,7 +14,7 @@ android {
 
     defaultConfig {
         minSdk = 23
-        targetSdk = 29
+        targetSdk = 31
         applicationId = "com.neeplayer"
         versionCode = 2
         versionName = "1.0.1"
@@ -73,13 +73,11 @@ androidExtensions {
     isExperimental = true
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs = listOf(
-            "-Xuse-experimental=kotlin.Experimental",
-            "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi",
-            "-Xuse-experimental=kotlinx.coroutines.FlowPreview"
-        )
+kotlin.sourceSets.all {
+    languageSettings {
+        useExperimentalAnnotation("kotlin.Experimental")
+        useExperimentalAnnotation("kotlinx.coroutines.ExperimentalCoroutinesApi")
+        useExperimentalAnnotation("kotlinx.coroutines.FlowPreview")
     }
 }
 

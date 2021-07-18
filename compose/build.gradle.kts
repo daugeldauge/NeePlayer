@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         minSdk = 23
-        targetSdk = 29
+        targetSdk = 31
         applicationId = "com.neeplayer.compose"
         versionCode = 1
         versionName = "1.0"
@@ -41,6 +41,9 @@ android {
 kotlin.sourceSets.all {
     languageSettings {
         useExperimentalAnnotation("androidx.compose.material.ExperimentalMaterialApi")
+        useExperimentalAnnotation("kotlin.Experimental")
+        useExperimentalAnnotation("kotlinx.coroutines.ExperimentalCoroutinesApi")
+        useExperimentalAnnotation("kotlinx.coroutines.FlowPreview")
     }
 }
 
@@ -53,15 +56,4 @@ dependencies {
     implementation("io.coil-kt:coil-compose:1.3.0")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1")
-}
-
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs = listOf(
-            "-Xuse-experimental=kotlin.Experimental",
-            "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi",
-            "-Xuse-experimental=kotlinx.coroutines.FlowPreview"
-        )
-    }
 }

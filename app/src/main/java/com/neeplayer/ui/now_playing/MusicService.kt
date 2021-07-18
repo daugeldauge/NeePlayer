@@ -20,12 +20,16 @@ import android.support.v4.media.session.PlaybackStateCompat
 import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
 import androidx.media.app.NotificationCompat.MediaStyle
+import com.bumptech.glide.Glide
 import com.neeplayer.BuildConfig
 import com.neeplayer.R
 import com.neeplayer.model.Song
 import com.neeplayer.ui.MainActivity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 
 class MusicService : Service(), NowPlayingView {
@@ -99,7 +103,11 @@ class MusicService : Service(), NowPlayingView {
             tick()
         }
 
-        updateInfo(song, paused)
+        mainScope.launch {
+            withContext(Dispatchers.IO) {
+                updateInfo(song, paused)
+            }
+        }
     }
 
 
@@ -127,7 +135,9 @@ class MusicService : Service(), NowPlayingView {
     }
 
     private fun updateInfo(song: Song, paused: Boolean) {
-        val albumArt = song.album.art?.let(BitmapFactory::decodeFile)
+        val largeIconHeight = resources.getDimensionPixelSize(android.R.dimen.notification_large_icon_height)
+        val largeIconWidth = resources.getDimensionPixelSize(android.R.dimen.notification_large_icon_width)
+        val albumArt = Glide.with(this).asBitmap().load(song.album.art).submit(largeIconWidth, largeIconHeight).get()
 
         mediaSession.setMetadata(
             MediaMetadataCompat.Builder()

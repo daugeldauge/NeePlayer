@@ -13,7 +13,7 @@ android {
     compileSdk = 31
 
     defaultConfig {
-        minSdk = 23
+        minSdk = 29
         targetSdk = 31
         applicationId = "com.neeplayer"
         versionCode = 2

@@ -21,13 +21,12 @@ class Database(private val storIOContentResolver: StorIOContentResolver, private
     }
 
     fun getAlbums(artist: Artist): List<Album> {
-        @Suppress("DEPRECATION") // Suggested replacement far less convenient :(
         return storIOContentResolver
                 .get()
                 .listOfObjects(Album::class.java)
                 .withQuery(Query.builder()
                         .uri(Albums.getContentUri("external", artist.id))
-                        .columns(Albums.ALBUM_ID, Albums.ALBUM, Albums.FIRST_YEAR, Albums.ALBUM_ART)
+                        .columns(Albums.ALBUM_ID, Albums.ALBUM, Albums.FIRST_YEAR)
                         .sortOrder(Albums.FIRST_YEAR)
                         .build())
                 .withGetResolver(AlbumResolver(artist))

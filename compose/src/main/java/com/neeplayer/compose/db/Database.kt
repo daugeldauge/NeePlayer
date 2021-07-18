@@ -42,7 +42,7 @@ class Database(private val contentResolver: ContentResolver) {
                 id = long(Albums.ALBUM_ID)!!,
                 title = string(Albums.ALBUM),
                 year = int(Albums.FIRST_YEAR),
-                art = string(Albums.ALBUM_ART)?.let { "file://$it" }
+                art = string(Albums.ALBUM_ART),
             )
         }
     }

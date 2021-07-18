@@ -43,7 +43,7 @@
                     android:adjustViewBounds="true"
                     android:background="@color/image_alt"
                     android:id="@+id/np_album_art"
-                    app:imagePath="@{song.album.art}"
+                    app:imageUri="@{song.album.art}"
                     tools:src="@color/image_alt"
                     tools:layout_height="360dp" />
 
@@ -168,7 +168,7 @@
                     android:layout_width="64dp"
                     android:layout_height="64dp"
                     android:background="@color/image_alt"
-                    app:imagePath="@{song.album.art}"
+                    app:imageUri="@{song.album.art}"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentLeft="true" />
 

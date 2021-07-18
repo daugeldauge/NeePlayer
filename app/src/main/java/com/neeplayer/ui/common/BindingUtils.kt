@@ -7,13 +7,10 @@ import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import java.util.concurrent.TimeUnit
 
-@BindingAdapter("imagePath")
-fun loadImageFile(view: ImageView, path: String?) = loadImage(view, path?.let { "file://$it" })
-
-@BindingAdapter("imageURL")
-fun loadImage(view: ImageView, url: String?) = Glide.with(view.context).run {
-    if (url != null) {
-        load(url).into(view)
+@BindingAdapter("imageUri")
+fun loadImage(view: ImageView, uri: String?) = Glide.with(view.context).run {
+    if (uri != null) {
+        load(uri).into(view)
     } else {
         clear(view)
     }

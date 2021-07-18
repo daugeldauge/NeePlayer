@@ -15,24 +15,24 @@ class ArtistResolver(private val artistImagesStorage: ArtistImagesStorage) : Def
     override fun mapFromCursor(cursor: Cursor): Artist {
         val name = cursor.getString(Artists.ARTIST).orEmpty()
         return Artist(
-                id = cursor.getLong(Artists._ID) ?: 0,
-                name = name,
-                numberOfSongs = cursor.getInt(Artists.NUMBER_OF_TRACKS) ?: 0,
-                numberOfAlbums = cursor.getInt(Artists.NUMBER_OF_ALBUMS) ?: 0,
-                imageUrl = artistImagesStorage.get(name)
+            id = cursor.getLong(Artists._ID) ?: 0,
+            name = name,
+            numberOfSongs = cursor.getInt(Artists.NUMBER_OF_TRACKS) ?: 0,
+            numberOfAlbums = cursor.getInt(Artists.NUMBER_OF_ALBUMS) ?: 0,
+            imageUrl = artistImagesStorage.get(name),
         )
     }
 }
 
 class AlbumResolver(val artist: Artist) : DefaultGetResolver<Album>() {
     override fun mapFromCursor(cursor: Cursor): Album {
-        @Suppress("DEPRECATION") // Suggested replacement far less convenient :(
+        val id = cursor.getLong(Albums.ALBUM_ID)!!
         return Album(
-                artist = artist,
-                id = cursor.getLong(Albums.ALBUM_ID)!!,
-                title = cursor.getString(Albums.ALBUM),
-                year = cursor.getInt(Albums.FIRST_YEAR),
-                art = cursor.getString(Albums.ALBUM_ART)
+            artist = artist,
+            id = id,
+            title = cursor.getString(Albums.ALBUM),
+            year = cursor.getInt(Albums.FIRST_YEAR),
+            art = "neeplayer://album/$id",
         )
     }
 }
@@ -40,11 +40,11 @@ class AlbumResolver(val artist: Artist) : DefaultGetResolver<Album>() {
 class SongResolver(val album: Album) : DefaultGetResolver<Song>() {
     override fun mapFromCursor(cursor: Cursor): Song {
         return Song(
-                album = album,
-                id = cursor.getLong(Media._ID)!!,
-                title = cursor.getString(Media.TITLE),
-                duration = cursor.getInt(Media.DURATION) ?: 0,
-                track = cursor.getInt(Media.TRACK)
+            album = album,
+            id = cursor.getLong(Media._ID)!!,
+            title = cursor.getString(Media.TITLE),
+            duration = cursor.getInt(Media.DURATION) ?: 0,
+            track = cursor.getInt(Media.TRACK),
         )
     }
 }

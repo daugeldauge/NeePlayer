@@ -1,6 +1,7 @@
 package com.neeplayer.ui.artists
 
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.databinding.DataBindingUtil
 import android.view.LayoutInflater
@@ -36,6 +37,7 @@ class ArtistAdapter(
         binding.root.setOnClickListener { onClickListener(artist) }
     }
 
+    @SuppressLint("NotifyDataSetChanged") // YOLO
     fun setArtists(artists: List<Artist>) {
         this.artists = artists.toMutableList()
         notifyDataSetChanged()

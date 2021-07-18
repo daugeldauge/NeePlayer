@@ -32,6 +32,7 @@ android {
 
     kotlinOptions {
         jvmTarget = "1.8"
+        allWarningsAsErrors = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = compose

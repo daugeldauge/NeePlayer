@@ -33,7 +33,7 @@ class Scrobbler(
 
     init {
         mainScope.launch {
-            service.nowPlayingFlow.collect {
+            service.nowPlayingChanges.collect {
                 if (lastSong != it.currentSong) {
                     overallPlaying = 0
                     playingPeriodStart = null
@@ -52,7 +52,7 @@ class Scrobbler(
         }
 
         mainScope.launch {
-            service.progressFlow.collect {
+            service.progressChanges.collect {
                 val song = lastSong ?: return@collect
                 val currentOverall = currentOverallPlaying() ?: return@collect
 

@@ -1,7 +1,6 @@
 package com.neeplayer.ui.now_playing
 
 import com.neeplayer.model.NowPlayingService
-import com.neeplayer.model.Song
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -13,13 +12,13 @@ class NowPlayingPresenter(private val service: NowPlayingService) {
 
     fun bind(scope: CoroutineScope, view: NowPlayingView) {
         scope.launch {
-            service.nowPlayingFlow.collect {
+            service.nowPlayingChanges.collect {
                 view.render(it.currentSong, it.paused)
             }
         }
 
         scope.launch {
-            service.progressFlow.collect { (payload, value) ->
+            service.progressChanges.collect { (payload, value) ->
                 if (payload != progressPayload) {
                     view.seek(value)
                 }

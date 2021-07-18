@@ -24,7 +24,7 @@ class AlbumsPresenter(
         view.showAlbums(albumsWithSongs)
 
         scope.launch {
-            nowPlayingService.nowPlayingFlow.collect {
+            nowPlayingService.nowPlayingChanges.collect {
                 view.showNowPlaying(it.currentSong, it.paused)
             }
         }

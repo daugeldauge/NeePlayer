@@ -18,10 +18,21 @@ import android.support.v4.media.session.PlaybackStateCompat
 import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
 import androidx.media.app.NotificationCompat.MediaStyle
+import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.ExoPlaybackException
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.audio.AudioAttributes
+import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.upstream.ContentDataSource
+import com.google.android.exoplayer2.util.Log
+import com.google.android.exoplayer2.util.Log.LOG_LEVEL_ALL
 import com.bumptech.glide.Glide
 import com.neeplayer.BuildConfig
 import com.neeplayer.R
 import com.neeplayer.model.Song
+import com.neeplayer.toast
 import com.neeplayer.ui.MainActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -35,6 +46,7 @@ class MusicService : Service(), NowPlayingView {
     private val handler = Handler(Looper.getMainLooper())
     private val mainScope = MainScope()
     private val presenter by inject<NowPlayingPresenter>()
+    private val mediaSourceFactory = ProgressiveMediaSource.Factory { ContentDataSource(this) }
 
     private val mediaSession by lazy {
         MediaSessionCompat(
@@ -48,16 +60,48 @@ class MusicService : Service(), NowPlayingView {
     private var wasForeground = false
 
     private val player by lazy {
-        MusicPlayer(application).apply {
-            setCompletionListener {
-                presenter.onNextClicked()
-            }
+        SimpleExoPlayer.Builder(applicationContext).build().apply {
+            val audioAttributes = AudioAttributes.Builder()
+                .setUsage(C.USAGE_MEDIA)
+                .setContentType(C.CONTENT_TYPE_MUSIC)
+                .build()
+
+            setAudioAttributes(audioAttributes, /*handleAudioFocus=*/ true)
+
+            addListener(object : Player.EventListener {
+                override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+                    if (playbackState == Player.STATE_ENDED) {
+                        stopTicking()
+                        presenter.onNextClicked()
+                    }
+                }
+
+                override fun onPlayerError(error: ExoPlaybackException) {
+                    stopTicking()
+                    applicationContext.toast(R.string.media_player_error)
+                }
+            })
+
+            Log.setLogLevel(LOG_LEVEL_ALL)
         }
     }
+
+
+    private var currentSong: Song? = null
+        set(value) {
+            if (value != field && value != null) {
+                val songUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, value.id)
+                player.prepare(mediaSourceFactory.createMediaSource(songUri))
+                field = value
+            }
+        }
 
     override fun onCreate() {
         super.onCreate()
         presenter.bind(mainScope, this)
+        MediaSessionConnector(mediaSession).apply {
+            setPlayer(player)
+        }
         mediaSession.setCallback(mediaSessionCallback)
         mediaSession.isActive = true
 
@@ -76,9 +120,9 @@ class MusicService : Service(), NowPlayingView {
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun render(song: Song, paused: Boolean) {
-        val songUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, song.id)
-        player.setState(songUri, playWhenReady = !paused)
+        currentSong = song
 
+        player.playWhenReady = !paused
         if (paused) {
             stopTicking()
         } else {
@@ -94,7 +138,7 @@ class MusicService : Service(), NowPlayingView {
 
 
     override fun seek(progress: Int) {
-        player.seek(progress)
+        player.seekTo(progress.toLong())
     }
     //endregion
 
@@ -102,6 +146,7 @@ class MusicService : Service(), NowPlayingView {
 
     override fun onDestroy() {
         stopTicking()
+        player.stop()
         player.release()
         mediaSession.release()
         unregisterReceiver(headsetPlugReceiver)
@@ -196,7 +241,7 @@ class MusicService : Service(), NowPlayingView {
     //endregion
 
     private fun tick() {
-        presenter.onSeek(player.currentPosition)
+        presenter.onSeek(player.currentPosition.toInt())
         handler.postDelayed({ tick() }, TICK_PERIOD)
     }
 

@@ -44,7 +44,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        allWarningsAsErrors = true
+        allWarningsAsErrors = false
     }
 }
 
@@ -70,6 +70,11 @@ dependencies {
     val koinVersion = "3.1.2"
     implementation("io.insert-koin:koin-core:$koinVersion")
     implementation("io.insert-koin:koin-android:$koinVersion")
+
+    val exoplayerVersion = "2.14.1"
+    implementation("com.google.android.exoplayer:exoplayer-core:$exoplayerVersion")
+    implementation("com.google.android.exoplayer:extension-mediasession:$exoplayerVersion")
+
 }
 
 androidExtensions {

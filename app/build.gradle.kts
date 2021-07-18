@@ -75,6 +75,13 @@ dependencies {
     implementation("com.google.android.exoplayer:exoplayer-core:$exoplayerVersion")
     implementation("com.google.android.exoplayer:extension-mediasession:$exoplayerVersion")
 
+    val ffmpegExtensionAar = properties["exoplayer-ffmpeg-aar"]?.toString()
+    if (!ffmpegExtensionAar.isNullOrBlank() && file(ffmpegExtensionAar).exists()) {
+        implementation(files(ffmpegExtensionAar))
+    } else {
+        logger.error("Building without exoplayer ffmpeg extension. Please specify path to extensions aar in `exoplayer-ffmpeg-aar` property")
+    }
+
 }
 
 androidExtensions {

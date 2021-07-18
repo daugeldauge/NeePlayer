@@ -29,6 +29,8 @@ import com.google.android.exoplayer2.upstream.ContentDataSource
 import com.google.android.exoplayer2.util.Log
 import com.google.android.exoplayer2.util.Log.LOG_LEVEL_ALL
 import com.bumptech.glide.Glide
+import com.google.android.exoplayer2.DefaultRenderersFactory
+import com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON
 import com.google.android.exoplayer2.MediaItem
 import com.neeplayer.BuildConfig
 import com.neeplayer.R
@@ -61,7 +63,10 @@ class MusicService : Service(), NowPlayingView {
     private var wasForeground = false
 
     private val player by lazy {
-        SimpleExoPlayer.Builder(applicationContext).build().apply {
+        SimpleExoPlayer.Builder(
+            applicationContext,
+            DefaultRenderersFactory(applicationContext).setExtensionRendererMode(EXTENSION_RENDERER_MODE_ON),
+        ).build().apply {
             val audioAttributes = AudioAttributes.Builder()
                 .setUsage(C.USAGE_MEDIA)
                 .setContentType(C.CONTENT_TYPE_MUSIC)
@@ -166,7 +171,11 @@ class MusicService : Service(), NowPlayingView {
     private fun updateInfo(song: Song, paused: Boolean) {
         val largeIconHeight = resources.getDimensionPixelSize(android.R.dimen.notification_large_icon_height)
         val largeIconWidth = resources.getDimensionPixelSize(android.R.dimen.notification_large_icon_width)
-        val albumArt = Glide.with(this).asBitmap().load(song.album.art).submit(largeIconWidth, largeIconHeight).get()
+        val albumArt = try {
+            Glide.with(this).asBitmap().load(song.album.art).submit(largeIconWidth, largeIconHeight).get()
+        } catch (e: Exception) {
+            null
+        }
 
         mediaSession.setMetadata(
             MediaMetadataCompat.Builder()

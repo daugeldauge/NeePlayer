@@ -13,6 +13,7 @@ import com.bumptech.glide.load.Options
 import com.bumptech.glide.load.data.DataFetcher
 import com.bumptech.glide.load.model.ModelLoader
 import com.bumptech.glide.signature.ObjectKey
+import java.io.IOException
 
 class AlbumThumbnailModelLoader(private val context: Context) : ModelLoader<String, Bitmap> {
     override fun buildLoadData(model: String, width: Int, height: Int, options: Options): ModelLoader.LoadData<Bitmap> {

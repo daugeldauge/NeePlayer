@@ -55,20 +55,6 @@ class MusicService : Service(), NowPlayingView {
         }
     }
 
-    private val audioFocusManager by lazy {
-        AudioFocusManager(
-            context = application,
-            audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager,
-            volumeModifier = player::setVolume,
-            focusLossListener = {
-                presenter.onPauseClicked()
-                stopSelf()
-            },
-            focusTransientLossListener = presenter::onPlayPauseClicked,
-            focusGainFromTransientLossListener = presenter::onPlayPauseClicked
-        )
-    }
-
     override fun onCreate() {
         super.onCreate()
         presenter.bind(mainScope, this)
@@ -94,10 +80,8 @@ class MusicService : Service(), NowPlayingView {
         player.setState(songUri, playWhenReady = !paused)
 
         if (paused) {
-            audioFocusManager.abandonFocus()
             stopTicking()
         } else {
-            audioFocusManager.requestFocus()
             tick()
         }
 

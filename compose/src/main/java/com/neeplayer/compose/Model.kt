@@ -5,7 +5,7 @@ data class Artist(
     val name: String,
     val numberOfSongs: Int,
     val numberOfAlbums: Int,
-    val imageUrl: String? = null
+    val imageUrl: String? = null,
 )
 
 sealed class Composition
@@ -14,17 +14,17 @@ data class Album(
     val id: Long,
     val title: String?,
     val year: Int?,
-    val art: String?
+    val art: String?,
 ) : Composition()
 
 data class Song(
     val id: Long,
     val title: String?,
     val duration: Long,
-    val track: Int?
+    val track: Int?,
 ) : Composition()
 
 data class AlbumWithSongs(
     val album: Album,
-    val songs: List<Song>
+    val songs: List<Song>,
 )

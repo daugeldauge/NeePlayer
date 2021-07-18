@@ -22,7 +22,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.filter
 import org.koin.android.ext.android.inject
-import org.koin.android.scope.currentScope
+import org.koin.androidx.scope.activityScope
 
 class MainActivity : AppCompatActivity(), AuthView {
 
@@ -31,9 +31,11 @@ class MainActivity : AppCompatActivity(), AuthView {
         private const val READ_EXTERNAL_STORAGE_REQUEST_CODE = 42
     }
 
+    val koinScope by activityScope()
+
     private val presenter by inject<AuthPresenter>()
     private val nowPlayingService by inject<NowPlayingService>()
-    private val router by currentScope.inject<Router>()
+    private val router by koinScope.inject<Router>()
 
 
     private var menuElements = emptySet<AuthView.MenuElement>()
@@ -49,7 +51,7 @@ class MainActivity : AppCompatActivity(), AuthView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        currentScope.declare(supportFragmentManager)
+        koinScope.declare(supportFragmentManager)
 
         setContentView(R.layout.activity_main)
         presenter.bind(scope, this)
@@ -91,7 +93,7 @@ class MainActivity : AppCompatActivity(), AuthView {
 
     override fun onResume() {
         super.onResume()
-        resumesChannel.offer(Unit)
+        resumesChannel.trySend(Unit)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -110,7 +112,7 @@ class MainActivity : AppCompatActivity(), AuthView {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (val id = item.itemId) {
             R.id.sign_in, R.id.sign_out, R.id.scrobbling -> {
-                optionsItemSelectionsChannel.offer(id)
+                optionsItemSelectionsChannel.trySend(id)
                 true
             }
             else -> false

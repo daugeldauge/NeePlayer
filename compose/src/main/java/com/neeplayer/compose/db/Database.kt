@@ -70,7 +70,7 @@ class Database(private val contentResolver: ContentResolver) {
         selection: String? = null,
         selectionArgs: Array<String>? = null,
         sortOrder: String? = null,
-        mapper: Cursor.() -> T
+        mapper: Cursor.() -> T,
     ): List<T> {
         return withContext(Dispatchers.IO) {
             contentResolver.query(uri, projection, selection, selectionArgs, sortOrder)

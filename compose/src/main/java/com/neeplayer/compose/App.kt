@@ -1,10 +1,10 @@
 package com.neeplayer.compose
 
-import androidx.compose.foundation.Text
-import androidx.compose.foundation.contentColor
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -18,7 +18,7 @@ fun App(container: AppStateContainer) {
 
         Column {
 
-            TopAppBar(title = { Text(text = "Neé", color = contentColor()) })
+            TopAppBar(title = { Text(text = "Neé", color = MaterialTheme.colors.onPrimary) })
 
             Box {
                 Box(modifier = Modifier.padding(bottom = 72.dp)) {

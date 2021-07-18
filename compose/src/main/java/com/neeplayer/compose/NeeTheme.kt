@@ -37,13 +37,13 @@ private fun typography(): Typography {
             fontWeight = FontWeight.Normal,
             fontSize = 16.sp,
             letterSpacing = 0.sp,
-            color = NeeColors.black87
+            color = NeeColors.black87,
         ),
         body2 = TextStyle(
             fontWeight = FontWeight.Normal,
             fontSize = 14.sp,
             letterSpacing = 0.sp,
-            color = NeeColors.black54
+            color = NeeColors.black54,
         )
     )
 }

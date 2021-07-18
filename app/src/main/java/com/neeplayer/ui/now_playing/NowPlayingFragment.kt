@@ -12,7 +12,6 @@ import com.neeplayer.databinding.FragmentNowPlayingBinding
 import com.neeplayer.model.Song
 import com.neeplayer.ui.CoroFragment
 import com.neeplayer.ui.common.*
-import org.koin.android.ext.android.bind
 import org.koin.android.ext.android.inject
 
 class NowPlayingFragment : CoroFragment(R.layout.fragment_now_playing), NowPlayingView {

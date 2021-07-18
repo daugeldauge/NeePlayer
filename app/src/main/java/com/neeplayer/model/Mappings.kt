@@ -13,12 +13,12 @@ fun Cursor.getString(column: String): String? = getString(getColumnIndexOrThrow(
 
 class ArtistResolver(private val artistImagesStorage: ArtistImagesStorage) : DefaultGetResolver<Artist>() {
     override fun mapFromCursor(cursor: Cursor): Artist {
-        val name = cursor.getString(Artists.ARTIST)!!
+        val name = cursor.getString(Artists.ARTIST).orEmpty()
         return Artist(
-                id = cursor.getLong(Artists._ID)!!,
+                id = cursor.getLong(Artists._ID) ?: 0,
                 name = name,
-                numberOfSongs = cursor.getInt(Artists.NUMBER_OF_TRACKS)!!,
-                numberOfAlbums = cursor.getInt(Artists.NUMBER_OF_ALBUMS)!!,
+                numberOfSongs = cursor.getInt(Artists.NUMBER_OF_TRACKS) ?: 0,
+                numberOfAlbums = cursor.getInt(Artists.NUMBER_OF_ALBUMS) ?: 0,
                 imageUrl = artistImagesStorage.get(name)
         )
     }
@@ -43,7 +43,7 @@ class SongResolver(val album: Album) : DefaultGetResolver<Song>() {
                 album = album,
                 id = cursor.getLong(Media._ID)!!,
                 title = cursor.getString(Media.TITLE),
-                duration = cursor.getInt(Media.DURATION)!!,
+                duration = cursor.getInt(Media.DURATION) ?: 0,
                 track = cursor.getInt(Media.TRACK)
         )
     }

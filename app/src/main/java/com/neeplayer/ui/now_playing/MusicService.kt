@@ -150,13 +150,12 @@ class MusicService : Service(), NowPlayingView {
 
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notificationManager.createNotificationChannel(NotificationChannel(CHANNEL_ID, getString(R.string.music_notification_channel_description), NotificationManager.IMPORTANCE_HIGH))
+            notificationManager.createNotificationChannel(NotificationChannel(CHANNEL_ID, getString(R.string.music_notification_channel_description), NotificationManager.IMPORTANCE_LOW).apply { setSound(null, null) })
         }
 
         val mediaStyle = MediaStyle().setMediaSession(mediaSession.sessionToken)
 
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setPriority(NotificationCompat.PRIORITY_MAX)
             .setCategory(NotificationCompat.CATEGORY_STATUS)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setTicker(song.title)

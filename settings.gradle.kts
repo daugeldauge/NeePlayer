@@ -1,15 +1,15 @@
 pluginManagement {
-    val kotlinVersion = "1.4.10"
+    val kotlinVersion = "1.5.10"
 
     repositories {
-        jcenter()
+        mavenCentral()
         google()
     }
 
     resolutionStrategy {
         eachPlugin {
             when (requested.id.id) {
-                "com.android.application", "com.android.library" -> "com.android.tools.build:gradle:4.2.0-alpha13"
+                "com.android.application", "com.android.library" -> "com.android.tools.build:gradle:7.0.0-beta05"
                 "kotlin-android",
                 "kotlin-kapt",
                 "kotlin-android-extensions" -> "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"

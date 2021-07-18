@@ -7,9 +7,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.neeplayer.R
 import com.neeplayer.model.Artist
 import com.neeplayer.ui.CoroFragment
+import com.neeplayer.ui.MainActivity
 import com.neeplayer.ui.common.actionBar
 import com.neeplayer.ui.common.uiThread
-import org.koin.android.scope.currentScope
 
 class ArtistsFragment : CoroFragment(R.layout.fragment_artists), ArtistsView {
     companion object {
@@ -17,7 +17,7 @@ class ArtistsFragment : CoroFragment(R.layout.fragment_artists), ArtistsView {
     }
 
     private val presenter by lazy {
-        requireActivity().currentScope.get<ArtistsPresenter>()
+        (requireActivity() as MainActivity).koinScope.get<ArtistsPresenter>()
     }
 
     private val adapter by lazy {

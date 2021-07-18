@@ -4,21 +4,21 @@ plugins {
 }
 
 var compose: String by ext
-compose = "1.0.0-alpha04"
+compose = "1.0.0-rc02"
 
 android {
-    compileSdkVersion(30)
+    compileSdk = 31
 
     defaultConfig {
-        minSdkVersion(23)
-        targetSdkVersion(29)
+        minSdk = 23
+        targetSdk = 29
         applicationId = "com.neeplayer.compose"
         versionCode = 1
         versionName = "1.0"
     }
 
     packagingOptions {
-        exclude("META-INF/**.kotlin_module")
+        resources.excludes.add("META-INF/**.kotlin_module")
     }
 
     compileOptions {
@@ -32,26 +32,27 @@ android {
 
     kotlinOptions {
         jvmTarget = "1.8"
-        useIR = true
-        freeCompilerArgs = listOf(
-            "-Xallow-jvm-ir-dependencies",
-            "-Xskip-prerelease-check",
-            "-Xopt-in=androidx.compose.material.ExperimentalMaterialApi"
-        )
     }
     composeOptions {
         kotlinCompilerExtensionVersion = compose
     }
 }
 
+kotlin.sourceSets.all {
+    languageSettings {
+        useExperimentalAnnotation("androidx.compose.material.ExperimentalMaterialApi")
+    }
+}
+
 dependencies {
     implementation("androidx.compose.ui:ui:$compose")
+    implementation("androidx.compose.ui:ui-tooling:$compose")
     implementation("androidx.compose.material:material:$compose")
-    implementation("androidx.ui:ui-tooling:$compose")
+    implementation("androidx.activity:activity-compose:1.3.0-rc02")
 
-    implementation("dev.chrisbanes.accompanist:accompanist-coil:0.2.2")
+    implementation("io.coil-kt:coil-compose:1.3.0")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1")
 }
 
 

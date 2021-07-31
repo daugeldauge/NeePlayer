@@ -4,7 +4,7 @@ plugins {
 }
 
 var compose: String by ext
-compose = "1.0.0-rc02"
+compose = "1.0.0"
 
 android {
     compileSdk = 31

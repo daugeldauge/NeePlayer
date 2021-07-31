@@ -28,7 +28,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,25 +38,7 @@ import coil.compose.rememberImagePainter
 import coil.size.Scale
 
 @Composable
-fun NowPlayingBottomSheet(state: NowPlayingState?, actions: NowPlayingActions, content: @Composable (PaddingValues) -> Unit) {
-    val scaffoldState = rememberBottomSheetScaffoldState()
-
-    BottomSheetScaffold(
-        sheetContent = {
-            SheetContent(
-                state = state,
-                sheetValue = scaffoldState.bottomSheetState.targetValue,
-                actions = actions,
-            )
-        },
-        scaffoldState = scaffoldState,
-        content = content,
-        sheetPeekHeight = headerHeight,
-    )
-}
-
-@Composable
-private fun SheetContent(
+fun NowPlayingBottomSheetContent(
     state: NowPlayingState?,
     sheetValue: BottomSheetValue,
     actions: NowPlayingActions,
@@ -158,7 +139,7 @@ private fun Body(state: NowPlayingState?, actions: NowPlayingActions) {
 private fun Header(state: NowPlayingState?, onPlayPauseClick: () -> Unit = {}) {
     Row(
         modifier = Modifier
-            .height(headerHeight)
+            .height(72.dp)
             .background(MaterialTheme.colors.background)
             .padding(4.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -221,8 +202,6 @@ private fun MusicControl(
 
 private fun NowPlayingState?.playPauseResource() =
     if (this?.playing != true) R.drawable.ic_play_arrow_black_48dp else R.drawable.ic_pause_black_48dp
-
-private val headerHeight = 72.dp
 
 @Preview
 @Composable

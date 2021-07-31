@@ -39,16 +39,18 @@ import coil.size.Scale
 @ExperimentalMaterialApi
 @Composable
 fun NowPlayingScreen(state: NowPlayingState?, container: AppStateContainer) {
-    val drawerState = rememberBottomDrawerState(initialValue = BottomDrawerValue.Closed)
-
-    BottomDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            DrawerContent(state = state,
-                drawerValue = drawerState.targetValue,
-                container = container)
-        },
-    ) {}
+//    val drawerState = rememberBottomDrawerState(initialValue = BottomDrawerValue.Closed)
+//
+//    BottomDrawer(
+//        drawerState = drawerState,
+//        drawerContent = {
+//            DrawerContent(state = state,
+//                drawerValue = drawerState.targetValue,
+//                container = container)
+//        },
+//    ) {}
+//
+    Header(state = state, onPlayPauseClick = { container.playOrPause() })
 }
 
 @Composable

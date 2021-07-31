@@ -1,6 +1,7 @@
 package com.neeplayer.compose
 
 import android.graphics.drawable.ColorDrawable
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -96,7 +97,7 @@ fun AlbumSummaryView(albumWithSongs: AlbumWithSongs) {
         .height(130.dp)
         .padding(all = 15.dp)) {
 
-        Icon(
+        Image(
             painter = rememberImagePainter(data = album.art.orEmpty()) {
                 scale(Scale.FILL)
                 fallback(ColorDrawable(Color.LightGray.value.toInt()))

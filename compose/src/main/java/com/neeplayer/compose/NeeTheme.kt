@@ -18,7 +18,7 @@ object NeeColors {
 }
 
 @Composable
-fun NeeTheme(content: @Composable() () -> Unit) {
+fun NeeTheme(content: @Composable () -> Unit) {
     val colors = lightColors().copy(
         primary = NeeColors.primary,
         primaryVariant = NeeColors.primaryVariant,

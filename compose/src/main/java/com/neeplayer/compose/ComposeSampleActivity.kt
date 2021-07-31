@@ -5,6 +5,9 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import coil.Coil
+import coil.ImageLoader
+import coil.util.DebugLogger
 import com.neeplayer.compose.db.Database
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -24,6 +27,13 @@ class ComposeSampleActivity : ComponentActivity() {
 
         setContent {
             App(container)
+        }
+
+        Coil.setImageLoader {
+            ImageLoader.Builder(this)
+                .componentRegistry { add(ThumbnailFetcher(this@ComposeSampleActivity)) }
+                .logger(DebugLogger())
+                .build()
         }
 
         val database = Database(contentResolver)

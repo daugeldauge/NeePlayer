@@ -32,6 +32,7 @@ class ComposeSampleActivity : ComponentActivity() {
         Coil.setImageLoader {
             ImageLoader.Builder(this)
                 .componentRegistry { add(ThumbnailFetcher(this@ComposeSampleActivity)) }
+                .crossfade(enable = true)
                 .logger(DebugLogger())
                 .build()
         }

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -27,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -79,7 +81,7 @@ private fun Body(state: NowPlayingState?, container: AppStateContainer) {
             painter = rememberImagePainter(data = state?.album?.art) {
                 scale(Scale.FIT)
             },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().aspectRatio(1f),
             contentDescription = null,
         )
 
@@ -129,18 +131,18 @@ private fun Body(state: NowPlayingState?, container: AppStateContainer) {
             )
 
             Row(modifier = Modifier
-                .padding(start = 8.dp, end = 8.dp, top = 8.dp)
+                .padding(start = 8.dp, end = 8.dp, top = 40.dp)
                 .align(Alignment.BottomCenter)) {
 
                 Text(
-                    style = MaterialTheme.typography.body2,
+                    style = MaterialTheme.typography.caption,
                     text = state?.progress.formatDuration(),
                 )
 
                 Spacer(modifier = Modifier.weight(1f))
 
                 Text(
-                    style = MaterialTheme.typography.body2,
+                    style = MaterialTheme.typography.caption,
                     text = state?.song?.duration.formatDuration(),
                 )
 
@@ -225,7 +227,7 @@ private val headerHeight = 72.dp
 @Preview
 @Composable
 fun PreviewNowPlayingScreen() = NeeTheme {
-    NowPlayingBottomSheet(NowPlayingState(
+    Body(NowPlayingState(
         playlist = listOf(PlaylistItem(
             song = Sample.songs.first(),
             album = Sample.albums.first().album,
@@ -233,7 +235,6 @@ fun PreviewNowPlayingScreen() = NeeTheme {
         )),
         position = 0,
         playing = true,
-        progress = 132_000,
-    ), AppStateContainer()) {}
+        progress = 0,
+    ), AppStateContainer())
 }
-

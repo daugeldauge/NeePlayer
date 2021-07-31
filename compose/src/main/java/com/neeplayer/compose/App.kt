@@ -19,15 +19,15 @@ fun App(container: AppStateContainer) {
 
             TopAppBar(title = { Text(text = "Neé", color = MaterialTheme.colors.onPrimary) })
 
-            NowPlayingBottomSheet(state = state.nowPlaying, container = container) { padding ->
+            NowPlayingBottomSheet(state = state.nowPlaying, actions = container) { padding ->
                 Box(modifier = Modifier.padding(padding)) {
                     when (val screen = state.currentScreen) {
-                        is Screen.Artists -> ArtistsScreen(artists = screen.artists, container = container)
+                        is Screen.Artists -> ArtistsScreen(artists = screen.artists, actions = container)
                         is Screen.Albums -> AlbumsScreen(
                             artist = screen.artist,
                             albums = screen.albums,
                             nowPlayingSongId = state.nowPlaying?.song?.id,
-                            container = container,
+                            actions = container,
                         )
                     }
                 }

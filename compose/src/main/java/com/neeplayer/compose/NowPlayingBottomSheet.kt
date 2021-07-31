@@ -39,7 +39,7 @@ import coil.compose.rememberImagePainter
 import coil.size.Scale
 
 @Composable
-fun NowPlayingBottomSheet(state: NowPlayingState?, container: AppStateContainer, content: @Composable (PaddingValues) -> Unit) {
+fun NowPlayingBottomSheet(state: NowPlayingState?, actions: NowPlayingActions, content: @Composable (PaddingValues) -> Unit) {
     val scaffoldState = rememberBottomSheetScaffoldState()
 
     BottomSheetScaffold(
@@ -47,7 +47,7 @@ fun NowPlayingBottomSheet(state: NowPlayingState?, container: AppStateContainer,
             SheetContent(
                 state = state,
                 sheetValue = scaffoldState.bottomSheetState.targetValue,
-                container = container,
+                actions = actions,
             )
         },
         scaffoldState = scaffoldState,
@@ -60,21 +60,21 @@ fun NowPlayingBottomSheet(state: NowPlayingState?, container: AppStateContainer,
 private fun SheetContent(
     state: NowPlayingState?,
     sheetValue: BottomSheetValue,
-    container: AppStateContainer,
+    actions: NowPlayingActions,
 ) {
     Box {
-        Body(state = state, container = container)
+        Body(state = state, actions = actions)
 
         Crossfade(targetState = sheetValue) { value ->
             if (value == BottomSheetValue.Collapsed) {
-                Header(state = state, onPlayPauseClick = { container.playOrPause() })
+                Header(state = state, onPlayPauseClick = { actions.playOrPause() })
             }
         }
     }
 }
 
 @Composable
-private fun Body(state: NowPlayingState?, container: AppStateContainer) {
+private fun Body(state: NowPlayingState?, actions: NowPlayingActions) {
     Column {
 
         Image(
@@ -115,11 +115,11 @@ private fun Body(state: NowPlayingState?, container: AppStateContainer) {
             horizontalArrangement = Arrangement.Center,
         ) {
 
-            MusicControl(R.drawable.ic_fast_rewind_black_48dp) { container.playPrevious() }
+            MusicControl(R.drawable.ic_fast_rewind_black_48dp) { actions.playPrevious() }
 
-            MusicControl(state.playPauseResource()) { container.playOrPause() }
+            MusicControl(state.playPauseResource()) { actions.playOrPause() }
 
-            MusicControl(R.drawable.ic_fast_forward_black_48dp) { container.playNext() }
+            MusicControl(R.drawable.ic_fast_forward_black_48dp) { actions.playNext() }
         }
 
         Box(modifier = Modifier.padding(8.dp)) {
@@ -127,7 +127,7 @@ private fun Body(state: NowPlayingState?, container: AppStateContainer) {
             Slider(
                 value = state?.progress?.toFloat() ?: 0f,
                 valueRange = 0f..(state?.song?.duration?.toFloat() ?: 1f),
-                onValueChange = { value -> container.seekTo(value.toLong()) },
+                onValueChange = { value -> actions.seekTo(value.toLong()) },
             )
 
             Row(modifier = Modifier

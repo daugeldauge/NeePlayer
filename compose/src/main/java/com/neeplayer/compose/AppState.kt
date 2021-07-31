@@ -38,8 +38,23 @@ sealed class Screen {
     data class Albums(val artist: Artist, val albums: List<AlbumWithSongs> = emptyList()) : Screen()
 }
 
+interface NowPlayingActions {
+    fun playOrPause()
+    fun playNext()
+    fun playPrevious()
+    fun seekTo(progress: Long)
+}
 
-class AppStateContainer {
+interface ArtistsActions {
+    fun goToAlbums(artist: Artist)
+}
+
+interface AlbumsActions {
+    fun playSong(song: Song, artist: Artist, albums: List<AlbumWithSongs>)
+}
+
+
+class AppStateContainer : NowPlayingActions, ArtistsActions, AlbumsActions {
 
     val state = MutableStateFlow(AppState())
 
@@ -55,11 +70,11 @@ class AppStateContainer {
         return true
     }
 
-    fun goToAlbums(artist: Artist) = mutate {
+    override fun goToAlbums(artist: Artist) = mutate {
         copy(currentScreen = Screen.Albums(artist))
     }
 
-    fun playSong(song: Song, artist: Artist, albums: List<AlbumWithSongs>) = mutate {
+    override fun playSong(song: Song, artist: Artist, albums: List<AlbumWithSongs>) = mutate {
         val playlist = albums.flatMap { albumWithSongs ->
             albumWithSongs.songs.map {
                 PlaylistItem(
@@ -80,7 +95,7 @@ class AppStateContainer {
         )
     }
 
-    fun playOrPause() = mutate {
+    override fun playOrPause() = mutate {
         if (nowPlaying != null) {
             copy(nowPlaying = nowPlaying.copy(playing = !nowPlaying.playing))
         } else {
@@ -88,15 +103,15 @@ class AppStateContainer {
         }
     }
 
-    fun playNext() = mutateNowPlaying {
+    override fun playNext() = mutateNowPlaying {
         copy(position = if (position < playlist.lastIndex) position + 1 else 0, progress = 0L)
     }
 
-    fun playPrevious() = mutateNowPlaying {
+    override fun playPrevious() = mutateNowPlaying {
         copy(position = if (position > 0) position - 1 else playlist.lastIndex, progress = 0L)
     }
 
-    fun seekTo(progress: Long) = mutateNowPlaying {
+    override fun seekTo(progress: Long) = mutateNowPlaying {
         copy(progress = progress)
     }
 

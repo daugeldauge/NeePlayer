@@ -16,19 +16,19 @@ import coil.compose.rememberImagePainter
 import coil.size.Scale
 
 @Composable
-fun ArtistsScreen(artists: List<Artist>, container: AppStateContainer) {
+fun ArtistsScreen(artists: List<Artist>, actions: ArtistsActions) {
     LazyColumn {
         items(artists) {
-            ArtistItem(artist = it, container = container)
+            ArtistItem(artist = it, actions = actions)
         }
     }
 }
 
 @Composable
-fun ArtistItem(artist: Artist, container: AppStateContainer) {
+fun ArtistItem(artist: Artist, actions: ArtistsActions) {
     Row(
         modifier = Modifier
-            .clickable(onClick = { container.goToAlbums(artist) })
+            .clickable(onClick = { actions.goToAlbums(artist) })
             .padding(start = 10.dp, end = 10.dp, bottom = 5.dp, top = 5.dp)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically

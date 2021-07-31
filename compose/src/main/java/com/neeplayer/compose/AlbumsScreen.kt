@@ -26,7 +26,7 @@ fun AlbumsScreen(
     artist: Artist,
     albums: List<AlbumWithSongs>,
     nowPlayingSongId: Long?,
-    container: AppStateContainer,
+    actions: AlbumsActions,
 ) {
     val compositions = albums.asSequence().flatMap { sequenceOf(it) + it.songs }.toList()
 
@@ -38,7 +38,7 @@ fun AlbumsScreen(
                     song = composition,
                     playing = composition.id == nowPlayingSongId,
                     onClick = {
-                        container.playSong(song = composition, artist = artist, albums = albums)
+                        actions.playSong(song = composition, artist = artist, albums = albums)
                     })
             }
         }
@@ -148,7 +148,7 @@ fun PreviewAlbumsScreen() = NeeTheme {
         artist = Sample.artists.first(),
         albums = Sample.albums,
         nowPlayingSongId = 3,
-        container = AppStateContainer()
+        actions = AppStateContainer()
     )
 }
 

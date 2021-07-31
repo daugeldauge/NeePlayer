@@ -7,6 +7,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,14 +15,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.BottomDrawer
-import androidx.compose.material.BottomDrawerValue
-import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.BottomSheetScaffold
+import androidx.compose.material.BottomSheetValue
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Slider
 import androidx.compose.material.Text
-import androidx.compose.material.rememberBottomDrawerState
+import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -36,34 +36,35 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import coil.size.Scale
 
-@ExperimentalMaterialApi
 @Composable
-fun NowPlayingScreen(state: NowPlayingState?, container: AppStateContainer) {
-//    val drawerState = rememberBottomDrawerState(initialValue = BottomDrawerValue.Closed)
-//
-//    BottomDrawer(
-//        drawerState = drawerState,
-//        drawerContent = {
-//            DrawerContent(state = state,
-//                drawerValue = drawerState.targetValue,
-//                container = container)
-//        },
-//    ) {}
-//
-    Header(state = state, onPlayPauseClick = { container.playOrPause() })
+fun NowPlayingBottomSheet(state: NowPlayingState?, container: AppStateContainer, content: @Composable (PaddingValues) -> Unit) {
+    val scaffoldState = rememberBottomSheetScaffoldState()
+
+    BottomSheetScaffold(
+        sheetContent = {
+            SheetContent(
+                state = state,
+                sheetValue = scaffoldState.bottomSheetState.targetValue,
+                container = container,
+            )
+        },
+        scaffoldState = scaffoldState,
+        content = content,
+        sheetPeekHeight = headerHeight,
+    )
 }
 
 @Composable
-private fun DrawerContent(
+private fun SheetContent(
     state: NowPlayingState?,
-    drawerValue: BottomDrawerValue,
+    sheetValue: BottomSheetValue,
     container: AppStateContainer,
 ) {
     Box {
         Body(state = state, container = container)
 
-        Crossfade(targetState = drawerValue) { value ->
-            if (value == BottomDrawerValue.Closed) {
+        Crossfade(targetState = sheetValue) { value ->
+            if (value == BottomSheetValue.Collapsed) {
                 Header(state = state, onPlayPauseClick = { container.playOrPause() })
             }
         }
@@ -224,7 +225,7 @@ private val headerHeight = 72.dp
 @Preview
 @Composable
 fun PreviewNowPlayingScreen() = NeeTheme {
-    NowPlayingScreen(NowPlayingState(
+    NowPlayingBottomSheet(NowPlayingState(
         playlist = listOf(PlaylistItem(
             song = Sample.songs.first(),
             album = Sample.albums.first().album,
@@ -233,6 +234,6 @@ fun PreviewNowPlayingScreen() = NeeTheme {
         position = 0,
         playing = true,
         progress = 132_000,
-    ), AppStateContainer())
+    ), AppStateContainer()) {}
 }
 

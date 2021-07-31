@@ -9,7 +9,6 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 
 @Composable
 fun App(container: AppStateContainer) {
@@ -20,8 +19,8 @@ fun App(container: AppStateContainer) {
 
             TopAppBar(title = { Text(text = "Neé", color = MaterialTheme.colors.onPrimary) })
 
-            Box {
-                Box(modifier = Modifier.padding(bottom = 72.dp)) {
+            NowPlayingBottomSheet(state = state.nowPlaying, container = container) { padding ->
+                Box(modifier = Modifier.padding(padding)) {
                     when (val screen = state.currentScreen) {
                         is Screen.Artists -> ArtistsScreen(artists = screen.artists, container = container)
                         is Screen.Albums -> AlbumsScreen(
@@ -32,8 +31,6 @@ fun App(container: AppStateContainer) {
                         )
                     }
                 }
-
-                NowPlayingScreen(state = state.nowPlaying, container = container)
             }
         }
     }

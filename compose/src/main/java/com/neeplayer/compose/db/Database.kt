@@ -21,13 +21,14 @@ class Database(private val contentResolver: ContentResolver) {
             uri = Artists.EXTERNAL_CONTENT_URI,
             projection = arrayOf(Artists._ID, Artists.ARTIST, Artists.NUMBER_OF_TRACKS, Artists.NUMBER_OF_ALBUMS)
         ) {
-            Artist(
+            val artist = Artist(
                 id = id(),
                 name = string(Artists.ARTIST) ?: "Unknown",
-                numberOfSongs = int(Artists.NUMBER_OF_TRACKS) ?: 0,
-                numberOfAlbums = int(Artists.NUMBER_OF_ALBUMS) ?: 0,
+                numberOfSongs = int(Artists.NUMBER_OF_TRACKS),
+                numberOfAlbums = int(Artists.NUMBER_OF_ALBUMS),
                 imageUrl = "https://cdns-images.dzcdn.net/images/artist/3a27ec1beff8cae3a0196f32a6361195/250x250-000000-80-0-0.jpg"
             )
+            artist
         }
     }
 
@@ -37,7 +38,7 @@ class Database(private val contentResolver: ContentResolver) {
             projection = arrayOf(Albums.ALBUM_ID, Albums.ALBUM, Albums.FIRST_YEAR),
             sortOrder = Albums.FIRST_YEAR
         ) {
-            val id = long(Albums.ALBUM_ID)!!
+            val id = long(Albums.ALBUM_ID)
             Album(
                 id = id,
                 title = string(Albums.ALBUM),
@@ -57,7 +58,7 @@ class Database(private val contentResolver: ContentResolver) {
             Song(
                 id = id(),
                 title = string(Media.TITLE),
-                duration = long(MEDIA_DURATION) ?: 0,
+                duration = long(MEDIA_DURATION),
                 track = int(Media.TRACK)
             )
         }
@@ -87,9 +88,9 @@ class Database(private val contentResolver: ContentResolver) {
 }
 
 
-private fun Cursor.id(): Long = long(BaseColumns._ID)!!
-private fun Cursor.int(column: String): Int? = getInt(getColumnIndexOrThrow(column))
-private fun Cursor.long(column: String): Long? = getLong(getColumnIndexOrThrow(column))
+private fun Cursor.id(): Long = long(BaseColumns._ID)
+private fun Cursor.int(column: String): Int = getInt(getColumnIndexOrThrow(column))
+private fun Cursor.long(column: String): Long = getLong(getColumnIndexOrThrow(column))
 private fun Cursor.string(column: String): String? = getString(getColumnIndexOrThrow(column))
 
 @SuppressLint("InlinedApi")
